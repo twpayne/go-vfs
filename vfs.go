@@ -12,6 +12,7 @@ type FS interface {
 	Mkdir(string, os.FileMode) error
 	ReadDir(string) ([]os.FileInfo, error)
 	ReadFile(string) ([]byte, error)
+	Readlink(string) (string, error)
 	Remove(string) error
 	Stat(string) (os.FileInfo, error)
 	Symlink(string, string) error

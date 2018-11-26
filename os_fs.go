@@ -29,6 +29,10 @@ func (osfs) ReadFile(dirname string) ([]byte, error) {
 	return ioutil.ReadFile(dirname)
 }
 
+func (osfs) Readlink(name string) (string, error) {
+	return os.Readlink(name)
+}
+
 func (osfs) Remove(name string) error {
 	return os.Remove(name)
 }

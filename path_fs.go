@@ -42,6 +42,10 @@ func (p *PathFS) ReadFile(filename string) ([]byte, error) {
 	return p.fs.ReadFile(p.Join(filename))
 }
 
+func (p *PathFS) Readlink(name string) (string, error) {
+	return p.fs.Readlink(p.Join(name))
+}
+
 func (p *PathFS) Remove(name string) error {
 	return p.fs.Remove(p.Join(name))
 }
