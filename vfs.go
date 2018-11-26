@@ -47,7 +47,10 @@ func MkdirAll(fs FS, path string, perm os.FileMode) error {
 
 // walk recursively walks fs from path.
 func walk(fs FS, path string, walkFn filepath.WalkFunc, info os.FileInfo, err error) error {
-	err = walkFn(path, info, err)
+	if err != nil {
+		return walkFn(path, info, err)
+	}
+	err = walkFn(path, info, nil)
 	if !info.IsDir() {
 		return err
 	}
