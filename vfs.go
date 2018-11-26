@@ -71,7 +71,32 @@ func RemoveAll(fs FS, path string) error {
 	return removeAll(fs, path, info)
 }
 
+func walk(fs FS, path string, walkFn filepath.WalkFunc, info os.FileInfo, err error) error {
+	err = walkFn(path, info, err)
+	if !info.IsDir() {
+		return err
+	}
+	if err == filepath.SkipDir {
+		return nil
+	}
+	infos, err := fs.ReadDir(path)
+	if err != nil {
+		return err
+	}
+	for _, info := range infos {
+		name := info.Name()
+		if name == "." || name == ".." {
+			continue
+		}
+		if err := walk(fs, filepath.Join(path, info.Name()), walkFn, info, nil); err != nil {
+			return err
+		}
+	}
+	return nil
+}
+
 // Walk is the equivalent of filepath.Walk but operates on fs.
 func Walk(fs FS, path string, walkFn filepath.WalkFunc) error {
-	return nil
+	info, err := fs.Lstat(path)
+	return walk(fs, path, walkFn, info, err)
 }
