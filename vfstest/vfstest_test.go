@@ -88,7 +88,7 @@ func TestBuilderBuild(t *testing.T) {
 			if err != nil {
 				t.Fatal(err)
 			}
-			RunTest(t, fs, "", tc.tests)
+			RunTests(t, fs, "", tc.tests)
 		})
 	}
 }
@@ -120,7 +120,7 @@ func TestCoverage(t *testing.T) {
 	if err != nil {
 		log.Fatal(err)
 	}
-	RunTest(t, fs, "", []interface{}{
+	RunTests(t, fs, "", []interface{}{
 		TestPath("/home",
 			TestIsDir,
 			TestModePerm(0755)),

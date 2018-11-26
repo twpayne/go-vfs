@@ -249,8 +249,8 @@ func (b *Builder) WriteFile(fs vfs.FS, path string, contents []byte, perm os.Fil
 	return fs.WriteFile(path, contents, perm&^b.umask)
 }
 
-// runTest recursively runs tests on fs.
-func runTest(t *testing.T, fs vfs.FS, name string, test interface{}) {
+// runTests recursively runs tests on fs.
+func runTests(t *testing.T, fs vfs.FS, name string, test interface{}) {
 	prefix := ""
 	if name != "" {
 		prefix = name + "_"
@@ -277,7 +277,7 @@ func runTest(t *testing.T, fs vfs.FS, name string, test interface{}) {
 		}
 	case []interface{}:
 		for _, u := range test {
-			runTest(t, fs, name, u)
+			runTests(t, fs, name, u)
 		}
 	case map[string]interface{}:
 		testNames := make([]string, 0, len(test))
@@ -286,7 +286,7 @@ func runTest(t *testing.T, fs vfs.FS, name string, test interface{}) {
 		}
 		sort.Strings(testNames)
 		for _, testName := range testNames {
-			runTest(t, fs, prefix+testName, test[testName])
+			runTests(t, fs, prefix+testName, test[testName])
 		}
 	case nil:
 	default:
@@ -294,9 +294,9 @@ func runTest(t *testing.T, fs vfs.FS, name string, test interface{}) {
 	}
 }
 
-// RunTest recursively runs tests on fs.
-func RunTest(t *testing.T, fs vfs.FS, name string, tests ...interface{}) {
-	runTest(t, fs, name, tests)
+// RunTests recursively runs tests on fs.
+func RunTests(t *testing.T, fs vfs.FS, name string, tests ...interface{}) {
+	runTests(t, fs, name, tests)
 }
 
 // TestContents returns a PathTest that verifies the contents of the file are
