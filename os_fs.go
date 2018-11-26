@@ -45,6 +45,11 @@ func (osfs) Remove(name string) error {
 	return os.Remove(name)
 }
 
+// RemoveAll implements os.RemoveAll.
+func (osfs) RemoveAll(name string) error {
+	return os.RemoveAll(name)
+}
+
 // Stat implements os.Stat.
 func (osfs) Stat(name string) (os.FileInfo, error) {
 	return os.Stat(name)

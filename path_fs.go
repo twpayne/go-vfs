@@ -63,6 +63,11 @@ func (p *PathFS) Remove(name string) error {
 	return p.fs.Remove(p.Join(name))
 }
 
+// RemoveAll implements os.RemoveAll.
+func (p *PathFS) RemoveAll(name string) error {
+	return p.fs.RemoveAll(p.Join(name))
+}
+
 // Stat implements os.Stat.
 func (p *PathFS) Stat(name string) (os.FileInfo, error) {
 	return p.fs.Stat(p.Join(name))

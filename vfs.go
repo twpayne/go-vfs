@@ -16,6 +16,7 @@ type FS interface {
 	ReadFile(filename string) ([]byte, error)
 	Readlink(name string) (string, error)
 	Remove(name string) error
+	RemoveAll(name string) error
 	Stat(name string) (os.FileInfo, error)
 	Symlink(oldname, newname string) error
 	WriteFile(filename string, data []byte, perm os.FileMode) error
@@ -42,34 +43,6 @@ func MkdirAll(fs FS, path string, perm os.FileMode) error {
 		return nil
 	}
 	return fs.Mkdir(path, perm)
-}
-
-// removeAll recursively removes all from path in fs.
-func removeAll(fs FS, path string, info os.FileInfo) error {
-	if info.Mode().IsDir() {
-		infos, err := fs.ReadDir(path)
-		if err != nil {
-			return err
-		}
-		for _, info := range infos {
-			if err := removeAll(fs, filepath.Join(path, info.Name()), info); err != nil {
-				return err
-			}
-		}
-		return nil
-	}
-	return fs.Remove(path)
-}
-
-// RemoveAll is equivalent to os.RemoveAll but operates on fs.
-func RemoveAll(fs FS, path string) error {
-	info, err := fs.Stat(path)
-	if err != nil && os.IsNotExist(err) {
-		return nil
-	} else if err != nil {
-		return err
-	}
-	return removeAll(fs, path, info)
 }
 
 // walk recursively walks fs from path.
