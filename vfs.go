@@ -6,19 +6,22 @@ import (
 	"path/filepath"
 )
 
+// An FS is an abstraction over commonly-used functions in the os and ioutil
+// packages.
 type FS interface {
-	Chmod(string, os.FileMode) error
-	Lstat(string) (os.FileInfo, error)
-	Mkdir(string, os.FileMode) error
-	ReadDir(string) ([]os.FileInfo, error)
-	ReadFile(string) ([]byte, error)
-	Readlink(string) (string, error)
-	Remove(string) error
-	Stat(string) (os.FileInfo, error)
-	Symlink(string, string) error
-	WriteFile(string, []byte, os.FileMode) error
+	Chmod(name string, mode os.FileMode) error
+	Lstat(name string) (os.FileInfo, error)
+	Mkdir(name string, perm os.FileMode) error
+	ReadDir(dirname string) ([]os.FileInfo, error)
+	ReadFile(filename string) ([]byte, error)
+	Readlink(name string) (string, error)
+	Remove(name string) error
+	Stat(name string) (os.FileInfo, error)
+	Symlink(oldname, newname string) error
+	WriteFile(filename string, data []byte, perm os.FileMode) error
 }
 
+// MkdirAll is equivalent to os.MkdirAll but operates on fs.
 func MkdirAll(fs FS, path string, perm os.FileMode) error {
 	if parentDir := filepath.Dir(path); parentDir != "." {
 		info, err := fs.Stat(parentDir)
@@ -57,6 +60,7 @@ func removeAll(fs FS, path string, info os.FileInfo) error {
 	return fs.Remove(path)
 }
 
+// RemoveAll is equivalent to os.RemoveAll but operates on fs.
 func RemoveAll(fs FS, path string) error {
 	info, err := fs.Stat(path)
 	if err != nil && os.IsNotExist(err) {
@@ -67,6 +71,7 @@ func RemoveAll(fs FS, path string) error {
 	return removeAll(fs, path, info)
 }
 
+// Walk is the equivalent of filepath.Walk but operates on fs.
 func Walk(fs FS, path string, walkFn filepath.WalkFunc) error {
 	return nil
 }
