@@ -71,6 +71,16 @@ func TestBuilderBuild(t *testing.T) {
 				TestPath("/foo/bar", TestModeIsRegular, TestModePerm(0644), TestSize(3), TestContentsString("baz")),
 			},
 		},
+		{
+			name:  "symlink",
+			umask: 022,
+			root: map[string]interface{}{
+				"foo": &Symlink{Target: "bar"},
+			},
+			tests: []Test{
+				TestPath("/foo", TestModeType(os.ModeSymlink), TestSymlinkTarget("bar")),
+			},
+		},
 	} {
 		t.Run(tc.name, func(t *testing.T) {
 			fs, cleanup, err := NewTempFS(tc.root, BuilderUmask(tc.umask), BuilderVerbose(true))
@@ -89,6 +99,7 @@ func TestCoverage(t *testing.T) {
 	fs, cleanup, err := NewTempFS(map[string]interface{}{
 		"/home/user/.bashrc": "# contents of user's .bashrc\n",
 		"/home/user/empty":   []byte{},
+		"/home/user/symlink": &Symlink{Target: "empty"},
 		"/home/user/bin/hello.sh": &File{
 			Perm:     0755,
 			Contents: []byte("echo hello\n"),
@@ -128,6 +139,9 @@ func TestCoverage(t *testing.T) {
 				TestModeIsRegular,
 				TestModePerm(0644),
 				TestSize(0)),
+			"home_user_symlink": TestPath("/home/user/symlink",
+				TestModeType(os.ModeSymlink),
+				TestSymlinkTarget("empty")),
 			"foo_bar_baz": []Test{
 				TestPath("/home/user/foo/bar/baz",
 					TestModeIsRegular,
@@ -158,8 +172,14 @@ func TestErrors(t *testing.T) {
 		"write_file_to_existing_dir": func(b *Builder, fs vfs.FS) error {
 			return b.WriteFile(fs, "/home/user", nil, 0644)
 		},
+		"write_file_to_existing_symlink": func(b *Builder, fs vfs.FS) error {
+			return b.WriteFile(fs, "/home/user/symlink", nil, 0644)
+		},
 		"write_file_via_existing_dir": func(b *Builder, fs vfs.FS) error {
 			return b.WriteFile(fs, "/home/user/empty/foo", nil, 0644)
+		},
+		"write_file_via_existing_symlink": func(b *Builder, fs vfs.FS) error {
+			return b.WriteFile(fs, "/home/user/symlink/foo", nil, 0644)
 		},
 		"mkdir_existing_dir_with_different_perms": func(b *Builder, fs vfs.FS) error {
 			return b.Mkdir(fs, "/home/user", 0666)
@@ -167,11 +187,17 @@ func TestErrors(t *testing.T) {
 		"mkdir_to_existing_file": func(b *Builder, fs vfs.FS) error {
 			return b.Mkdir(fs, "/home/user/empty", 0755)
 		},
+		"mkdir_to_existing_symlink": func(b *Builder, fs vfs.FS) error {
+			return b.Mkdir(fs, "/home/user/symlink", 0755)
+		},
 		"mkdir_all_to_existing_file": func(b *Builder, fs vfs.FS) error {
 			return b.Mkdir(fs, "/home/user/empty", 0755)
 		},
 		"mkdir_all_via_existing_file": func(b *Builder, fs vfs.FS) error {
 			return b.MkdirAll(fs, "/home/user/empty/foo", 0755)
+		},
+		"mkdir_all_via_existing_symlink": func(b *Builder, fs vfs.FS) error {
+			return b.MkdirAll(fs, "/home/user/symlink/foo", 0755)
 		},
 	} {
 		t.Run(name, func(t *testing.T) {
@@ -184,6 +210,7 @@ func TestErrors(t *testing.T) {
 			root := map[string]interface{}{
 				"/home/user/.bashrc": "# bashrc\n",
 				"/home/user/empty":   []byte{},
+				"/home/user/symlink": &Symlink{Target: "empty"},
 				"/home/user/foo":     &Dir{Perm: 0755},
 			}
 			if err := b.Build(fs, root); err != nil {
@@ -216,6 +243,12 @@ func TestIdempotency(t *testing.T) {
 		"mkdir_all_new_dir": func(b *Builder, fs vfs.FS) error {
 			return b.MkdirAll(fs, "/usr/bin", 0755)
 		},
+		"symlink_new_symlink": func(b *Builder, fs vfs.FS) error {
+			return b.Symlink(fs, ".bashrc", "symlink2")
+		},
+		"symlink_existing_symlink": func(b *Builder, fs vfs.FS) error {
+			return b.Symlink(fs, ".bashrc", "symlink")
+		},
 	} {
 		t.Run(name, func(t *testing.T) {
 			fs, cleanup, err := newTempFS()
@@ -224,8 +257,9 @@ func TestIdempotency(t *testing.T) {
 				t.Fatal(err)
 			}
 			b := NewBuilder(BuilderVerbose(true))
-			root := map[string]string{
+			root := map[string]interface{}{
 				"/home/user/.bashrc": "# bashrc\n",
+				"/home/user/symlink": &Symlink{Target: ".bashrc"},
 			}
 			if err := b.Build(fs, root); err != nil {
 				t.Fatalf("b.Build(fs, root) == %v, want <nil>", err)
