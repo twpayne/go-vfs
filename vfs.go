@@ -44,6 +44,7 @@ func MkdirAll(fs FS, path string, perm os.FileMode) error {
 	return fs.Mkdir(path, perm)
 }
 
+// removeAll recursively removes all from path in fs.
 func removeAll(fs FS, path string, info os.FileInfo) error {
 	if info.Mode().IsDir() {
 		infos, err := fs.ReadDir(path)
@@ -71,6 +72,7 @@ func RemoveAll(fs FS, path string) error {
 	return removeAll(fs, path, info)
 }
 
+// walk recursively walks fs from path.
 func walk(fs FS, path string, walkFn filepath.WalkFunc, info os.FileInfo, err error) error {
 	err = walkFn(path, info, err)
 	if !info.IsDir() {
