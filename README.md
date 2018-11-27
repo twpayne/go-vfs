@@ -28,7 +28,7 @@ test cases.  `vfs` does not attempt to implent an in-memory mock filesystem,
 and instead only provides a thin layer around the standard libary's `os` and
 `ioutil` packages, and as such should have fewer bugs.
 
- * `afero` does not support creating or reading symbolic links, and it's
+ * `afero` does not support creating or reading symbolic links, and its
    `LstatIfPossible` interface is clumsy to use. `vfs` provides out-of-the-box
 support for symbolic links.
 
