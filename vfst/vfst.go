@@ -329,7 +329,7 @@ var testDoesNotExist = func(t *testing.T, fs vfs.FS, path string) {
 var TestDoesNotExist PathTest = testDoesNotExist
 
 // TestIsDir is a PathTest that verifies that the path is a directory.
-var TestIsDir PathTest = TestModeType(os.ModeDir)
+var TestIsDir = TestModeType(os.ModeDir)
 
 // TestSysNlink returns a PathTest that verifies that the the path's
 // Sys().(*syscall.Stat_t).Nlink is equal to wantNlink. If path's Sys() cannot
@@ -363,7 +363,7 @@ func TestModePerm(wantPerm os.FileMode) PathTest {
 }
 
 // TestModeIsRegular is a PathTest that tests that the path is a regular file.
-var TestModeIsRegular PathTest = TestModeType(0)
+var TestModeIsRegular = TestModeType(0)
 
 // TestModeType returns a PathTest that verifies that the path's mode type is
 // equal to wantModeType.
