@@ -328,20 +328,8 @@ var testDoesNotExist = func(t *testing.T, fs vfs.FS, path string) {
 // not exist.
 var TestDoesNotExist PathTest = testDoesNotExist
 
-// testIsDir is a PathTest that verifies that the path is a directory.
-func testIsDir(t *testing.T, fs vfs.FS, path string) {
-	info, err := fs.Lstat(path)
-	if err != nil {
-		t.Errorf("fs.Lstat(%q) == %+v, %v, want !<nil>, <nil>", path, info, err)
-		return
-	}
-	if gotIsDir, wantIsDir := info.IsDir(), true; gotIsDir != wantIsDir {
-		t.Errorf("fs.Lstat(%q).IsDir() == %v, want %v", path, gotIsDir, wantIsDir)
-	}
-}
-
 // TestIsDir is a PathTest that verifies that the path is a directory.
-var TestIsDir PathTest = testIsDir
+var TestIsDir PathTest = TestModeType(os.ModeDir)
 
 // TestSysNlink returns a PathTest that verifies that the the path's
 // Sys().(*syscall.Stat_t).Nlink is equal to wantNlink. If path's Sys() cannot
