@@ -36,7 +36,7 @@ func ExampleNewTestFS_complex() {
 			},
 		}
 
-		// Create and populate an *vfs.FS
+		// Create and populate an *vfst.TestFS
 		fs, cleanup, err := vfst.NewTestFS(root)
 		defer cleanup()
 		if err != nil {
