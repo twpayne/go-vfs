@@ -6,7 +6,7 @@ import (
 	"github.com/twpayne/go-vfs/vfst"
 )
 
-func ExampleNewTempFS_complex() {
+func ExampleNewTestFS_complex() {
 
 	Test := func(t *testing.T) {
 		// Describe the structure of the filesystem using a map from filenames to
@@ -37,7 +37,7 @@ func ExampleNewTempFS_complex() {
 		}
 
 		// Create and populate an *vfs.FS
-		fs, cleanup, err := vfst.NewTempFS(root)
+		fs, cleanup, err := vfst.NewTestFS(root)
 		defer cleanup()
 		if err != nil {
 			t.Fatal(err)
@@ -86,10 +86,10 @@ func ExampleNewTempFS_complex() {
 	Test(&testing.T{})
 }
 
-func ExampleNewTempFS() {
+func ExampleNewTestFS() {
 
 	Test := func(t *testing.T) {
-		fs, cleanup, err := vfst.NewTempFS(map[string]string{
+		fs, cleanup, err := vfst.NewTestFS(map[string]string{
 			"/home/user/.bashrc": "# contents of user's .bashrc\n",
 		})
 		defer cleanup()

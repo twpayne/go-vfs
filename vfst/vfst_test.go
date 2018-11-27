@@ -83,7 +83,7 @@ func TestBuilderBuild(t *testing.T) {
 		},
 	} {
 		t.Run(tc.name, func(t *testing.T) {
-			fs, cleanup, err := NewTempFS(tc.root, BuilderUmask(tc.umask), BuilderVerbose(true))
+			fs, cleanup, err := NewTestFS(tc.root, BuilderUmask(tc.umask), BuilderVerbose(true))
 			defer cleanup()
 			if err != nil {
 				t.Fatal(err)
@@ -96,7 +96,7 @@ func TestBuilderBuild(t *testing.T) {
 // TestCoverage exercises as much functionality as possible to increase test
 // coverage.
 func TestCoverage(t *testing.T) {
-	fs, cleanup, err := NewTempFS(map[string]interface{}{
+	fs, cleanup, err := NewTestFS(map[string]interface{}{
 		"/home/user/.bashrc": "# contents of user's .bashrc\n",
 		"/home/user/empty":   []byte{},
 		"/home/user/symlink": &Symlink{Target: "empty"},
@@ -201,7 +201,7 @@ func TestErrors(t *testing.T) {
 		},
 	} {
 		t.Run(name, func(t *testing.T) {
-			fs, cleanup, err := newTempFS()
+			fs, cleanup, err := newTestFS()
 			defer cleanup()
 			if err != nil {
 				t.Fatal(err)
@@ -251,7 +251,7 @@ func TestIdempotency(t *testing.T) {
 		},
 	} {
 		t.Run(name, func(t *testing.T) {
-			fs, cleanup, err := newTempFS()
+			fs, cleanup, err := newTestFS()
 			defer cleanup()
 			if err != nil {
 				t.Fatal(err)

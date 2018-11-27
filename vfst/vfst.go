@@ -5,7 +5,6 @@ package vfst
 import (
 	"bytes"
 	"fmt"
-	"io/ioutil"
 	"log"
 	"os"
 	"path/filepath"
@@ -429,29 +428,4 @@ func TestMinSize(wantMinSize int64) PathTest {
 			t.Errorf("fs.Lstat(%q).Size() == %d, want >=%d", path, gotSize, wantMinSize)
 		}
 	}
-}
-
-func newTempFS() (*vfs.PathFS, func(), error) {
-	tempDir, err := ioutil.TempDir("", "fs-fstest")
-	if err != nil {
-		return nil, func() {}, err
-	}
-	return vfs.NewPathFS(vfs.OSFS, tempDir), func() {
-		os.RemoveAll(tempDir)
-	}, nil
-}
-
-// NewTempFS returns a new *vfs.PathFs based in a temporary directory
-// and a cleanup function, populated with root.
-func NewTempFS(root interface{}, builderOptions ...BuilderOption) (*vfs.PathFS, func(), error) {
-	fs, cleanup, err := newTempFS()
-	if err != nil {
-		cleanup()
-		return nil, func() {}, err
-	}
-	if err := NewBuilder(builderOptions...).Build(fs, root); err != nil {
-		cleanup()
-		return nil, func() {}, err
-	}
-	return fs, cleanup, nil
 }

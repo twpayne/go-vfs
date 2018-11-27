@@ -10,7 +10,7 @@ import (
 )
 
 func TestWalk(t *testing.T) {
-	fs, cleanup, err := NewTempFS(map[string]interface{}{
+	fs, cleanup, err := NewTestFS(map[string]interface{}{
 		"/home/user/.bashrc":  "# .bashrc contents\n",
 		"/home/user/skip/foo": "bar",
 		"/home/user/symlink":  &Symlink{Target: "baz"},

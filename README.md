@@ -52,7 +52,7 @@ The implementations of `FS` provided are:
 
  * `ReadOnlyFS` which prevents modification of the underlying FS.
 
-`PathFS` is used by `vfst.NewTempFS` which assists running tests on a real
+`PathFS` is used by `vfst.NewTestFS` which assists running tests on a real
 filesystem but in a temporary directory that is easily cleaned up.
 
 ```go
@@ -65,7 +65,7 @@ func writeConfigFile(fs vfs.FS) error {
 // TestWriteConfigFile is our test function.
 func TestWriteConfigFile(t *testing.T) {
     // Create and populate an temporary directory with a home directory.
-    fs, cleanup, err := vfst.NewTempFS(map[string]string{
+    fs, cleanup, err := vfst.NewTestFS(map[string]string{
         "/home/user/.bashrc": "# contents of user's .bashrc\n",
     })
 
@@ -74,7 +74,7 @@ func TestWriteConfigFile(t *testing.T) {
 
     // Check that the directory was populated successfully.
     if err != nil {
-        t.Fatalf("vfsTest.NewTempFS(_) == _, _, %v, want _, _, <nil>", err)
+        t.Fatalf("vfsTest.NewTestFS(_) == _, _, %v, want _, _, <nil>", err)
     }
 
     // Call the function we want to test.
