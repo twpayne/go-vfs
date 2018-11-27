@@ -1,9 +1,9 @@
-package vfstest_test
+package vfst_test
 
 import (
 	"testing"
 
-	"github.com/twpayne/go-vfs/vfstest"
+	"github.com/twpayne/go-vfs/vfst"
 )
 
 func ExampleNewTempFS_complex() {
@@ -15,8 +15,8 @@ func ExampleNewTempFS_complex() {
 			// A string or []byte is sets a file's contents.
 			"/home/user/.bashrc": "# contents of user's .bashrc\n",
 			"/home/user/empty":   []byte{},
-			// To set non-default permissions on a file, create an &vfstest.File.
-			"/home/user/bin/hello.sh": &vfstest.File{
+			// To set non-default permissions on a file, create an &vfst.File.
+			"/home/user/bin/hello.sh": &vfst.File{
 				Perm:     0755,
 				Contents: []byte("echo hello\n"),
 			},
@@ -27,8 +27,8 @@ func ExampleNewTempFS_complex() {
 				},
 			},
 			// To set non-default permissions on a directory, create an
-			// &vfstest.Dir.
-			"/root": &vfstest.Dir{
+			// &vfst.Dir.
+			"/root": &vfst.Dir{
 				Perm: 0700,
 				Entries: map[string]interface{}{
 					".bashrc": "# contents of root's .bashrc\n",
@@ -37,7 +37,7 @@ func ExampleNewTempFS_complex() {
 		}
 
 		// Create and populate an *vfs.FS
-		fs, cleanup, err := vfstest.NewTempFS(root)
+		fs, cleanup, err := vfst.NewTempFS(root)
 		defer cleanup()
 		if err != nil {
 			t.Fatal(err)
@@ -46,41 +46,41 @@ func ExampleNewTempFS_complex() {
 		// Create tests by creating data structures containing Tests.
 		tests := []interface{}{
 			// Test multiple properties of a single path with TestPath.
-			vfstest.TestPath("/home",
-				vfstest.TestIsDir,
-				vfstest.TestModePerm(0755)),
-			vfstest.TestPath("/home/user",
-				vfstest.TestIsDir,
-				vfstest.TestModePerm(0755)),
-			vfstest.TestPath("/home/user/.bashrc",
-				vfstest.TestModeIsRegular,
-				vfstest.TestModePerm(0644),
-				vfstest.TestContentsString("# contents of user's .bashrc\n")),
+			vfst.TestPath("/home",
+				vfst.TestIsDir,
+				vfst.TestModePerm(0755)),
+			vfst.TestPath("/home/user",
+				vfst.TestIsDir,
+				vfst.TestModePerm(0755)),
+			vfst.TestPath("/home/user/.bashrc",
+				vfst.TestModeIsRegular,
+				vfst.TestModePerm(0644),
+				vfst.TestContentsString("# contents of user's .bashrc\n")),
 			// Maps with string keys create sub tests with testing.T.Run. The key
 			// is used as the test name.
 			map[string]interface{}{
-				"home_user_empty": vfstest.TestPath("/home/user/empty",
-					vfstest.TestModeIsRegular,
-					vfstest.TestModePerm(0644),
-					vfstest.TestSize(0)),
-				"foo_bar_baz": vfstest.TestPath("/home/user/foo/bar/baz",
-					vfstest.TestModeIsRegular,
-					vfstest.TestModePerm(0644),
-					vfstest.TestContentsString("qux")),
+				"home_user_empty": vfst.TestPath("/home/user/empty",
+					vfst.TestModeIsRegular,
+					vfst.TestModePerm(0644),
+					vfst.TestSize(0)),
+				"foo_bar_baz": vfst.TestPath("/home/user/foo/bar/baz",
+					vfst.TestModeIsRegular,
+					vfst.TestModePerm(0644),
+					vfst.TestContentsString("qux")),
 				"root": []interface{}{
-					vfstest.TestPath("/root",
-						vfstest.TestIsDir,
-						vfstest.TestModePerm(0700)),
-					vfstest.TestPath("/root/.bashrc",
-						vfstest.TestModeIsRegular,
-						vfstest.TestModePerm(0644),
-						vfstest.TestContentsString("# contents of root's .bashrc\n")),
+					vfst.TestPath("/root",
+						vfst.TestIsDir,
+						vfst.TestModePerm(0700)),
+					vfst.TestPath("/root/.bashrc",
+						vfst.TestModeIsRegular,
+						vfst.TestModePerm(0644),
+						vfst.TestContentsString("# contents of root's .bashrc\n")),
 				},
 			},
 		}
 
 		// RunTests traverses the data structure and running all Tests.
-		vfstest.RunTests(t, fs, "", tests)
+		vfst.RunTests(t, fs, "", tests)
 	}
 
 	Test(&testing.T{})
@@ -89,7 +89,7 @@ func ExampleNewTempFS_complex() {
 func ExampleNewTempFS() {
 
 	Test := func(t *testing.T) {
-		fs, cleanup, err := vfstest.NewTempFS(map[string]string{
+		fs, cleanup, err := vfst.NewTempFS(map[string]string{
 			"/home/user/.bashrc": "# contents of user's .bashrc\n",
 		})
 		defer cleanup()
@@ -97,9 +97,9 @@ func ExampleNewTempFS() {
 			t.Fatal(err)
 		}
 
-		vfstest.RunTests(t, fs, "",
-			vfstest.TestPath("/home/user/.bashrc",
-				vfstest.TestContentsString("# contents of user's .bashrc\n")),
+		vfst.RunTests(t, fs, "",
+			vfst.TestPath("/home/user/.bashrc",
+				vfst.TestContentsString("# contents of user's .bashrc\n")),
 		)
 	}
 

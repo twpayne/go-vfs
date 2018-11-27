@@ -4,16 +4,17 @@
 [![GoDoc](https://godoc.org/github.com/twpayne/go-vfs?status.svg)](https://godoc.org/github.com/twpayne/go-vfs)
 [![Report Card](https://goreportcard.com/badge/github.com/twpayne/go-vfs)](https://goreportcard.com/report/github.com/twpayne/go-vfs)
 
-Package `go-vfs` provides an abstraction of the `os` and `ioutil` packages that is easy to test.
+Package `go-vfs` provides an abstraction of the `os` and `ioutil` packages that
+is easy to test.
 
 ## Key features
 
  * File system abstraction layer for commonly-used `os` and `ioutil` functions
    from the standard library.
 
- * Powerful testing framework, `vfstest`. For a quick tour of `vfstest`'s
-   features, see [the examples in the
-documentation](https://godoc.org/github.com/twpayne/go-vfs/vfstest#pkg-examples).
+ * Powerful testing framework, `vfst`. For a quick tour of `vfst`'s features,
+   see [the examples in the
+documentation](https://godoc.org/github.com/twpayne/go-vfs/vfst#pkg-examples).
 
 ## Quick start
 
@@ -38,7 +39,7 @@ type FS interface {
 ```
 
 To use `go-vfs`, you write your code to use the `FS` interface, and then use
-`vfstest` to test it.
+`vfst` to test it.
 
 `go-vfs` also provides functions `MkdirAll` (equivalent to `os.MkdirAll`) and
 `Walk` (equivalent to `filepath.Walk`) that operate on an `FS`.
@@ -49,7 +50,7 @@ The implementations of `FS` provided are:
 
  * `PathFS` which transforms all paths to provide a poor-man's `chroot`.
 
-`PathFS` is used by `vfstest.NewTempFS` which assists running tests on a real
+`PathFS` is used by `vfst.NewTempFS` which assists running tests on a real
 filesystem but in a temporary directory that is easily cleaned up.
 
 ```go
@@ -62,7 +63,7 @@ func writeConfigFile(fs vfs.FS) error {
 // TestWriteConfigFile is our test function.
 func TestWriteConfigFile(t *testing.T) {
     // Create and populate an temporary directory with a home directory.
-    fs, cleanup, err := vfstest.NewTempFS(map[string]string{
+    fs, cleanup, err := vfst.NewTempFS(map[string]string{
         "/home/user/.bashrc": "# contents of user's .bashrc\n",
     })
 
@@ -80,11 +81,11 @@ func TestWriteConfigFile(t *testing.T) {
     }
 
     // Check properties of the filesystem after our function has modified it.
-    vfstest.RunTest(t, fs, "",
-        vfstest.PathTest("/home/user/app.conf",
-            vfstest.TestModeIsRegular,
-            vfstest.TestModePerm(0644),
-            vfstest.TestContentsString("app config"))),
+    vfst.RunTest(t, fs, "",
+        vfst.PathTest("/home/user/app.conf",
+            vfst.TestModeIsRegular,
+            vfst.TestModePerm(0644),
+            vfst.TestContentsString("app config"))),
 }
 ```
 

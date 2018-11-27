@@ -1,6 +1,6 @@
-// Package vfstest provides helper functions for testing code that uses
+// Package vfst provides helper functions for testing code that uses
 // github.com/twpayne/go-vfs.
-package vfstest
+package vfst
 
 import (
 	"bytes"
