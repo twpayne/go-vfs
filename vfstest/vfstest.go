@@ -362,20 +362,8 @@ func TestModePerm(wantPerm os.FileMode) PathTest {
 	}
 }
 
-// testModeIsRegular is a PathTest that tests that the path is a regular file.
-func testModeIsRegular(t *testing.T, fs vfs.FS, path string) {
-	info, err := fs.Lstat(path)
-	if err != nil {
-		t.Errorf("fs.Lstat(%q) == %+v, %v, want !<nil>, <nil>", path, info, err)
-		return
-	}
-	if gotModeIsRegular, wantModeIsRegular := info.Mode().IsRegular(), true; gotModeIsRegular != wantModeIsRegular {
-		t.Errorf("fs.Lstat(%q).IsReg() == %v, want %v", path, gotModeIsRegular, wantModeIsRegular)
-	}
-}
-
 // TestModeIsRegular is a PathTest that tests that the path is a regular file.
-var TestModeIsRegular PathTest = testModeIsRegular
+var TestModeIsRegular PathTest = TestModeType(0)
 
 // TestModeType returns a PathTest that verifies that the path's mode type is
 // equal to wantModeType.
