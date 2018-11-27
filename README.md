@@ -29,8 +29,9 @@ and instead only provides a thin layer around the standard libary's `os` and
 `ioutil` packages, and as such should have fewer bugs.
 
  * `afero` does not support creating or reading symbolic links, and its
-   `LstatIfPossible` interface is clumsy to use. `vfs` provides out-of-the-box
-support for symbolic links.
+   `LstatIfPossible` interface is clumsy to use as it is not part of the
+`afero.Fs` interface. `vfs` provides out-of-the-box support for symbolic links
+with all methods in the `vfs.FS` interface.
 
  * `afero` has been effectively abandoned by its author, and a "friendly fork"
    ([`github.com/absfs/afero`](https://github.com/absfs/afero)) has not seen
