@@ -52,12 +52,14 @@ The implementations of `FS` provided are:
 
  * `ReadOnlyFS` which prevents modification of the underlying FS.
 
-`PathFS` is used by `vfst.NewTestFS` which assists running tests on a real
-filesystem but in a temporary directory that is easily cleaned up.
+ * `TestFS` which assists running tests on a real filesystem but in a temporary
+   directory that is easily cleaned up.
+
+Example usage:
 
 ```go
 // writeConfigFile is the function we're going to test. It can make arbitrary
-changes to the filesystem through fs.
+// changes to the filesystem through fs.
 func writeConfigFile(fs vfs.FS) error {
     return fs.WriteFile("/home/user/app.conf", []byte(`app config`), 0644)
 }
@@ -108,7 +110,7 @@ and instead only provides a thin layer around the standard libary's `os` and
  * `afero` does not support creating or reading symbolic links, and its
    `LstatIfPossible` interface is clumsy to use as it is not part of the
 `afero.Fs` interface. `vfs` provides out-of-the-box support for symbolic links
-with all methods in the `vfs.FS` interface.
+with all methods in the `FS` interface.
 
  * `afero` has been effectively abandoned by its author, and a "friendly fork"
    ([`github.com/absfs/afero`](https://github.com/absfs/afero)) has not seen
