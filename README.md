@@ -15,6 +15,80 @@ Package `go-vfs` provides an abstraction of the `os` and `ioutil` packages that 
    features, see [the examples in the
 documentation](https://godoc.org/github.com/twpayne/go-vfs/vfstest#pkg-examples).
 
+## Quick start
+
+`go-vfs` provides implementations of the `FS` interface:
+
+```go
+// An FS is an abstraction over commonly-used functions in the os and ioutil
+// packages.
+type FS interface {
+    Chmod(name string, mode os.FileMode) error
+    Lstat(name string) (os.FileInfo, error)
+    Mkdir(name string, perm os.FileMode) error
+    ReadDir(dirname string) ([]os.FileInfo, error)
+    ReadFile(filename string) ([]byte, error)
+    Readlink(name string) (string, error)
+    Remove(name string) error
+    RemoveAll(name string) error
+    Stat(name string) (os.FileInfo, error)
+    Symlink(oldname, newname string) error
+    WriteFile(filename string, data []byte, perm os.FileMode) error
+}
+```
+
+To use `go-vfs`, you write your code to use the `FS` interface, and then use
+`vfstest` to test it.
+
+`go-vfs` also provides functions `MkdirAll` (equivalent to `os.MkdirAll`) and
+`Walk` (equivalent to `filepath.Walk`) that operate on an `FS`.
+
+The implementations of `FS` provided are:
+
+ * `OSFS` which calls the underlying `os` and `ioutil` functions directly.
+
+ * `PathFS` which transforms all paths to provide a poor-man's `chroot`.
+
+`PathFS` is used by `vfstest.NewTempFS` which assists running tests on a real
+filesystem but in a temporary directory that is easily cleaned up.
+
+```go
+// writeConfigFile is the function we're going to test. It can make arbitrary
+changes to the filesystem through fs.
+func writeConfigFile(fs vfs.FS) error {
+    return fs.WriteFile("/home/user/app.conf", []byte(`app config`), 0644)
+}
+
+// TestWriteConfigFile is our test function.
+func TestWriteConfigFile(t *testing.T) {
+    // Create and populate an temporary directory with a home directory.
+    fs, cleanup, err := vfstest.NewTempFS(map[string]string{
+        "/home/user/.bashrc": "# contents of user's .bashrc\n",
+    })
+
+    // Ensure that the temporary directory is removed.
+    defer cleanup()
+
+    // Check that the directory was populated successfully.
+    if err != nil {
+        t.Fatalf("vfsTest.NewTempFS(_) == _, _, %v, want _, _, <nil>", err)
+    }
+
+    // Call the function we want to test.
+    if err := writeConfigFile(fs); err != nil {
+        t.Error(err)
+    }
+
+    // Check properties of the filesystem after our function has modified it.
+    vfstest.RunTest(t, fs, "",
+        vfstest.PathTest("/home/user/app.conf",
+            vfstest.TestModeIsRegular,
+            vfstest.TestModePerm(0644),
+            vfstest.TestContentsString("app config"))),
+}
+```
+
+
 ## Motivation
 
 `go-vfs` was inspired by
