@@ -47,6 +47,11 @@ func (t *TestFS) Keep() {
 	t.keep = true
 }
 
+// TempDir returns t's temporary directory.
+func (t *TestFS) TempDir() string {
+	return t.tempDir
+}
+
 func (t *TestFS) cleanup() {
 	if !t.keep {
 		os.RemoveAll(t.tempDir)

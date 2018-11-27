@@ -81,6 +81,12 @@ func ExampleNewTestFS_complex() {
 
 		// RunTests traverses the data structure and running all Tests.
 		vfst.RunTests(t, fs, "", tests)
+
+		// Optionally, calling fs.Keep() prevents the cleanup function from
+		// removing the temporary directory, so you can inspect it later. The
+		// directory itself is returned by fs.TempDir().
+		// fs.Keep()
+		t.Logf("fs.TempDir() == %s", fs.TempDir())
 	}
 
 	Test(&testing.T{})
