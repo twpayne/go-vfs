@@ -50,6 +50,8 @@ The implementations of `FS` provided are:
 
  * `PathFS` which transforms all paths to provide a poor-man's `chroot`.
 
+ * `ReadOnlyFS` which prevents modification of the underlying FS.
+
 `PathFS` is used by `vfst.NewTempFS` which assists running tests on a real
 filesystem but in a temporary directory that is easily cleaned up.
 
