@@ -163,7 +163,7 @@ func (b *Builder) Mkdir(fs vfs.FS, path string, perm os.FileMode) error {
 		return err
 	} else if !info.IsDir() {
 		return fmt.Errorf("%s: not a directory", path)
-	} else if gotPerm, wantPerm := info.Mode()&os.ModePerm, perm&^b.umask; gotPerm != wantPerm {
+	} else if gotPerm, wantPerm := info.Mode()&os.ModePerm, perm&^b.umask; !permEqual(gotPerm, wantPerm) {
 		return fmt.Errorf("%s has permissions 0%o, want 0%o", path, gotPerm, wantPerm)
 	}
 	return nil
@@ -226,7 +226,7 @@ func (b *Builder) WriteFile(fs vfs.FS, path string, contents []byte, perm os.Fil
 		return err
 	} else if !info.Mode().IsRegular() {
 		return fmt.Errorf("%s: not a regular file", path)
-	} else if gotPerm, wantPerm := info.Mode()&os.ModePerm, perm&^b.umask; gotPerm != wantPerm {
+	} else if gotPerm, wantPerm := info.Mode()&os.ModePerm, perm&^b.umask; !permEqual(gotPerm, wantPerm) {
 		return fmt.Errorf("%s has permissions 0%o, want 0%o", path, gotPerm, wantPerm)
 	} else {
 		gotContents, err := fs.ReadFile(path)
@@ -338,7 +338,7 @@ func TestModePerm(wantPerm os.FileMode) PathTest {
 			t.Errorf("fs.Lstat(%q) == %+v, %v, want !<nil>, <nil>", path, info, err)
 			return
 		}
-		if gotPerm := info.Mode() & os.ModePerm; gotPerm != wantPerm {
+		if gotPerm := info.Mode() & os.ModePerm; !permEqual(gotPerm, wantPerm) {
 			t.Errorf("fs.Lstat(%q).Mode()&os.ModePerm == 0%o, want 0%o", path, gotPerm, wantPerm)
 		}
 	}
