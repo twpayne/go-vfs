@@ -1,6 +1,7 @@
 package vfst
 
 import (
+	"errors"
 	"log"
 	"os"
 	"testing"
@@ -162,11 +163,15 @@ func TestCoverage(t *testing.T) {
 }
 
 func TestErrors(t *testing.T) {
+	errSkip := errors.New("skip")
 	for name, f := range map[string]func(*Builder, vfs.FS) error{
 		"write_file_with_different_content": func(b *Builder, fs vfs.FS) error {
 			return b.WriteFile(fs, "/home/user/.bashrc", nil, 0644)
 		},
 		"write_file_with_different_perms": func(b *Builder, fs vfs.FS) error {
+			if permEqual(0644, 0755) {
+				return errSkip
+			}
 			return b.WriteFile(fs, "/home/user/.bashrc", []byte("# bashrc\n"), 0755)
 		},
 		"write_file_to_existing_dir": func(b *Builder, fs vfs.FS) error {
@@ -182,6 +187,9 @@ func TestErrors(t *testing.T) {
 			return b.WriteFile(fs, "/home/user/symlink/foo", nil, 0644)
 		},
 		"mkdir_existing_dir_with_different_perms": func(b *Builder, fs vfs.FS) error {
+			if permEqual(0755, 0666) {
+				return errSkip
+			}
 			return b.Mkdir(fs, "/home/user", 0666)
 		},
 		"mkdir_to_existing_file": func(b *Builder, fs vfs.FS) error {
