@@ -1,8 +1,8 @@
 # `go-vfs`
 
+[![GoDoc](https://godoc.org/github.com/twpayne/go-vfs?status.svg)](https://godoc.org/github.com/twpayne/go-vfs)
 [![Build Status](https://travis-ci.org/twpayne/go-vfs.svg?branch=master)](https://travis-ci.org/twpayne/go-vfs)
 [![Build status](https://ci.appveyor.com/api/projects/status/m0nup45u310krjah?svg=true)](https://ci.appveyor.com/project/twpayne/go-vfs)
-[![GoDoc](https://godoc.org/github.com/twpayne/go-vfs?status.svg)](https://godoc.org/github.com/twpayne/go-vfs)
 [![Report Card](https://goreportcard.com/badge/github.com/twpayne/go-vfs)](https://goreportcard.com/report/github.com/twpayne/go-vfs)
 
 Package `go-vfs` provides an abstraction of the `os` and `ioutil` packages that

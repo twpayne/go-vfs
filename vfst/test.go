@@ -3,11 +3,18 @@
 package vfst
 
 import (
+	"os"
 	"syscall"
 	"testing"
 
 	"github.com/twpayne/go-vfs"
 )
+
+// permEqual returns if perm1 and perm2 represent the same permissions. On
+// Windows, it always returns true.
+func permEqual(perm1, perm2 os.FileMode) bool {
+	return perm1&os.ModePerm == perm2&os.ModePerm
+}
 
 // TestSysNlink returns a PathTest that verifies that the the path's
 // Sys().(*syscall.Stat_t).Nlink is equal to wantNlink. If path's Sys() cannot

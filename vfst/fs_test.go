@@ -21,7 +21,7 @@ func TestWalk(t *testing.T) {
 	}
 	pathTypeMap := make(map[string]os.FileMode)
 	if err := vfs.Walk(fs, "/", func(path string, info os.FileInfo, err error) error {
-		pathTypeMap[path] = info.Mode() & os.ModeType
+		pathTypeMap[filepath.ToSlash(path)] = info.Mode() & os.ModeType
 		if err != nil {
 			t.Errorf("walkFn(%q, %v, %v) called, want err == <nil>", path, info, err)
 		}
