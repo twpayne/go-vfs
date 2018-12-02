@@ -50,6 +50,11 @@ func (osfs) RemoveAll(name string) error {
 	return os.RemoveAll(name)
 }
 
+// Rename implements os.Rename.
+func (osfs) Rename(oldpath, newpath string) error {
+	return os.Rename(oldpath, newpath)
+}
+
 // Stat implements os.Stat.
 func (osfs) Stat(name string) (os.FileInfo, error) {
 	return os.Stat(name)

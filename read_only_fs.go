@@ -74,6 +74,15 @@ func (r *ReadOnlyFS) RemoveAll(name string) error {
 	}
 }
 
+// Rename implements os.Rename.
+func (r *ReadOnlyFS) Rename(oldpath, newpath string) error {
+	return &os.PathError{
+		Op:   "Rename",
+		Path: oldpath,
+		Err:  syscall.EPERM,
+	}
+}
+
 // Stat implements os.Stat.
 func (r *ReadOnlyFS) Stat(name string) (os.FileInfo, error) {
 	return r.fs.Stat(name)
