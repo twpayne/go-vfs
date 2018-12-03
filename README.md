@@ -33,6 +33,7 @@ type FS interface {
     Readlink(name string) (string, error)
     Remove(name string) error
     RemoveAll(name string) error
+    Rename(oldpath, newpath string) error
     Stat(name string) (os.FileInfo, error)
     Symlink(oldname, newname string) error
     WriteFile(filename string, data []byte, perm os.FileMode) error
