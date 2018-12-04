@@ -43,6 +43,11 @@ func (p *PathFS) Mkdir(name string, perm os.FileMode) error {
 	return p.fs.Mkdir(p.Join(name), perm)
 }
 
+// Open implements os.Open.
+func (p *PathFS) Open(name string) (*os.File, error) {
+	return p.fs.Open(p.Join(name))
+}
+
 // ReadDir implenents ioutil.ReadDir.
 func (p *PathFS) ReadDir(dirname string) ([]os.FileInfo, error) {
 	return p.fs.ReadDir(p.Join(dirname))

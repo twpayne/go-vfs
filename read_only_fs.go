@@ -41,6 +41,11 @@ func (r *ReadOnlyFS) Mkdir(name string, perm os.FileMode) error {
 	}
 }
 
+// Open implements os.Open.
+func (r *ReadOnlyFS) Open(name string) (*os.File, error) {
+	return r.fs.Open(name)
+}
+
 // ReadDir implenents ioutil.ReadDir.
 func (r *ReadOnlyFS) ReadDir(dirname string) ([]os.FileInfo, error) {
 	return r.fs.ReadDir(dirname)

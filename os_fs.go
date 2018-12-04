@@ -25,6 +25,11 @@ func (osfs) Mkdir(name string, perm os.FileMode) error {
 	return os.Mkdir(name, perm)
 }
 
+// Open implements os.Open.
+func (osfs) Open(name string) (*os.File, error) {
+	return os.Open(name)
+}
+
 // ReadDir implenents ioutil.ReadDir.
 func (osfs) ReadDir(dirname string) ([]os.FileInfo, error) {
 	return ioutil.ReadDir(dirname)
