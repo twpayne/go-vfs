@@ -48,33 +48,40 @@ func ExampleNewTestFS_complex() {
 			// Test multiple properties of a single path with TestPath.
 			vfst.TestPath("/home",
 				vfst.TestIsDir,
-				vfst.TestModePerm(0755)),
+				vfst.TestModePerm(0755),
+			),
 			vfst.TestPath("/home/user",
 				vfst.TestIsDir,
-				vfst.TestModePerm(0755)),
+				vfst.TestModePerm(0755),
+			),
 			vfst.TestPath("/home/user/.bashrc",
 				vfst.TestModeIsRegular,
 				vfst.TestModePerm(0644),
-				vfst.TestContentsString("# contents of user's .bashrc\n")),
+				vfst.TestContentsString("# contents of user's .bashrc\n"),
+			),
 			// Maps with string keys create sub tests with testing.T.Run. The key
 			// is used as the test name.
 			map[string]interface{}{
 				"home_user_empty": vfst.TestPath("/home/user/empty",
 					vfst.TestModeIsRegular,
 					vfst.TestModePerm(0644),
-					vfst.TestSize(0)),
+					vfst.TestSize(0),
+				),
 				"foo_bar_baz": vfst.TestPath("/home/user/foo/bar/baz",
 					vfst.TestModeIsRegular,
 					vfst.TestModePerm(0644),
-					vfst.TestContentsString("qux")),
+					vfst.TestContentsString("qux"),
+				),
 				"root": []interface{}{
 					vfst.TestPath("/root",
 						vfst.TestIsDir,
-						vfst.TestModePerm(0700)),
+						vfst.TestModePerm(0700),
+					),
 					vfst.TestPath("/root/.bashrc",
 						vfst.TestModeIsRegular,
 						vfst.TestModePerm(0644),
-						vfst.TestContentsString("# contents of root's .bashrc\n")),
+						vfst.TestContentsString("# contents of root's .bashrc\n"),
+					),
 				},
 			},
 		}
@@ -105,7 +112,8 @@ func ExampleNewTestFS() {
 
 		vfst.RunTests(t, fs, "",
 			vfst.TestPath("/home/user/.bashrc",
-				vfst.TestContentsString("# contents of user's .bashrc\n")),
+				vfst.TestContentsString("# contents of user's .bashrc\n"),
+			),
 		)
 	}
 
