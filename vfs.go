@@ -1,3 +1,5 @@
+// Package vfs provides an abstraction of the os and ioutil packages that is
+// easy to test.
 package vfs
 
 import (

@@ -5,8 +5,8 @@
 [![Build status](https://ci.appveyor.com/api/projects/status/m0nup45u310krjah?svg=true)](https://ci.appveyor.com/project/twpayne/go-vfs)
 [![Report Card](https://goreportcard.com/badge/github.com/twpayne/go-vfs)](https://goreportcard.com/report/github.com/twpayne/go-vfs)
 
-Package `go-vfs` provides an abstraction of the `os` and `ioutil` packages that
-is easy to test.
+Package `vfs` provides an abstraction of the `os` and `ioutil` packages that is
+easy to test.
 
 ## Key features
 
@@ -19,7 +19,7 @@ documentation](https://godoc.org/github.com/twpayne/go-vfs/vfst#pkg-examples).
 
 ## Quick start
 
-`go-vfs` provides implementations of the `FS` interface:
+`vfs` provides implementations of the `FS` interface:
 
 ```go
 // An FS is an abstraction over commonly-used functions in the os and ioutil
@@ -47,10 +47,10 @@ type FS interface {
 }
 ```
 
-To use `go-vfs`, you write your code to use the `FS` interface, and then use
+To use `vfs`, you write your code to use the `FS` interface, and then use
 `vfst` to test it.
 
-`go-vfs` also provides functions `MkdirAll` (equivalent to `os.MkdirAll`) and
+`vfs` also provides functions `MkdirAll` (equivalent to `os.MkdirAll`) and
 `Walk` (equivalent to `filepath.Walk`) that operate on an `FS`.
 
 The implementations of `FS` provided are:
@@ -105,7 +105,7 @@ func TestWriteConfigFile(t *testing.T) {
 
 ## Motivation
 
-`go-vfs` was inspired by
+`vfs` was inspired by
 [`github.com/spf13/afero`](https://github.com/spf13/afero) and
 [`github.com/twpayne/aferot`](https://github.com/twpayne/aferot). So, why not
 use these?
