@@ -25,6 +25,7 @@ type FS interface {
 	Rename(oldpath, newpath string) error
 	Stat(name string) (os.FileInfo, error)
 	Symlink(oldname, newname string) error
+	Truncate(name string, size int64) error
 	WriteFile(filename string, data []byte, perm os.FileMode) error
 }
 

@@ -130,6 +130,15 @@ func (r *ReadOnlyFS) Symlink(oldname, newname string) error {
 	}
 }
 
+// Truncate implements os.Truncate.
+func (r *ReadOnlyFS) Truncate(name string, size int64) error {
+	return &os.PathError{
+		Op:   "Truncate",
+		Path: name,
+		Err:  syscall.EPERM,
+	}
+}
+
 // WriteFile implements ioutil.WriteFile.
 func (r *ReadOnlyFS) WriteFile(filename string, data []byte, perm os.FileMode) error {
 	return &os.PathError{

@@ -107,6 +107,11 @@ func (p *PathFS) Symlink(oldname, newname string) error {
 	return p.fs.Symlink(oldname, p.Join(newname))
 }
 
+// Truncate implements os.Truncate.
+func (p *PathFS) Truncate(name string, size int64) error {
+	return p.fs.Truncate(p.Join(name), size)
+}
+
 // WriteFile implements ioutil.WriteFile.
 func (p *PathFS) WriteFile(filename string, data []byte, perm os.FileMode) error {
 	return p.fs.WriteFile(p.Join(filename), data, perm)

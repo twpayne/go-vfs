@@ -86,6 +86,11 @@ func (osfs) Symlink(oldname, newname string) error {
 	return os.Symlink(oldname, newname)
 }
 
+// Truncate implements os.Truncate.
+func (osfs) Truncate(name string, size int64) error {
+	return os.Truncate(name, size)
+}
+
 // WriteFile implements ioutil.WriteFile.
 func (osfs) WriteFile(filename string, data []byte, perm os.FileMode) error {
 	return ioutil.WriteFile(filename, data, perm)
