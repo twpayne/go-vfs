@@ -36,8 +36,8 @@ func MkdirAll(fs FS, path string, perm os.FileMode) error {
 	if parentDir := filepath.Dir(path); parentDir != "." {
 		info, err := fs.Stat(parentDir)
 		if err != nil && os.IsNotExist(err) {
-			if err := MkdirAll(fs, parentDir, perm); err != nil {
-				return err
+			if mkdirAllErr := MkdirAll(fs, parentDir, perm); mkdirAllErr != nil {
+				return mkdirAllErr
 			}
 		} else if err != nil {
 			return err
