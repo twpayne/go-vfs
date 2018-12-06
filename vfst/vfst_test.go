@@ -294,10 +294,10 @@ func TestIdempotency(t *testing.T) {
 			return b.MkdirAll(fs, "/usr/bin", 0755)
 		},
 		"symlink_new_symlink": func(b *Builder, fs vfs.FS) error {
-			return b.Symlink(fs, ".bashrc", "symlink2")
+			return b.Symlink(fs, ".bashrc", "/home/user/symlink2")
 		},
 		"symlink_existing_symlink": func(b *Builder, fs vfs.FS) error {
-			return b.Symlink(fs, ".bashrc", "symlink")
+			return b.Symlink(fs, ".bashrc", "/home/user/symlink")
 		},
 	} {
 		t.Run(name, func(t *testing.T) {
