@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"os"
 	"path/filepath"
+	"time"
 )
 
 // An FS is an abstraction over commonly-used functions in the os and ioutil
@@ -11,6 +12,7 @@ import (
 type FS interface {
 	Chmod(name string, mode os.FileMode) error
 	Chown(name string, uid, git int) error
+	Chtimes(name string, atime, mtime time.Time) error
 	Lstat(name string) (os.FileInfo, error)
 	Mkdir(name string, perm os.FileMode) error
 	Open(name string) (*os.File, error)

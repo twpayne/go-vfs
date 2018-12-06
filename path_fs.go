@@ -6,6 +6,7 @@ import (
 	"os"
 	"path"
 	"path/filepath"
+	"time"
 )
 
 // A PathFS operates on an existing FS, but prefixes all names with a path.
@@ -31,6 +32,11 @@ func (p *PathFS) Chmod(name string, mode os.FileMode) error {
 // Chown implements os.Chown.
 func (p *PathFS) Chown(name string, uid, gid int) error {
 	return p.fs.Chown(p.Join(name), uid, gid)
+}
+
+// Chtimes implements os.Chtimes.
+func (p *PathFS) Chtimes(name string, atime, mtime time.Time) error {
+	return p.fs.Chtimes(p.Join(name), atime, mtime)
 }
 
 // Lstat implements os.Lstat.

@@ -3,6 +3,7 @@ package vfs
 import (
 	"os"
 	"syscall"
+	"time"
 )
 
 // A ReadOnlyFS operates on an existing FS, but any methods that
@@ -31,6 +32,15 @@ func (r *ReadOnlyFS) Chmod(name string, mode os.FileMode) error {
 func (r *ReadOnlyFS) Chown(name string, uid, gid int) error {
 	return &os.PathError{
 		Op:   "Chown",
+		Path: name,
+		Err:  syscall.EPERM,
+	}
+}
+
+// Chtimes implements os.Chtimes.
+func (r *ReadOnlyFS) Chtimes(name string, atime, mtime time.Time) error {
+	return &os.PathError{
+		Op:   "Chtimes",
 		Path: name,
 		Err:  syscall.EPERM,
 	}

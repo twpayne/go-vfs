@@ -3,6 +3,7 @@ package vfs
 import (
 	"io/ioutil"
 	"os"
+	"time"
 )
 
 type osfs struct{}
@@ -18,6 +19,11 @@ func (osfs) Chmod(name string, mode os.FileMode) error {
 // Chown implements os.Chown.
 func (osfs) Chown(name string, uid, gid int) error {
 	return os.Chown(name, uid, gid)
+}
+
+// Chtimes implements os.Chtimes.
+func (osfs) Chtimes(name string, atime, mtime time.Time) error {
+	return os.Chtimes(name, atime, mtime)
 }
 
 // Lstat implements os.Lstat.
