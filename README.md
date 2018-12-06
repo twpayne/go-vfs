@@ -2,11 +2,10 @@
 
 [![GoDoc](https://godoc.org/github.com/twpayne/go-vfs?status.svg)](https://godoc.org/github.com/twpayne/go-vfs)
 [![Build Status](https://travis-ci.org/twpayne/go-vfs.svg?branch=master)](https://travis-ci.org/twpayne/go-vfs)
-[![Build status](https://ci.appveyor.com/api/projects/status/m0nup45u310krjah?svg=true)](https://ci.appveyor.com/project/twpayne/go-vfs)
 [![Report Card](https://goreportcard.com/badge/github.com/twpayne/go-vfs)](https://goreportcard.com/report/github.com/twpayne/go-vfs)
 
-Package `go-vfs` provides an abstraction of the `os` and `ioutil` packages that
-is easy to test.
+Package `vfs` provides an abstraction of the `os` and `ioutil` packages that is
+easy to test.
 
 ## Key features
 
@@ -19,16 +18,21 @@ documentation](https://godoc.org/github.com/twpayne/go-vfs/vfst#pkg-examples).
 
 ## Quick start
 
-`go-vfs` provides implementations of the `FS` interface:
+`vfs` provides implementations of the `FS` interface:
 
 ```go
 // An FS is an abstraction over commonly-used functions in the os and ioutil
 // packages.
 type FS interface {
     Chmod(name string, mode os.FileMode) error
+    Chown(name string, uid, git int) error
+    Chtimes(name string, atime, mtime time.Time) error
+    Create(name string) (*os.File, error)
+    Lchown(name string, uid, git int) error
     Lstat(name string) (os.FileInfo, error)
     Mkdir(name string, perm os.FileMode) error
     Open(name string) (*os.File, error)
+    OpenFile(name string, flag int, perm os.ModePerm) (*os.File, error)
     ReadDir(dirname string) ([]os.FileInfo, error)
     ReadFile(filename string) ([]byte, error)
     Readlink(name string) (string, error)
@@ -37,14 +41,15 @@ type FS interface {
     Rename(oldpath, newpath string) error
     Stat(name string) (os.FileInfo, error)
     Symlink(oldname, newname string) error
+    Truncate(name string, size int64) error
     WriteFile(filename string, data []byte, perm os.FileMode) error
 }
 ```
 
-To use `go-vfs`, you write your code to use the `FS` interface, and then use
+To use `vfs`, you write your code to use the `FS` interface, and then use
 `vfst` to test it.
 
-`go-vfs` also provides functions `MkdirAll` (equivalent to `os.MkdirAll`) and
+`vfs` also provides functions `MkdirAll` (equivalent to `os.MkdirAll`) and
 `Walk` (equivalent to `filepath.Walk`) that operate on an `FS`.
 
 The implementations of `FS` provided are:
@@ -99,7 +104,7 @@ func TestWriteConfigFile(t *testing.T) {
 
 ## Motivation
 
-`go-vfs` was inspired by
+`vfs` was inspired by
 [`github.com/spf13/afero`](https://github.com/spf13/afero) and
 [`github.com/twpayne/aferot`](https://github.com/twpayne/aferot). So, why not
 use these?

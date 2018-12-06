@@ -7,7 +7,7 @@ import (
 	"syscall"
 	"testing"
 
-	"github.com/twpayne/go-vfs"
+	vfs "github.com/twpayne/go-vfs"
 )
 
 // permEqual returns if perm1 and perm2 represent the same permissions. On

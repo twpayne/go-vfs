@@ -4,9 +4,10 @@ import (
 	"io/ioutil"
 	"os"
 
-	"github.com/twpayne/go-vfs"
+	vfs "github.com/twpayne/go-vfs"
 )
 
+// A TestFS is a virtual filesystem based in a temporary directory.
 type TestFS struct {
 	vfs.PathFS
 	tempDir string
@@ -14,7 +15,7 @@ type TestFS struct {
 }
 
 func newTestFS() (*TestFS, func(), error) {
-	tempDir, err := ioutil.TempDir("", "fs-fstest")
+	tempDir, err := ioutil.TempDir("", "go-vfs-vfst")
 	if err != nil {
 		return nil, func() {}, err
 	}
@@ -26,8 +27,7 @@ func newTestFS() (*TestFS, func(), error) {
 	return t, t.cleanup, nil
 }
 
-// NewTestFS returns a new *TestFS based in a temporary directory and a cleanup
-// function, populated with root.
+// NewTestFS returns a new *TestFS populated with root and a cleanup function.
 func NewTestFS(root interface{}, builderOptions ...BuilderOption) (*TestFS, func(), error) {
 	fs, cleanup, err := newTestFS()
 	if err != nil {
