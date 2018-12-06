@@ -83,6 +83,18 @@ func (r *ReadOnlyFS) Open(name string) (*os.File, error) {
 	return r.fs.Open(name)
 }
 
+// OpenFile implements os.OpenFile.
+func (r *ReadOnlyFS) OpenFile(name string, flag int, perm os.FileMode) (*os.File, error) {
+	if flag&(os.O_RDONLY|os.O_WRONLY|os.O_RDWR) != os.O_RDONLY {
+		return nil, &os.PathError{
+			Op:   "OpenFile",
+			Path: name,
+			Err:  syscall.EPERM,
+		}
+	}
+	return r.fs.OpenFile(name, flag, perm)
+}
+
 // ReadDir implenents ioutil.ReadDir.
 func (r *ReadOnlyFS) ReadDir(dirname string) ([]os.FileInfo, error) {
 	return r.fs.ReadDir(dirname)

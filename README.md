@@ -33,6 +33,7 @@ type FS interface {
     Lstat(name string) (os.FileInfo, error)
     Mkdir(name string, perm os.FileMode) error
     Open(name string) (*os.File, error)
+    OpenFile(name string, flag int, perm os.ModePerm) (*os.File, error)
     ReadDir(dirname string) ([]os.FileInfo, error)
     ReadFile(filename string) ([]byte, error)
     Readlink(name string) (string, error)

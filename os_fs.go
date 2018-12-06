@@ -51,6 +51,11 @@ func (osfs) Open(name string) (*os.File, error) {
 	return os.Open(name)
 }
 
+// OpenFile implements os.OpenFile.
+func (osfs) OpenFile(name string, flag int, perm os.FileMode) (*os.File, error) {
+	return os.OpenFile(name, flag, perm)
+}
+
 // ReadDir implenents ioutil.ReadDir.
 func (osfs) ReadDir(dirname string) ([]os.FileInfo, error) {
 	return ioutil.ReadDir(dirname)

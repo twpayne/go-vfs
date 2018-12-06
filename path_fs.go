@@ -69,6 +69,11 @@ func (p *PathFS) Open(name string) (*os.File, error) {
 	return p.fs.Open(p.Join(name))
 }
 
+// OpenFile implements os.OpenFile.
+func (p *PathFS) OpenFile(name string, flag int, perm os.FileMode) (*os.File, error) {
+	return p.fs.OpenFile(p.Join(name), flag, perm)
+}
+
 // ReadDir implenents ioutil.ReadDir.
 func (p *PathFS) ReadDir(dirname string) ([]os.FileInfo, error) {
 	return p.fs.ReadDir(p.Join(dirname))
