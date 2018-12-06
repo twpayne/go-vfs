@@ -84,6 +84,15 @@ func (p *PathFS) Lstat(name string) (os.FileInfo, error) {
 	return p.fs.Lstat(realName)
 }
 
+// LstatIfPossible calls os.Lstat if it is available, os.State otherwise.
+func (p *PathFS) LstatIfPossible(name string) (os.FileInfo, bool, error) {
+	realName, err := p.join("LstatIfPossible", name)
+	if err != nil {
+		return nil, false, err
+	}
+	return p.fs.LstatIfPossible(realName)
+}
+
 // Mkdir implements os.Mkdir.
 func (p *PathFS) Mkdir(name string, perm os.FileMode) error {
 	realName, err := p.join("Mkdir", name)

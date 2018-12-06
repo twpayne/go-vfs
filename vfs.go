@@ -18,6 +18,7 @@ type FS interface {
 	Create(name string) (*os.File, error)
 	Lchown(name string, uid, git int) error
 	Lstat(name string) (os.FileInfo, error)
+	LstatIfPossible(name string) (os.FileInfo, bool, error)
 	Mkdir(name string, perm os.FileMode) error
 	Open(name string) (*os.File, error)
 	OpenFile(name string, flag int, perm os.FileMode) (*os.File, error)

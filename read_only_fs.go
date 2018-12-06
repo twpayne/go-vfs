@@ -49,6 +49,11 @@ func (r *ReadOnlyFS) Lstat(name string) (os.FileInfo, error) {
 	return r.fs.Lstat(name)
 }
 
+// LstatIfPossible calls os.Lstat if it is available, os.Stat otherwise.
+func (r *ReadOnlyFS) LstatIfPossible(name string) (os.FileInfo, bool, error) {
+	return r.fs.LstatIfPossible(name)
+}
+
 // Mkdir implements os.Mkdir.
 func (r *ReadOnlyFS) Mkdir(name string, perm os.FileMode) error {
 	return permError("Mkdir", name)
