@@ -46,6 +46,15 @@ func (r *ReadOnlyFS) Chtimes(name string, atime, mtime time.Time) error {
 	}
 }
 
+// Lchown implements os.Lchown.
+func (r *ReadOnlyFS) Lchown(name string, uid, gid int) error {
+	return &os.PathError{
+		Op:   "Lchown",
+		Path: name,
+		Err:  syscall.EPERM,
+	}
+}
+
 // Lstat implements os.Lstat.
 func (r *ReadOnlyFS) Lstat(name string) (os.FileInfo, error) {
 	return r.fs.Lstat(name)

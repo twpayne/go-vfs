@@ -39,6 +39,11 @@ func (p *PathFS) Chtimes(name string, atime, mtime time.Time) error {
 	return p.fs.Chtimes(p.Join(name), atime, mtime)
 }
 
+// Lchown implements os.Lchown.
+func (p *PathFS) Lchown(name string, uid, gid int) error {
+	return p.fs.Lchown(p.Join(name), uid, gid)
+}
+
 // Lstat implements os.Lstat.
 func (p *PathFS) Lstat(name string) (os.FileInfo, error) {
 	return p.fs.Lstat(p.Join(name))

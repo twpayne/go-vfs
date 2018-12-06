@@ -26,6 +26,11 @@ func (osfs) Chtimes(name string, atime, mtime time.Time) error {
 	return os.Chtimes(name, atime, mtime)
 }
 
+// Lchown implements os.Lchown.
+func (osfs) Lchown(name string, uid, gid int) error {
+	return os.Lchown(name, uid, gid)
+}
+
 // Lstat implements os.Lstat.
 func (osfs) Lstat(name string) (os.FileInfo, error) {
 	return os.Lstat(name)
