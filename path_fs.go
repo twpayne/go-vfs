@@ -39,6 +39,11 @@ func (p *PathFS) Chtimes(name string, atime, mtime time.Time) error {
 	return p.fs.Chtimes(p.Join(name), atime, mtime)
 }
 
+// Create implements os.Create.
+func (p *PathFS) Create(name string) (*os.File, error) {
+	return p.fs.Create(p.Join(name))
+}
+
 // Lchown implements os.Lchown.
 func (p *PathFS) Lchown(name string, uid, gid int) error {
 	return p.fs.Lchown(p.Join(name), uid, gid)

@@ -46,6 +46,15 @@ func (r *ReadOnlyFS) Chtimes(name string, atime, mtime time.Time) error {
 	}
 }
 
+// Create implements os.Create.
+func (r *ReadOnlyFS) Create(name string) (*os.File, error) {
+	return nil, &os.PathError{
+		Op:   "Create",
+		Path: name,
+		Err:  syscall.EPERM,
+	}
+}
+
 // Lchown implements os.Lchown.
 func (r *ReadOnlyFS) Lchown(name string, uid, gid int) error {
 	return &os.PathError{
