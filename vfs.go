@@ -87,6 +87,6 @@ func walk(fs FS, path string, walkFn filepath.WalkFunc, info os.FileInfo, err er
 
 // Walk is the equivalent of filepath.Walk but operates on fs.
 func Walk(fs FS, path string, walkFn filepath.WalkFunc) error {
-	info, err := fs.Lstat(path)
+	info, _, err := fs.LstatIfPossible(path)
 	return walk(fs, path, walkFn, info, err)
 }
