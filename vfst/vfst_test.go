@@ -6,7 +6,7 @@ import (
 	"os"
 	"testing"
 
-	"github.com/twpayne/go-vfs"
+	vfs "github.com/twpayne/go-vfs"
 )
 
 func TestBuilderBuild(t *testing.T) {

@@ -12,7 +12,7 @@ import (
 	"strconv"
 	"testing"
 
-	"github.com/twpayne/go-vfs"
+	vfs "github.com/twpayne/go-vfs"
 )
 
 // DefaultUmask is the default umask.
