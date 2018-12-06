@@ -15,6 +15,11 @@ func (osfs) Chmod(name string, mode os.FileMode) error {
 	return os.Chmod(name, mode)
 }
 
+// Chown implements os.Chown.
+func (osfs) Chown(name string, uid, gid int) error {
+	return os.Chown(name, uid, gid)
+}
+
 // Lstat implements os.Lstat.
 func (osfs) Lstat(name string) (os.FileInfo, error) {
 	return os.Lstat(name)

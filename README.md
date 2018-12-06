@@ -26,6 +26,7 @@ documentation](https://godoc.org/github.com/twpayne/go-vfs/vfst#pkg-examples).
 // packages.
 type FS interface {
     Chmod(name string, mode os.FileMode) error
+    Chown(name string, uid, git int) error
     Lstat(name string) (os.FileInfo, error)
     Mkdir(name string, perm os.FileMode) error
     Open(name string) (*os.File, error)

@@ -27,6 +27,15 @@ func (r *ReadOnlyFS) Chmod(name string, mode os.FileMode) error {
 	}
 }
 
+// Chown implements os.Chown.
+func (r *ReadOnlyFS) Chown(name string, uid, gid int) error {
+	return &os.PathError{
+		Op:   "Chown",
+		Path: name,
+		Err:  syscall.EPERM,
+	}
+}
+
 // Lstat implements os.Lstat.
 func (r *ReadOnlyFS) Lstat(name string) (os.FileInfo, error) {
 	return r.fs.Lstat(name)

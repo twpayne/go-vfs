@@ -28,6 +28,11 @@ func (p *PathFS) Chmod(name string, mode os.FileMode) error {
 	return p.fs.Chmod(p.Join(name), mode)
 }
 
+// Chown implements os.Chown.
+func (p *PathFS) Chown(name string, uid, gid int) error {
+	return p.fs.Chown(p.Join(name), uid, gid)
+}
+
 // Lstat implements os.Lstat.
 func (p *PathFS) Lstat(name string) (os.FileInfo, error) {
 	return p.fs.Lstat(p.Join(name))
