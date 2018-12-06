@@ -154,7 +154,7 @@ func (b *Builder) Build(fs vfs.FS, root interface{}) error {
 // will not fail if path already exists, is a directory, and has permissions
 // perm.
 func (b *Builder) Mkdir(fs vfs.FS, path string, perm os.FileMode) error {
-	if info, err := fs.Lstat(path); os.IsNotExist(err) {
+	if info, _, err := fs.LstatIfPossible(path); os.IsNotExist(err) {
 		if b.verbose {
 			log.Printf("mkdir -m 0%o %s", perm&^b.umask, path)
 		}
@@ -173,7 +173,7 @@ func (b *Builder) Mkdir(fs vfs.FS, path string, perm os.FileMode) error {
 // permissions perm. It is idempotent and will not file if path already exists
 // and is a directory.
 func (b *Builder) MkdirAll(fs vfs.FS, path string, perm os.FileMode) error {
-	if info, err := fs.Lstat(path); os.IsNotExist(err) {
+	if info, _, err := fs.LstatIfPossible(path); os.IsNotExist(err) {
 		// fallthrough to fs.MkdirAll
 	} else if err == nil && !info.IsDir() {
 		return fmt.Errorf("%s: not a directory", path)
@@ -190,7 +190,7 @@ func (b *Builder) MkdirAll(fs vfs.FS, path string, perm os.FileMode) error {
 // missing parent directories with default permissions. It is idempotent and
 // will not fail if the symbolic link already exists and points to oldname.
 func (b *Builder) Symlink(fs vfs.FS, oldname, newname string) error {
-	if info, err := fs.Lstat(newname); os.IsNotExist(err) {
+	if info, _, err := fs.LstatIfPossible(newname); os.IsNotExist(err) {
 		// fallthrough to fs.Symlink
 	} else if err == nil && info.Mode()&os.ModeType != os.ModeSymlink {
 		return fmt.Errorf("%s: not a symbolic link", newname)
@@ -220,7 +220,7 @@ func (b *Builder) Symlink(fs vfs.FS, oldname, newname string) error {
 // idempotent and will not fail if the file already exists, has contents
 // contents, and permissions perm.
 func (b *Builder) WriteFile(fs vfs.FS, path string, contents []byte, perm os.FileMode) error {
-	if info, err := fs.Lstat(path); os.IsNotExist(err) {
+	if info, _, err := fs.LstatIfPossible(path); os.IsNotExist(err) {
 		// fallthrough to fs.WriteFile
 	} else if err != nil {
 		return err
@@ -316,9 +316,9 @@ func TestContentsString(wantContentsStr string) PathTest {
 // testDoesNotExist is a PathTest that verifies that a file or directory does
 // not exist.
 var testDoesNotExist = func(t *testing.T, fs vfs.FS, path string) {
-	_, err := fs.Lstat(path)
+	_, _, err := fs.LstatIfPossible(path)
 	if got, want := os.IsNotExist(err), true; got != want {
-		t.Errorf("_, err := fs.Lstat(%q); os.IsNotExist(err) == %v, want %v", path, got, want)
+		t.Errorf("_, _, err := fs.LstatIfPossible(%q); os.IsNotExist(err) == %v, want %v", path, got, want)
 	}
 }
 
@@ -333,13 +333,13 @@ var TestIsDir = TestModeType(os.ModeDir)
 // are equal to wantPerm.
 func TestModePerm(wantPerm os.FileMode) PathTest {
 	return func(t *testing.T, fs vfs.FS, path string) {
-		info, err := fs.Lstat(path)
+		info, ok, err := fs.LstatIfPossible(path)
 		if err != nil {
-			t.Errorf("fs.Lstat(%q) == %+v, %v, want !<nil>, <nil>", path, info, err)
+			t.Errorf("fs.LstatIfPossible(%q) == %+v, %v, %v, want !<nil>, _, <nil>", path, info, ok, err)
 			return
 		}
 		if gotPerm := info.Mode() & os.ModePerm; !permEqual(gotPerm, wantPerm) {
-			t.Errorf("fs.Lstat(%q).Mode()&os.ModePerm == 0%o, want 0%o", path, gotPerm, wantPerm)
+			t.Errorf("fs.LstatIfPossible(%q).Mode()&os.ModePerm == 0%o, want 0%o", path, gotPerm, wantPerm)
 		}
 	}
 }
@@ -351,13 +351,13 @@ var TestModeIsRegular = TestModeType(0)
 // equal to wantModeType.
 func TestModeType(wantModeType os.FileMode) PathTest {
 	return func(t *testing.T, fs vfs.FS, path string) {
-		info, err := fs.Lstat(path)
+		info, ok, err := fs.LstatIfPossible(path)
 		if err != nil {
-			t.Errorf("fs.Lstat(%q) == %+v, %v, want !<nil>, <nil>", path, info, err)
+			t.Errorf("fs.LstatIfPossible(%q) == %+v, %v, %v, want !<nil>, _, <nil>", path, info, ok, err)
 			return
 		}
 		if gotModeType := info.Mode() & os.ModeType; gotModeType != wantModeType {
-			t.Errorf("fs.Lstat(%q).Mode()&os.ModeType == %v, want %v", path, gotModeType, wantModeType)
+			t.Errorf("fs.LstatIfPossible(%q).Mode()&os.ModeType == %v, want %v", path, gotModeType, wantModeType)
 		}
 	}
 }
@@ -377,13 +377,13 @@ func TestPath(path string, pathTests ...PathTest) Test {
 // wantSize.
 func TestSize(wantSize int64) PathTest {
 	return func(t *testing.T, fs vfs.FS, path string) {
-		info, err := fs.Lstat(path)
+		info, ok, err := fs.LstatIfPossible(path)
 		if err != nil {
-			t.Errorf("fs.Lstat(%q) == %+v, %v, want !<nil>, <nil>", path, info, err)
+			t.Errorf("fs.LstatIfPossible(%q) == %+v, %v, %v, want !<nil>, _, <nil>", path, info, ok, err)
 			return
 		}
 		if gotSize := info.Size(); gotSize != wantSize {
-			t.Errorf("fs.Lstat(%q).Size() == %d, want %d", path, gotSize, wantSize)
+			t.Errorf("fs.LstatIfPossible(%q).Size() == %d, want %d", path, gotSize, wantSize)
 		}
 	}
 }
@@ -402,13 +402,13 @@ func TestSymlinkTarget(wantTarget string) PathTest {
 // wantMinSize.
 func TestMinSize(wantMinSize int64) PathTest {
 	return func(t *testing.T, fs vfs.FS, path string) {
-		info, err := fs.Lstat(path)
+		info, ok, err := fs.LstatIfPossible(path)
 		if err != nil {
-			t.Errorf("fs.Lstat(%q) == %+v, %v, want !<nil>, <nil>", path, info, err)
+			t.Errorf("fs.LstatIfPossible(%q) == %+v, %v, %v, want !<nil>, _, <nil>", path, info, ok, err)
 			return
 		}
 		if gotSize := info.Size(); gotSize < wantMinSize {
-			t.Errorf("fs.Lstat(%q).Size() == %d, want >=%d", path, gotSize, wantMinSize)
+			t.Errorf("fs.LstatIfPossible(%q).Size() == %d, want >=%d", path, gotSize, wantMinSize)
 		}
 	}
 }

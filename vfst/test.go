@@ -21,13 +21,13 @@ func permEqual(perm1, perm2 os.FileMode) bool {
 // be converted to a *syscall.Stat_t, it does nothing.
 func TestSysNlink(wantNlink int) PathTest {
 	return func(t *testing.T, fs vfs.FS, path string) {
-		info, err := fs.Lstat(path)
+		info, ok, err := fs.LstatIfPossible(path)
 		if err != nil {
-			t.Errorf("fs.Lstat(%q) == %+v, %v, want !<nil>, <nil>", path, info, err)
+			t.Errorf("fs.LstatIfPossible(%q) == %+v, %v, %v, want !<nil>, _, <nil>", path, info, ok, err)
 			return
 		}
 		if stat, ok := info.Sys().(*syscall.Stat_t); ok && int(stat.Nlink) != wantNlink {
-			t.Errorf("fs.Lstat(%q).Sys().(*syscall.Stat_t).Nlink == %d, want %d", path, stat.Nlink, wantNlink)
+			t.Errorf("fs.LstatIfPossible(%q).Sys().(*syscall.Stat_t).Nlink == %d, want %d", path, stat.Nlink, wantNlink)
 		}
 	}
 }
