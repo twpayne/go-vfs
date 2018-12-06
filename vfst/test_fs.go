@@ -15,7 +15,7 @@ type TestFS struct {
 }
 
 func newTestFS() (*TestFS, func(), error) {
-	tempDir, err := ioutil.TempDir("", "fs-fstest")
+	tempDir, err := ioutil.TempDir("", "go-vfs-vfst")
 	if err != nil {
 		return nil, func() {}, err
 	}
