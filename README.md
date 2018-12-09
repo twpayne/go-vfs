@@ -16,6 +16,8 @@ easy to test.
    see [the examples in the
 documentation](https://godoc.org/github.com/twpayne/go-vfs/vfst#pkg-examples).
 
+ * Compatability with [`github.com/spf13/afero`](https://github.com/spf13/afero).
+
 ## Quick start
 
 `vfs` provides implementations of the `FS` interface:
@@ -102,6 +104,16 @@ func TestWriteConfigFile(t *testing.T) {
 ```
 
 
+## `github.com/spf13/afero` compatibility
+
+`vfs` includes a compatability shim for `github.com/spf13/afero` in the
+`github.com/twpayne/go-vfs/vfsafero` module. This allows you to use `vfst` to
+test exisiting code that uses
+[`afero.FS`](https://godoc.org/github.com/absfs/afero#Fs). See [the
+documentation](https://godoc.org/github.com/twpayne/go-vfs/vfsafero) for an
+example.
+
+
 ## Motivation
 
 `vfs` was inspired by
@@ -124,6 +136,7 @@ with all methods in the `FS` interface.
    ([`github.com/absfs/afero`](https://github.com/absfs/afero)) has not seen
 much activity. `vfs`, by providing much less functionality than `afero`, should
 be smaller and easier to maintain.
+
 
 ## License
 
