@@ -106,11 +106,11 @@ func TestWriteConfigFile(t *testing.T) {
 
 ## `github.com/spf13/afero` compatibility
 
-`vfs` includes a compatability shim for `github.com/spf13/afero` in the
-`github.com/twpayne/go-vfs/vfsafero` module. This allows you to use `vfst` to
-test exisiting code that uses
-[`afero.FS`](https://godoc.org/github.com/absfs/afero#Fs). See [the
-documentation](https://godoc.org/github.com/twpayne/go-vfs/vfsafero) for an
+There is a compatability shim for `github.com/spf13/afero` in the
+`github.com/twpayne/go-vfsafero` module. This allows you to use `vfst` to test
+exisiting code that uses
+[`afero.FS`](https://godoc.org/github.com/spf13/afero#Fs). See [the
+documentation](https://godoc.org/github.com/twpayne/go-vfsafero) for an
 example.
 
 
