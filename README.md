@@ -81,13 +81,13 @@ func TestWriteConfigFile(t *testing.T) {
         "/home/user/.bashrc": "# contents of user's .bashrc\n",
     })
 
-    // Ensure that the temporary directory is removed.
-    defer cleanup()
-
     // Check that the directory was populated successfully.
     if err != nil {
         t.Fatalf("vfsTest.NewTestFS(_) == _, _, %v, want _, _, <nil>", err)
     }
+
+    // Ensure that the temporary directory is removed.
+    defer cleanup()
 
     // Call the function we want to test.
     if err := writeConfigFile(fs); err != nil {

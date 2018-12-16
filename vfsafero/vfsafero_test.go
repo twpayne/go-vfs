@@ -15,10 +15,10 @@ func TestAferoFS(t *testing.T) {
 	fs, cleanup, err := vfst.NewTestFS(map[string]interface{}{
 		"/home/user/.bashrc": "# contents of .bashrc\n",
 	})
-	defer cleanup()
 	if err != nil {
 		t.Fatal(err)
 	}
+	defer cleanup()
 
 	aferoFS := NewAferoFS(fs)
 	afero.WriteFile(aferoFS, "/home/user/foo", []byte("bar"), 0666)

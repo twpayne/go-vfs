@@ -120,10 +120,10 @@ func TestBuilderBuild(t *testing.T) {
 	} {
 		t.Run(tc.name, func(t *testing.T) {
 			fs, cleanup, err := NewTestFS(tc.root, BuilderUmask(tc.umask), BuilderVerbose(true))
-			defer cleanup()
 			if err != nil {
 				t.Fatal(err)
 			}
+			defer cleanup()
 			RunTests(t, fs, "", tc.tests)
 		})
 	}
@@ -152,10 +152,10 @@ func TestCoverage(t *testing.T) {
 			},
 		},
 	})
-	defer cleanup()
 	if err != nil {
 		log.Fatal(err)
 	}
+	defer cleanup()
 	RunTests(t, fs, "", []interface{}{
 		TestPath("/home",
 			TestIsDir,
@@ -252,10 +252,10 @@ func TestErrors(t *testing.T) {
 	} {
 		t.Run(name, func(t *testing.T) {
 			fs, cleanup, err := newTestFS()
-			defer cleanup()
 			if err != nil {
 				t.Fatal(err)
 			}
+			defer cleanup()
 			b := NewBuilder(BuilderVerbose(true))
 			root := map[string]interface{}{
 				"/home/user/.bashrc": "# bashrc\n",
@@ -302,10 +302,10 @@ func TestIdempotency(t *testing.T) {
 	} {
 		t.Run(name, func(t *testing.T) {
 			fs, cleanup, err := newTestFS()
-			defer cleanup()
 			if err != nil {
 				t.Fatal(err)
 			}
+			defer cleanup()
 			b := NewBuilder(BuilderVerbose(true))
 			root := map[string]interface{}{
 				"/home/user/.bashrc": "# bashrc\n",

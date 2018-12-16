@@ -15,10 +15,10 @@ func TestWalk(t *testing.T) {
 		"/home/user/skip/foo": "bar",
 		"/home/user/symlink":  &Symlink{Target: "baz"},
 	})
-	defer cleanup()
 	if err != nil {
 		t.Fatal(err)
 	}
+	defer cleanup()
 	pathTypeMap := make(map[string]os.FileMode)
 	if err := vfs.Walk(fs, "/", func(path string, info os.FileInfo, err error) error {
 		pathTypeMap[filepath.ToSlash(path)] = info.Mode() & os.ModeType
