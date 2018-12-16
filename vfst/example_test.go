@@ -38,10 +38,10 @@ func ExampleNewTestFS_complex() {
 
 		// Create and populate an *vfst.TestFS
 		fs, cleanup, err := vfst.NewTestFS(root)
-		defer cleanup()
 		if err != nil {
 			t.Fatal(err)
 		}
+		defer cleanup()
 
 		// Create tests by creating data structures containing Tests.
 		tests := []interface{}{
