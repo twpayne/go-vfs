@@ -16,7 +16,7 @@ easy to test.
    see [the examples in the
 documentation](https://godoc.org/github.com/twpayne/go-vfs/vfst#pkg-examples).
 
- * Compatability with [`github.com/spf13/afero`](https://github.com/spf13/afero).
+ * Compatibility with [`github.com/spf13/afero`](https://github.com/spf13/afero).
 
 ## Quick start
 
@@ -106,9 +106,9 @@ func TestWriteConfigFile(t *testing.T) {
 
 ## `github.com/spf13/afero` compatibility
 
-There is a compatability shim for `github.com/spf13/afero` in the
+There is a compatibility shim for `github.com/spf13/afero` in the
 `github.com/twpayne/go-vfsafero` module. This allows you to use `vfst` to test
-exisiting code that uses
+existing code that uses
 [`afero.FS`](https://godoc.org/github.com/spf13/afero#Fs). See [the
 documentation](https://godoc.org/github.com/twpayne/go-vfsafero) for an
 example.
@@ -123,8 +123,8 @@ use these?
 
  * `afero` has several critical bugs in its in-memory mock filesystem
    implementation `MemMapFs`, to the point that it is unusable for non-trivial
-test cases.  `vfs` does not attempt to implent an in-memory mock filesystem,
-and instead only provides a thin layer around the standard libary's `os` and
+test cases.  `vfs` does not attempt to implement an in-memory mock filesystem,
+and instead only provides a thin layer around the standard library's `os` and
 `ioutil` packages, and as such should have fewer bugs.
 
  * `afero` does not support creating or reading symbolic links, and its
