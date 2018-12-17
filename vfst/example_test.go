@@ -102,7 +102,7 @@ func ExampleNewTestFS_complex() {
 func ExampleNewTestFS() {
 
 	Test := func(t *testing.T) {
-		fs, cleanup, err := vfst.NewTestFS(map[string]string{
+		fs, cleanup, err := vfst.NewTestFS(map[string]interface{}{
 			"/home/user/.bashrc": "# contents of user's .bashrc\n",
 		})
 		defer cleanup()
@@ -110,8 +110,9 @@ func ExampleNewTestFS() {
 			t.Fatal(err)
 		}
 
-		vfst.RunTests(t, fs, "",
+		vfst.RunTests(t, fs, "bashrc",
 			vfst.TestPath("/home/user/.bashrc",
+				vfst.TestModeIsRegular,
 				vfst.TestContentsString("# contents of user's .bashrc\n"),
 			),
 		)
