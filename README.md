@@ -77,7 +77,7 @@ func writeConfigFile(fs vfs.FS) error {
 // TestWriteConfigFile is our test function.
 func TestWriteConfigFile(t *testing.T) {
     // Create and populate an temporary directory with a home directory.
-    fs, cleanup, err := vfst.NewTestFS(map[string]string{
+    fs, cleanup, err := vfst.NewTestFS(map[string]interface{}{
         "/home/user/.bashrc": "# contents of user's .bashrc\n",
     })
 
@@ -95,11 +95,13 @@ func TestWriteConfigFile(t *testing.T) {
     }
 
     // Check properties of the filesystem after our function has modified it.
-    vfst.RunTest(t, fs, "",
+    vfst.RunTest(t, fs, "app_conf",
         vfst.PathTest("/home/user/app.conf",
             vfst.TestModeIsRegular,
             vfst.TestModePerm(0644),
-            vfst.TestContentsString("app config"))),
+            vfst.TestContentsString("app config"),
+        ),
+    )
 }
 ```
 
