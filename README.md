@@ -16,7 +16,9 @@ easy to test.
    see [the examples in the
 documentation](https://godoc.org/github.com/twpayne/go-vfs/vfst#pkg-examples).
 
- * Compatibility with [`github.com/spf13/afero`](https://github.com/spf13/afero).
+ * Compatibility with
+   [`github.com/spf13/afero`](https://github.com/spf13/afero) and
+[`github.com/src-d/go-billy`](https://github.com/src-d/go-billy).
 
 ## Quick start
 
@@ -114,6 +116,16 @@ existing code that uses
 [`afero.FS`](https://godoc.org/github.com/spf13/afero#Fs). See [the
 documentation](https://godoc.org/github.com/twpayne/go-vfsafero) for an
 example.
+
+
+## `github.com/src-d/go-billy` compatibility
+
+There is a compatibility shim for `github.com/src-d/go-billy` in the
+`github.com/twpayne/go-vfsbilly` module. This allows you to use `vfst` to test
+existing code that uses
+[`billy.Filesystem`](https://godoc.org/github.com/src-d/go-billy#Filesystem).
+See [the documentation](https://godoc.org/github.com/twpayne/go-vfsbilly) for
+an example.
 
 
 ## Motivation
