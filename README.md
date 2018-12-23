@@ -137,7 +137,7 @@ use these?
 
  * `afero` has several critical bugs in its in-memory mock filesystem
    implementation `MemMapFs`, to the point that it is unusable for non-trivial
-test cases.  `vfs` does not attempt to implement an in-memory mock filesystem,
+test cases. `vfs` does not attempt to implement an in-memory mock filesystem,
 and instead only provides a thin layer around the standard library's `os` and
 `ioutil` packages, and as such should have fewer bugs.
 
