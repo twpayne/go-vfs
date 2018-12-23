@@ -16,7 +16,9 @@ easy to test.
    see [the examples in the
 documentation](https://godoc.org/github.com/twpayne/go-vfs/vfst#pkg-examples).
 
- * Compatibility with [`github.com/spf13/afero`](https://github.com/spf13/afero).
+ * Compatibility with
+   [`github.com/spf13/afero`](https://github.com/spf13/afero) and
+[`github.com/src-d/go-billy`](https://github.com/src-d/go-billy).
 
 ## Quick start
 
@@ -116,6 +118,16 @@ documentation](https://godoc.org/github.com/twpayne/go-vfsafero) for an
 example.
 
 
+## `github.com/src-d/go-billy` compatibility
+
+There is a compatibility shim for `github.com/src-d/go-billy` in the
+`github.com/twpayne/go-vfsbilly` module. This allows you to use `vfst` to test
+existing code that uses
+[`billy.Filesystem`](https://godoc.org/github.com/src-d/go-billy#Filesystem).
+See [the documentation](https://godoc.org/github.com/twpayne/go-vfsbilly) for
+an example.
+
+
 ## Motivation
 
 `vfs` was inspired by
@@ -125,7 +137,7 @@ use these?
 
  * `afero` has several critical bugs in its in-memory mock filesystem
    implementation `MemMapFs`, to the point that it is unusable for non-trivial
-test cases.  `vfs` does not attempt to implement an in-memory mock filesystem,
+test cases. `vfs` does not attempt to implement an in-memory mock filesystem,
 and instead only provides a thin layer around the standard library's `os` and
 `ioutil` packages, and as such should have fewer bugs.
 
