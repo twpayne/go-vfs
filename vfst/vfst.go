@@ -310,7 +310,11 @@ func TestContents(wantContents []byte) PathTest {
 // TestContentsString returns a PathTest that verifies the contetnts of the
 // file are equal to wantContentsStr.
 func TestContentsString(wantContentsStr string) PathTest {
-	return TestContents([]byte(wantContentsStr))
+	return func(t *testing.T, fs vfs.FS, path string) {
+		if gotContents, err := fs.ReadFile(path); err != nil || string(gotContents) != wantContentsStr {
+			t.Errorf("fs.ReadFile(%q) == %q, %v, want %q, <nil>", path, gotContents, err, wantContentsStr)
+		}
+	}
 }
 
 // testDoesNotExist is a PathTest that verifies that a file or directory does
