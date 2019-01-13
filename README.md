@@ -12,8 +12,10 @@ easy to test.
  * File system abstraction layer for commonly-used `os` and `ioutil` functions
    from the standard library.
 
- * Powerful testing framework, `vfst`. For a quick tour of `vfst`'s features,
-   see [the examples in the
+ * Powerful and easy-to-use declarative testing framework, `vfst`. You declare
+   the desired state of the filesystem after your code has run, and `vfst`
+tests that the filesystem matches that state. For a quick tour of `vfst`'s
+features, see [the examples in the
 documentation](https://godoc.org/github.com/twpayne/go-vfs/vfst#pkg-examples).
 
  * Compatibility with
