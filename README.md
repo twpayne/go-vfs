@@ -12,8 +12,10 @@ easy to test.
  * File system abstraction layer for commonly-used `os` and `ioutil` functions
    from the standard library.
 
- * Powerful testing framework, `vfst`. For a quick tour of `vfst`'s features,
-   see [the examples in the
+ * Powerful and easy-to-use declarative testing framework, `vfst`. You declare
+   the desired state of the filesystem after your code has run, and `vfst`
+tests that the filesystem matches that state. For a quick tour of `vfst`'s
+features, see [the examples in the
 documentation](https://godoc.org/github.com/twpayne/go-vfs/vfst#pkg-examples).
 
  * Compatibility with
@@ -110,9 +112,10 @@ func TestWriteConfigFile(t *testing.T) {
 
 ## `github.com/spf13/afero` compatibility
 
-There is a compatibility shim for `github.com/spf13/afero` in the
-`github.com/twpayne/go-vfsafero` module. This allows you to use `vfst` to test
-existing code that uses
+There is a compatibility shim for
+[`github.com/spf13/afero`](https://github.com/spf13/afero) in
+[`github.com/twpayne/go-vfsafero`](https://github.com/twpayne/go-vfsafero).
+This allows you to use `vfst` to test existing code that uses
 [`afero.FS`](https://godoc.org/github.com/spf13/afero#Fs). See [the
 documentation](https://godoc.org/github.com/twpayne/go-vfsafero) for an
 example.
@@ -120,9 +123,10 @@ example.
 
 ## `github.com/src-d/go-billy` compatibility
 
-There is a compatibility shim for `github.com/src-d/go-billy` in the
-`github.com/twpayne/go-vfsbilly` module. This allows you to use `vfst` to test
-existing code that uses
+There is a compatibility shim for
+[`github.com/src-d/go-billy`](https://github.com/src-d/go-billy) in
+[`github.com/twpayne/go-vfsbilly`](https://github.com/twpayne/go-vfsbilly).
+This allows you to use `vfst` to test existing code that uses
 [`billy.Filesystem`](https://godoc.org/github.com/src-d/go-billy#Filesystem).
 See [the documentation](https://godoc.org/github.com/twpayne/go-vfsbilly) for
 an example.
@@ -131,9 +135,8 @@ an example.
 ## Motivation
 
 `vfs` was inspired by
-[`github.com/spf13/afero`](https://github.com/spf13/afero) and
-[`github.com/twpayne/aferot`](https://github.com/twpayne/aferot). So, why not
-use these?
+[`github.com/spf13/afero`](https://github.com/spf13/afero). So, why not use
+`afero`?
 
  * `afero` has several critical bugs in its in-memory mock filesystem
    implementation `MemMapFs`, to the point that it is unusable for non-trivial
