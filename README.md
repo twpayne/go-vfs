@@ -135,9 +135,8 @@ an example.
 ## Motivation
 
 `vfs` was inspired by
-[`github.com/spf13/afero`](https://github.com/spf13/afero) and
-[`github.com/twpayne/aferot`](https://github.com/twpayne/aferot). So, why not
-use these?
+[`github.com/spf13/afero`](https://github.com/spf13/afero). So, why not use
+`afero`?
 
  * `afero` has several critical bugs in its in-memory mock filesystem
    implementation `MemMapFs`, to the point that it is unusable for non-trivial
