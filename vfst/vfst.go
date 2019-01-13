@@ -301,7 +301,7 @@ func RunTests(t *testing.T, fs vfs.FS, name string, tests ...interface{}) {
 // equal to wantContents.
 func TestContents(wantContents []byte) PathTest {
 	return func(t *testing.T, fs vfs.FS, path string) {
-		if gotContents, err := fs.ReadFile(path); err != nil || !bytes.Equal(wantContents, gotContents) {
+		if gotContents, err := fs.ReadFile(path); err != nil || !bytes.Equal(gotContents, wantContents) {
 			t.Errorf("fs.ReadFile(%q) == %v, %v, want %v, <nil>", path, gotContents, err, wantContents)
 		}
 	}
@@ -310,7 +310,11 @@ func TestContents(wantContents []byte) PathTest {
 // TestContentsString returns a PathTest that verifies the contetnts of the
 // file are equal to wantContentsStr.
 func TestContentsString(wantContentsStr string) PathTest {
-	return TestContents([]byte(wantContentsStr))
+	return func(t *testing.T, fs vfs.FS, path string) {
+		if gotContents, err := fs.ReadFile(path); err != nil || string(gotContents) != wantContentsStr {
+			t.Errorf("fs.ReadFile(%q) == %q, %v, want %q, <nil>", path, gotContents, err, wantContentsStr)
+		}
+	}
 }
 
 // testDoesNotExist is a PathTest that verifies that a file or directory does
