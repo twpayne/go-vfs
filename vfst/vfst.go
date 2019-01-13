@@ -301,7 +301,7 @@ func RunTests(t *testing.T, fs vfs.FS, name string, tests ...interface{}) {
 // equal to wantContents.
 func TestContents(wantContents []byte) PathTest {
 	return func(t *testing.T, fs vfs.FS, path string) {
-		if gotContents, err := fs.ReadFile(path); err != nil || !bytes.Equal(wantContents, gotContents) {
+		if gotContents, err := fs.ReadFile(path); err != nil || !bytes.Equal(gotContents, wantContents) {
 			t.Errorf("fs.ReadFile(%q) == %v, %v, want %v, <nil>", path, gotContents, err, wantContents)
 		}
 	}
