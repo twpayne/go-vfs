@@ -50,14 +50,14 @@ func MkdirAll(fs FS, path string, perm os.FileMode) error {
 			}
 		} else if err != nil {
 			return err
-		} else if err == nil && !info.Mode().IsDir() {
+		} else if err == nil && !info.IsDir() {
 			return fmt.Errorf("%s: not a directory", parentDir)
 		}
 	}
 	info, err := fs.Stat(path)
 	if err != nil && !os.IsNotExist(err) {
 		return err
-	} else if err == nil && info.Mode().IsDir() {
+	} else if err == nil && info.IsDir() {
 		return nil
 	}
 	return fs.Mkdir(path, perm)
