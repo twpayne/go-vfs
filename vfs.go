@@ -10,6 +10,12 @@ import (
 	"time"
 )
 
+// A MkdirStater implements all the functionality needed by MkdirAll.
+type MkdirStater interface {
+	Mkdir(name string, perm os.FileMode) error
+	Stat(name string) (os.FileInfo, error)
+}
+
 // An FS is an abstraction over commonly-used functions in the os and ioutil
 // packages.
 type FS interface {
@@ -41,7 +47,7 @@ func (is infosByName) Less(i, j int) bool { return is[i].Name() < is[j].Name() }
 func (is infosByName) Swap(i, j int)      { is[i], is[j] = is[j], is[i] }
 
 // MkdirAll is equivalent to os.MkdirAll but operates on fs.
-func MkdirAll(fs FS, path string, perm os.FileMode) error {
+func MkdirAll(fs MkdirStater, path string, perm os.FileMode) error {
 	if parentDir := filepath.Dir(path); parentDir != "." {
 		info, err := fs.Stat(parentDir)
 		if err != nil && os.IsNotExist(err) {
