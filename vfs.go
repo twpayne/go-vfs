@@ -10,6 +10,18 @@ import (
 	"time"
 )
 
+// A MkdirStater implements all the functionality needed by MkdirAll.
+type MkdirStater interface {
+	Mkdir(name string, perm os.FileMode) error
+	Stat(name string) (os.FileInfo, error)
+}
+
+// A LstatReadDirer implements all the functionality needed by Walk.
+type LstatReadDirer interface {
+	Lstat(name string) (os.FileInfo, error)
+	ReadDir(dirname string) ([]os.FileInfo, error)
+}
+
 // An FS is an abstraction over commonly-used functions in the os and ioutil
 // packages.
 type FS interface {
@@ -41,7 +53,7 @@ func (is infosByName) Less(i, j int) bool { return is[i].Name() < is[j].Name() }
 func (is infosByName) Swap(i, j int)      { is[i], is[j] = is[j], is[i] }
 
 // MkdirAll is equivalent to os.MkdirAll but operates on fs.
-func MkdirAll(fs FS, path string, perm os.FileMode) error {
+func MkdirAll(fs MkdirStater, path string, perm os.FileMode) error {
 	if parentDir := filepath.Dir(path); parentDir != "." {
 		info, err := fs.Stat(parentDir)
 		if err != nil && os.IsNotExist(err) {
@@ -64,7 +76,7 @@ func MkdirAll(fs FS, path string, perm os.FileMode) error {
 }
 
 // walk recursively walks fs from path.
-func walk(fs FS, path string, walkFn filepath.WalkFunc, info os.FileInfo, err error) error {
+func walk(fs LstatReadDirer, path string, walkFn filepath.WalkFunc, info os.FileInfo, err error) error {
 	if err != nil {
 		return walkFn(path, info, err)
 	}
@@ -94,7 +106,7 @@ func walk(fs FS, path string, walkFn filepath.WalkFunc, info os.FileInfo, err er
 
 // Walk is the equivalent of filepath.Walk but operates on fs. Entries are
 // returned in lexicographical order.
-func Walk(fs FS, path string, walkFn filepath.WalkFunc) error {
+func Walk(fs LstatReadDirer, path string, walkFn filepath.WalkFunc) error {
 	info, err := fs.Lstat(path)
 	return walk(fs, path, walkFn, info, err)
 }
