@@ -16,6 +16,12 @@ type MkdirStater interface {
 	Stat(name string) (os.FileInfo, error)
 }
 
+// A LstatReadDirer implements all the functionality needed by Walk.
+type LstatReadDirer interface {
+	Lstat(name string) (os.FileInfo, error)
+	ReadDir(dirname string) ([]os.FileInfo, error)
+}
+
 // An FS is an abstraction over commonly-used functions in the os and ioutil
 // packages.
 type FS interface {
@@ -70,7 +76,7 @@ func MkdirAll(fs MkdirStater, path string, perm os.FileMode) error {
 }
 
 // walk recursively walks fs from path.
-func walk(fs FS, path string, walkFn filepath.WalkFunc, info os.FileInfo, err error) error {
+func walk(fs LstatReadDirer, path string, walkFn filepath.WalkFunc, info os.FileInfo, err error) error {
 	if err != nil {
 		return walkFn(path, info, err)
 	}
@@ -100,7 +106,7 @@ func walk(fs FS, path string, walkFn filepath.WalkFunc, info os.FileInfo, err er
 
 // Walk is the equivalent of filepath.Walk but operates on fs. Entries are
 // returned in lexicographical order.
-func Walk(fs FS, path string, walkFn filepath.WalkFunc) error {
+func Walk(fs LstatReadDirer, path string, walkFn filepath.WalkFunc) error {
 	info, err := fs.Lstat(path)
 	return walk(fs, path, walkFn, info, err)
 }
