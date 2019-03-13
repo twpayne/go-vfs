@@ -54,7 +54,7 @@ func (is infosByName) Swap(i, j int)      { is[i], is[j] = is[j], is[i] }
 
 // MkdirAll is equivalent to os.MkdirAll but operates on fs.
 func MkdirAll(fs MkdirStater, path string, perm os.FileMode) error {
-	if parentDir := filepath.Dir(path); parentDir != "." {
+	if parentDir := filepath.Dir(path); parentDir != "/" && parentDir != "." {
 		info, err := fs.Stat(parentDir)
 		if err != nil && os.IsNotExist(err) {
 			if mkdirAllErr := MkdirAll(fs, parentDir, perm); mkdirAllErr != nil {
