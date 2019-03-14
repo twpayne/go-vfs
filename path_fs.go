@@ -111,7 +111,7 @@ func (p *PathFS) OpenFile(name string, flag int, perm os.FileMode) (*os.File, er
 	return p.fs.OpenFile(realName, flag, perm)
 }
 
-// ReadDir implenents ioutil.ReadDir.
+// ReadDir implements ioutil.ReadDir.
 func (p *PathFS) ReadDir(dirname string) ([]os.FileInfo, error) {
 	realDirname, err := p.join("ReadDir", dirname)
 	if err != nil {

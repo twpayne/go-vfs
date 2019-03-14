@@ -67,7 +67,7 @@ func (r *ReadOnlyFS) OpenFile(name string, flag int, perm os.FileMode) (*os.File
 	return r.fs.OpenFile(name, flag, perm)
 }
 
-// ReadDir implenents ioutil.ReadDir.
+// ReadDir implements ioutil.ReadDir.
 func (r *ReadOnlyFS) ReadDir(dirname string) ([]os.FileInfo, error) {
 	return r.fs.ReadDir(dirname)
 }
