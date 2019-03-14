@@ -3,7 +3,6 @@
 package vfs
 
 import (
-	"fmt"
 	"os"
 	"path/filepath"
 	"sort"
@@ -54,25 +53,46 @@ func (is infosByName) Swap(i, j int)      { is[i], is[j] = is[j], is[i] }
 
 // MkdirAll is equivalent to os.MkdirAll but operates on fs.
 func MkdirAll(fs MkdirStater, path string, perm os.FileMode) error {
-	if parentDir := filepath.Dir(path); parentDir != "/" && parentDir != "." {
-		info, err := fs.Stat(parentDir)
-		if err != nil && os.IsNotExist(err) {
-			if mkdirAllErr := MkdirAll(fs, parentDir, perm); mkdirAllErr != nil {
-				return mkdirAllErr
-			}
-		} else if err != nil {
-			return err
-		} else if err == nil && !info.IsDir() {
-			return fmt.Errorf("%s: not a directory", parentDir)
-		}
-	}
-	info, err := fs.Stat(path)
-	if err != nil && !os.IsNotExist(err) {
-		return err
-	} else if err == nil && info.IsDir() {
+	err := fs.Mkdir(path, perm)
+	switch {
+	case err == nil:
+		// Mkdir was successful.
 		return nil
+	case os.IsExist(err):
+		// path already exists, but we don't know whether it's a directory or
+		// something else. We get this error if we try to create a subdirectory
+		// of a non-directory, for example if the parent directory of path is a
+		// file. There's a race condition here between the call to Mkdir and the
+		// call to Stat but we can't avoid it because there's not enough
+		// information in the returned error from Mkdir. We need to distinguish
+		// between "path already exists and is already a directory" and "path
+		// already exists and is not a directory". Between the call to Mkdir and
+		// the call to Stat path might have changed.
+		info, statErr := fs.Stat(path)
+		if statErr != nil {
+			return statErr
+		}
+		if !info.IsDir() {
+			return err
+		}
+		return nil
+	case os.IsNotExist(err):
+		// Parent directory does not exist. Create the parent directory
+		// recursively, then try again.
+		parentDir := filepath.Dir(path)
+		if parentDir == "/" || parentDir == "." {
+			// We cannot create the root directory or the current directory, so
+			// return the original error.
+			return err
+		}
+		if err := MkdirAll(fs, parentDir, perm); err != nil {
+			return nil
+		}
+		return fs.Mkdir(path, perm)
+	default:
+		// Some other error.
+		return err
 	}
-	return fs.Mkdir(path, perm)
 }
 
 // walk recursively walks fs from path.
