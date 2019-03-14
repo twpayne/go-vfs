@@ -105,10 +105,10 @@ func ExampleNewTestFS() {
 		fs, cleanup, err := vfst.NewTestFS(map[string]interface{}{
 			"/home/user/.bashrc": "# contents of user's .bashrc\n",
 		})
-		defer cleanup()
 		if err != nil {
 			t.Fatal(err)
 		}
+		defer cleanup()
 
 		vfst.RunTests(t, fs, "bashrc",
 			vfst.TestPath("/home/user/.bashrc",

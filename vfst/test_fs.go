@@ -17,7 +17,7 @@ type TestFS struct {
 func newTestFS() (*TestFS, func(), error) {
 	tempDir, err := ioutil.TempDir("", "go-vfs-vfst")
 	if err != nil {
-		return nil, func() {}, err
+		return nil, nil, err
 	}
 	t := &TestFS{
 		PathFS:  *vfs.NewPathFS(vfs.OSFS, tempDir),
@@ -32,11 +32,11 @@ func NewTestFS(root interface{}, builderOptions ...BuilderOption) (*TestFS, func
 	fs, cleanup, err := newTestFS()
 	if err != nil {
 		cleanup()
-		return nil, func() {}, err
+		return nil, nil, err
 	}
 	if err := NewBuilder(builderOptions...).Build(fs, root); err != nil {
 		cleanup()
-		return nil, func() {}, err
+		return nil, nil, err
 	}
 	return fs, cleanup, nil
 }
