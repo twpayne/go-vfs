@@ -5,7 +5,6 @@ package vfs
 import (
 	"os"
 	"path/filepath"
-	"sort"
 	"time"
 )
 
@@ -13,12 +12,6 @@ import (
 type MkdirStater interface {
 	Mkdir(name string, perm os.FileMode) error
 	Stat(name string) (os.FileInfo, error)
-}
-
-// A LstatReadDirer implements all the functionality needed by Walk.
-type LstatReadDirer interface {
-	Lstat(name string) (os.FileInfo, error)
-	ReadDir(dirname string) ([]os.FileInfo, error)
 }
 
 // An FS is an abstraction over commonly-used functions in the os and ioutil
@@ -44,12 +37,6 @@ type FS interface {
 	Truncate(name string, size int64) error
 	WriteFile(filename string, data []byte, perm os.FileMode) error
 }
-
-type infosByName []os.FileInfo
-
-func (is infosByName) Len() int           { return len(is) }
-func (is infosByName) Less(i, j int) bool { return is[i].Name() < is[j].Name() }
-func (is infosByName) Swap(i, j int)      { is[i], is[j] = is[j], is[i] }
 
 // MkdirAll is equivalent to os.MkdirAll but operates on fs.
 func MkdirAll(fs MkdirStater, path string, perm os.FileMode) error {
@@ -93,40 +80,4 @@ func MkdirAll(fs MkdirStater, path string, perm os.FileMode) error {
 		// Some other error.
 		return err
 	}
-}
-
-// walk recursively walks fs from path.
-func walk(fs LstatReadDirer, path string, walkFn filepath.WalkFunc, info os.FileInfo, err error) error {
-	if err != nil {
-		return walkFn(path, info, err)
-	}
-	err = walkFn(path, info, nil)
-	if !info.IsDir() {
-		return err
-	}
-	if err == filepath.SkipDir {
-		return nil
-	}
-	infos, err := fs.ReadDir(path)
-	if err != nil {
-		return err
-	}
-	sort.Sort(infosByName(infos))
-	for _, info := range infos {
-		name := info.Name()
-		if name == "." || name == ".." {
-			continue
-		}
-		if err := walk(fs, filepath.Join(path, info.Name()), walkFn, info, nil); err != nil {
-			return err
-		}
-	}
-	return nil
-}
-
-// Walk is the equivalent of filepath.Walk but operates on fs. Entries are
-// returned in lexicographical order.
-func Walk(fs LstatReadDirer, path string, walkFn filepath.WalkFunc) error {
-	info, err := fs.Lstat(path)
-	return walk(fs, path, walkFn, info, err)
 }
