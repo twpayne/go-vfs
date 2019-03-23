@@ -54,8 +54,9 @@ type FS interface {
 To use `vfs`, you write your code to use the `FS` interface, and then use
 `vfst` to test it.
 
-`vfs` also provides functions `MkdirAll` (equivalent to `os.MkdirAll`) and
-`Walk` (equivalent to `filepath.Walk`) that operate on an `FS`.
+`vfs` also provides functions `MkdirAll` (equivalent to `os.MkdirAll`),
+`Contains` (an improved `filepath.HasPrefix`), and `Walk` (equivalent to
+`filepath.Walk`) that operate on an `FS`.
 
 The implementations of `FS` provided are:
 
