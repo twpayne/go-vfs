@@ -3,6 +3,7 @@ package vfs
 import (
 	"os"
 	"path/filepath"
+	"syscall"
 )
 
 // A Stater implements Stat.
@@ -25,11 +26,40 @@ func HasPrefix(fs Stater, p, prefix string) (bool, error) {
 			if os.SameFile(fi, prefixFI) {
 				return true, nil
 			}
+			goto TryParent
 		case os.IsNotExist(err):
-			// Do nothing and skip ahead to trying p's parent directory.
+			goto TryParent
+		case os.IsPermission(err):
+			goto TryParent
 		default:
+			// Remove any os.PathError or os.SyscallError wrapping, if present.
+			for {
+				if pathError, ok := err.(*os.PathError); ok {
+					err = pathError.Err
+				} else if syscallError, ok := err.(*os.SyscallError); ok {
+					err = syscallError.Err
+				} else {
+					break
+				}
+			}
+			// Ignore some syscall.Errnos.
+			if errno, ok := err.(syscall.Errno); ok {
+				switch errno {
+				case syscall.ELOOP:
+					goto TryParent
+				case syscall.EMLINK:
+					goto TryParent
+				case syscall.ENAMETOOLONG:
+					goto TryParent
+				case syscall.ENOENT:
+					goto TryParent
+				case syscall.EOVERFLOW:
+					goto TryParent
+				}
+			}
 			return false, err
 		}
+	TryParent:
 		parentDir := filepath.Dir(p)
 		if parentDir == p {
 			// Return when we stop making progress.

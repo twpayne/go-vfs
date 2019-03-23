@@ -1,6 +1,7 @@
 package vfst
 
 import (
+	"strings"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -161,6 +162,57 @@ func TestHasPrefix(t *testing.T) {
 				{
 					p:        "/home/symlink/notexistpath",
 					prefix:   "/home/user",
+					expected: true,
+				},
+			},
+		},
+		{
+			name: "loop",
+			root: map[string]interface{}{
+				"/home/user": &Symlink{Target: "user"},
+			},
+			tests: []test{
+				{
+					p:         "/home/user",
+					prefix:    "/home/user",
+					expectErr: true,
+				},
+				{
+					p:         "/home/user/notexistpath",
+					prefix:    "/home/user",
+					expectErr: true,
+				},
+				{
+					p:         "/home/user/notexistdir/notexistpath",
+					prefix:    "/home/user",
+					expectErr: true,
+				},
+				{
+					p:        "/home/user/notexistdir/notexistpath",
+					prefix:   "/home",
+					expected: true,
+				},
+			},
+		},
+		{
+			name: "long_filename",
+			root: map[string]interface{}{
+				"/home/user": &Dir{Perm: 0755},
+			},
+			tests: []test{
+				{
+					p:        "/home/user/" + strings.Repeat("filename", 1024*1024), // 8MB filename
+					prefix:   "/home/user",
+					expected: true,
+				},
+				{
+					p:        "/home/user/" + strings.Repeat("filename", 1024*1024), // 8MB filename
+					prefix:   "/home",
+					expected: true,
+				},
+				{
+					p:        "/home/user/" + strings.Repeat("filename", 1024*1024), // 8MB filename
+					prefix:   "/",
 					expected: true,
 				},
 			},
