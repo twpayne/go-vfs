@@ -9,18 +9,17 @@ easy to test.
 
 ## Key features
 
- * File system abstraction layer for commonly-used `os` and `ioutil` functions
+* File system abstraction layer for commonly-used `os` and `ioutil` functions
    from the standard library.
 
- * Powerful and easy-to-use declarative testing framework, `vfst`. You declare
-   the desired state of the filesystem after your code has run, and `vfst`
-tests that the filesystem matches that state. For a quick tour of `vfst`'s
-features, see [the examples in the
-documentation](https://godoc.org/github.com/twpayne/go-vfs/vfst#pkg-examples).
+* Powerful and easy-to-use declarative testing framework, `vfst`. You declare
+   the desired state of the filesystem after your code has run, and `vfst` tests
+   that the filesystem matches that state. For a quick tour of `vfst`'s
+   features, see [the examples in the
+   documentation](https://godoc.org/github.com/twpayne/go-vfs/vfst#pkg-examples).
 
- * Compatibility with
-   [`github.com/spf13/afero`](https://github.com/spf13/afero) and
-[`github.com/src-d/go-billy`](https://github.com/src-d/go-billy).
+* Compatibility with [`github.com/spf13/afero`](https://github.com/spf13/afero)
+   and [`github.com/src-d/go-billy`](https://github.com/src-d/go-billy).
 
 ## Quick start
 
@@ -60,13 +59,13 @@ To use `vfs`, you write your code to use the `FS` interface, and then use
 
 The implementations of `FS` provided are:
 
- * `OSFS` which calls the underlying `os` and `ioutil` functions directly.
+* `OSFS` which calls the underlying `os` and `ioutil` functions directly.
 
- * `PathFS` which transforms all paths to provide a poor-man's `chroot`.
+* `PathFS` which transforms all paths to provide a poor-man's `chroot`.
 
- * `ReadOnlyFS` which prevents modification of the underlying FS.
+* `ReadOnlyFS` which prevents modification of the underlying FS.
 
- * `TestFS` which assists running tests on a real filesystem but in a temporary
+* `TestFS` which assists running tests on a real filesystem but in a temporary
    directory that is easily cleaned up.
 
 Example usage:
@@ -109,7 +108,6 @@ func TestWriteConfigFile(t *testing.T) {
 }
 ```
 
-
 ## `github.com/spf13/afero` compatibility
 
 There is a compatibility shim for
@@ -119,7 +117,6 @@ This allows you to use `vfst` to test existing code that uses
 [`afero.FS`](https://godoc.org/github.com/spf13/afero#Fs). See [the
 documentation](https://godoc.org/github.com/twpayne/go-vfsafero) for an
 example.
-
 
 ## `github.com/src-d/go-billy` compatibility
 
@@ -131,29 +128,27 @@ This allows you to use `vfst` to test existing code that uses
 See [the documentation](https://godoc.org/github.com/twpayne/go-vfsbilly) for
 an example.
 
-
 ## Motivation
 
 `vfs` was inspired by
 [`github.com/spf13/afero`](https://github.com/spf13/afero). So, why not use
 `afero`?
 
- * `afero` has several critical bugs in its in-memory mock filesystem
+* `afero` has several critical bugs in its in-memory mock filesystem
    implementation `MemMapFs`, to the point that it is unusable for non-trivial
-test cases. `vfs` does not attempt to implement an in-memory mock filesystem,
-and instead only provides a thin layer around the standard library's `os` and
-`ioutil` packages, and as such should have fewer bugs.
+   test cases. `vfs` does not attempt to implement an in-memory mock filesystem,
+   and instead only provides a thin layer around the standard library's `os` and
+   `ioutil` packages, and as such should have fewer bugs.
 
- * `afero` does not support creating or reading symbolic links, and its
+* `afero` does not support creating or reading symbolic links, and its
    `LstatIfPossible` interface is clumsy to use as it is not part of the
-`afero.Fs` interface. `vfs` provides out-of-the-box support for symbolic links
-with all methods in the `FS` interface.
+   `afero.Fs` interface. `vfs` provides out-of-the-box support for symbolic
+   links with all methods in the `FS` interface.
 
- * `afero` has been effectively abandoned by its author, and a "friendly fork"
+* `afero` has been effectively abandoned by its author, and a "friendly fork"
    ([`github.com/absfs/afero`](https://github.com/absfs/afero)) has not seen
-much activity. `vfs`, by providing much less functionality than `afero`, should
-be smaller and easier to maintain.
-
+   much activity. `vfs`, by providing much less functionality than `afero`,
+   should be smaller and easier to maintain.
 
 ## License
 
