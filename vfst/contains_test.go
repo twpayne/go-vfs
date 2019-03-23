@@ -9,7 +9,7 @@ import (
 	vfs "github.com/twpayne/go-vfs"
 )
 
-func TestHasPrefix(t *testing.T) {
+func TestContains(t *testing.T) {
 	type test struct {
 		p         string
 		prefix    string
@@ -223,7 +223,7 @@ func TestHasPrefix(t *testing.T) {
 			require.NoError(t, err)
 			defer cleanup()
 			for _, test := range tc.tests {
-				actual, err := vfs.HasPrefix(fs, test.p, test.prefix)
+				actual, err := vfs.Contains(fs, test.p, test.prefix)
 				if test.expectErr {
 					assert.Error(t, err)
 				} else {

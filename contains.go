@@ -11,10 +11,10 @@ type Stater interface {
 	Stat(string) (os.FileInfo, error)
 }
 
-// HasPrefix returns true if p or any parent of p is the same file as prefix.
-// prefix must exist, but p may not. It is an expensive but accurate alternative
-// to the deprecated filepath.HasPrefix.
-func HasPrefix(fs Stater, p, prefix string) (bool, error) {
+// Contains returns true if p is reachable by traversing through prefix. prefix
+// must exist, but p may not. It is an expensive but accurate alternative to the
+// deprecated filepath.HasPrefix.
+func Contains(fs Stater, p, prefix string) (bool, error) {
 	prefixFI, err := fs.Stat(prefix)
 	if err != nil {
 		return false, err
