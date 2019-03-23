@@ -6,7 +6,8 @@ import (
 	"syscall"
 )
 
-// A Stater implements Stat.
+// A Stater implements Stat. It is assumed that the os.FileInfos returned by
+// Stat are compatible with os.SameFile.
 type Stater interface {
 	Stat(string) (os.FileInfo, error)
 }
