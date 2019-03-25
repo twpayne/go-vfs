@@ -3,6 +3,7 @@
 [![GoDoc](https://godoc.org/github.com/twpayne/go-vfs?status.svg)](https://godoc.org/github.com/twpayne/go-vfs)
 [![Build Status](https://travis-ci.org/twpayne/go-vfs.svg?branch=master)](https://travis-ci.org/twpayne/go-vfs)
 [![Report Card](https://goreportcard.com/badge/github.com/twpayne/go-vfs)](https://goreportcard.com/report/github.com/twpayne/go-vfs)
+[![Coverage Status](https://coveralls.io/repos/github/twpayne/go-vfs/badge.svg)](https://coveralls.io/github/twpayne/go-vfs)
 
 Package `vfs` provides an abstraction of the `os` and `ioutil` packages that is
 easy to test.
