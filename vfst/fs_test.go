@@ -29,7 +29,6 @@ func TestWalk(t *testing.T) {
 			return filepath.SkipDir
 		}
 		return nil
-
 	}); err != nil {
 		t.Errorf("vfs.Walk(...) == %v, want <nil>", err)
 	}
