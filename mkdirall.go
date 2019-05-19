@@ -46,7 +46,7 @@ func MkdirAll(fs MkdirStater, path string, perm os.FileMode) error {
 			return err
 		}
 		if err := MkdirAll(fs, parentDir, perm); err != nil {
-			return nil
+			return err
 		}
 		return fs.Mkdir(path, perm)
 	default:

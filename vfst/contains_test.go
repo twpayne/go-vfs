@@ -1,6 +1,7 @@
 package vfst
 
 import (
+	"runtime"
 	"strings"
 	"testing"
 
@@ -109,9 +110,13 @@ func TestContains(t *testing.T) {
 		},
 		{
 			name: "symlink_dir",
-			root: map[string]interface{}{
-				"/home/user/file": "contents",
-				"/home/symlink":   &Symlink{Target: "user"},
+			root: []interface{}{
+				map[string]interface{}{
+					"/home/user/file": "contents",
+				},
+				map[string]interface{}{
+					"/home/symlink": &Symlink{Target: "user"},
+				},
 			},
 			tests: []test{
 				{
@@ -194,6 +199,9 @@ func TestContains(t *testing.T) {
 				},
 			},
 		},
+
+		// Windows has a maximum path length of 260 chars ( - 12 if creating a directory)
+		// so these tests are expected to error out on that platform.
 		{
 			name: "long_filename",
 			root: map[string]interface{}{
@@ -201,19 +209,22 @@ func TestContains(t *testing.T) {
 			},
 			tests: []test{
 				{
-					p:        "/home/user/" + strings.Repeat("filename", 1024*1024), // 8MB filename
-					prefix:   "/home/user",
-					expected: true,
+					p:         "/home/user/" + strings.Repeat("filename", 1024*1024), // 8MB filename
+					prefix:    "/home/user",
+					expectErr: runtime.GOOS == "windows",
+					expected:  true,
 				},
 				{
-					p:        "/home/user/" + strings.Repeat("filename", 1024*1024), // 8MB filename
-					prefix:   "/home",
-					expected: true,
+					p:         "/home/user/" + strings.Repeat("filename", 1024*1024), // 8MB filename
+					prefix:    "/home",
+					expectErr: runtime.GOOS == "windows",
+					expected:  true,
 				},
 				{
-					p:        "/home/user/" + strings.Repeat("filename", 1024*1024), // 8MB filename
-					prefix:   "/",
-					expected: true,
+					p:         "/home/user/" + strings.Repeat("filename", 1024*1024), // 8MB filename
+					prefix:    "/",
+					expectErr: runtime.GOOS == "windows",
+					expected:  true,
 				},
 			},
 		},

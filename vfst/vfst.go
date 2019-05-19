@@ -80,6 +80,14 @@ func NewBuilder(options ...BuilderOption) *Builder {
 // build is a recursive helper for Build.
 func (b *Builder) build(fs vfs.FS, path string, i interface{}) error {
 	switch i := i.(type) {
+	case []interface{}:
+		for _, element := range i {
+			if err := b.build(fs, path, element); err != nil {
+				return err
+			}
+		}
+		return nil
+
 	case *Dir:
 		if parentDir := filepath.Dir(path); parentDir != "." {
 			if err := b.MkdirAll(fs, parentDir, 0777); err != nil {
