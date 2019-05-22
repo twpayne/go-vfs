@@ -215,11 +215,10 @@ func (p *PathFS) WriteFile(filename string, data []byte, perm os.FileMode) error
 	return p.fs.WriteFile(realFilename, data, perm)
 }
 
-// join returns p's path joined with name. incoming path names
-// should always use / as a separator, while outgoing paths
-// should use the appropriate separator for the current path
-// mainly because on Windows paths without a volume specifier
-// are never absolute, meaning that this check will always fail
+// join returns p's path joined with name. incoming path names should always use
+// / as a separator, while outgoing paths should use the appropriate separator
+// for the current path mainly because on Windows paths without a volume
+// specifier are never absolute, meaning that this check will always fail.
 func (p *PathFS) join(op string, name string) (string, error) {
 	name = filepath.ToSlash(name)
 	if !path.IsAbs(name) {
