@@ -257,11 +257,15 @@ func TestErrors(t *testing.T) {
 			}
 			defer cleanup()
 			b := NewBuilder(BuilderVerbose(true))
-			root := map[string]interface{}{
-				"/home/user/.bashrc": "# bashrc\n",
-				"/home/user/empty":   []byte{},
-				"/home/user/symlink": &Symlink{Target: "empty"},
-				"/home/user/foo":     &Dir{Perm: 0755},
+			root := []interface{}{
+				map[string]interface{}{
+					"/home/user/.bashrc": "# bashrc\n",
+					"/home/user/empty":   []byte{},
+					"/home/user/foo":     &Dir{Perm: 0755},
+				},
+				map[string]interface{}{
+					"/home/user/symlink": &Symlink{Target: "empty"},
+				},
 			}
 			if err := b.Build(fs, root); err != nil {
 				t.Fatalf("b.Build(fs, root) == %v, want <nil>", err)

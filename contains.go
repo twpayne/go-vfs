@@ -56,6 +56,10 @@ func Contains(fs Stater, p, prefix string) (bool, error) {
 					goto TryParent
 				case syscall.EOVERFLOW:
 					goto TryParent
+				default:
+					if shouldSkipSystemError(errno) {
+						goto TryParent
+					}
 				}
 			}
 			return false, err
