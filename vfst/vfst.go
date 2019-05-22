@@ -87,7 +87,6 @@ func (b *Builder) build(fs vfs.FS, path string, i interface{}) error {
 			}
 		}
 		return nil
-
 	case *Dir:
 		if parentDir := filepath.Dir(path); parentDir != "." {
 			if err := b.MkdirAll(fs, parentDir, 0777); err != nil {
