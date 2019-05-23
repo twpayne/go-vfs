@@ -20,7 +20,7 @@ func newTestFS() (*TestFS, func(), error) {
 		return nil, nil, err
 	}
 	t := &TestFS{
-		PathFS:  *vfs.NewPathFS(vfs.OSFS, tempDir),
+		PathFS:  *vfs.NewPathFS(vfs.HostOSFS, tempDir),
 		tempDir: tempDir,
 		keep:    false,
 	}

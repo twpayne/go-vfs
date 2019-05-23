@@ -2,6 +2,7 @@
 
 [![GoDoc](https://godoc.org/github.com/twpayne/go-vfs?status.svg)](https://godoc.org/github.com/twpayne/go-vfs)
 [![Build Status](https://travis-ci.org/twpayne/go-vfs.svg?branch=master)](https://travis-ci.org/twpayne/go-vfs)
+[![Build status](https://ci.appveyor.com/api/projects/status/v53b59r5iivoadyr/branch/master?svg=true)](https://ci.appveyor.com/project/twpayne/go-vfs/branch/master)
 [![Report Card](https://goreportcard.com/badge/github.com/twpayne/go-vfs)](https://goreportcard.com/report/github.com/twpayne/go-vfs)
 [![Coverage Status](https://coveralls.io/repos/github/twpayne/go-vfs/badge.svg)](https://coveralls.io/github/twpayne/go-vfs)
 
@@ -67,8 +68,12 @@ The implementations of `FS` provided are:
 
 * `ReadOnlyFS` which prevents modification of the underlying FS.
 
+* `WindowsOSFS` which overrides `Chmod` to work on Windows.
+
+* `HostOSFS` which is `WindowsOSFS` on Windows, `OSFS` elsewhere.
+
 * `TestFS` which assists running tests on a real filesystem but in a temporary
-   directory that is easily cleaned up.
+   directory that is easily cleaned up. It uses `HostOSFS` under the hood.
 
 Example usage:
 
