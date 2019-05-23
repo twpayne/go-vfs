@@ -67,6 +67,10 @@ The implementations of `FS` provided are:
 
 * `ReadOnlyFS` which prevents modification of the underlying FS.
 
+* `WindowsOSFS` which overrides `Chmod` to work on Windows.
+
+* `HostOSFS` which is `WindowsOSFS` on Windows, `OSFS` elsewhere.
+
 * `TestFS` which assists running tests on a real filesystem but in a temporary
    directory that is easily cleaned up.
 
