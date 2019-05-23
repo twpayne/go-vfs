@@ -72,7 +72,7 @@ The implementations of `FS` provided are:
 * `HostOSFS` which is `WindowsOSFS` on Windows, `OSFS` elsewhere.
 
 * `TestFS` which assists running tests on a real filesystem but in a temporary
-   directory that is easily cleaned up.
+   directory that is easily cleaned up. It uses `HostOSFS` under the hood.
 
 Example usage:
 
