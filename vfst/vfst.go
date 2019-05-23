@@ -180,13 +180,23 @@ func (b *Builder) Mkdir(fs vfs.FS, path string, perm os.FileMode) error {
 // permissions perm. It is idempotent and will not file if path already exists
 // and is a directory.
 func (b *Builder) MkdirAll(fs vfs.FS, path string, perm os.FileMode) error {
-	if info, err := fs.Lstat(path); os.IsNotExist(err) {
-		// fallthrough to fs.MkdirAll
-	} else if err == nil && !info.IsDir() {
-		return fmt.Errorf("%s: not a directory", path)
-	} else if err != nil {
+	// Check path.
+	info, err := fs.Lstat(path)
+	switch {
+	case err != nil && os.IsNotExist(err):
+		// path does not exist, fallthrough to create.
+	case err == nil && info.IsDir():
+		// path already exists and is a directory.
+		return nil
+	case err == nil && !info.IsDir():
+		// path already exists, but is not a directory.
+		return err
+	default:
+		// Some other error.
 		return err
 	}
+
+	// Create path.
 	if b.verbose {
 		log.Printf("mkdir -p -m 0%o %s", perm&^b.umask, path)
 	}
@@ -197,13 +207,15 @@ func (b *Builder) MkdirAll(fs vfs.FS, path string, perm os.FileMode) error {
 // missing parent directories with default permissions. It is idempotent and
 // will not fail if the symbolic link already exists and points to oldname.
 func (b *Builder) Symlink(fs vfs.FS, oldname, newname string) error {
-	if info, err := fs.Lstat(newname); os.IsNotExist(err) {
-		// fallthrough to fs.Symlink
-	} else if err == nil && info.Mode()&os.ModeType != os.ModeSymlink {
+	// Check newname.
+	info, err := fs.Lstat(newname)
+	switch {
+	case err == nil && info.Mode()&os.ModeType != os.ModeSymlink:
+		// newname exists, but it's not a symlink.
 		return fmt.Errorf("%s: not a symbolic link", newname)
-	} else if err != nil {
-		return err
-	} else {
+	case err == nil:
+		// newname exists, and it's a symlink. Check that it is a symlink to
+		// oldname.
 		gotTarget, err := fs.Readlink(newname)
 		if err != nil {
 			return err
@@ -212,7 +224,14 @@ func (b *Builder) Symlink(fs vfs.FS, oldname, newname string) error {
 			return fmt.Errorf("%s: has target %s, want %s", newname, gotTarget, oldname)
 		}
 		return nil
+	case os.IsNotExist(err):
+		// newname does not exist, fallthrough to create.
+	default:
+		// Some other error, return it.
+		return err
 	}
+
+	// Create newname.
 	if err := b.MkdirAll(fs, filepath.Dir(newname), 0777); err != nil {
 		return err
 	}
