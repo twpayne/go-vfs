@@ -8,14 +8,16 @@ go:
 
 install:
   - go mod download
-  - go get golang.org/x/tools/cmd/cover
-  - go get github.com/mattn/goveralls
+  - make install-tools
 
 script:
-  - go test -v ./...
-  - go test -cover -race ./...
-  - go vet ./...
-  - go test -covermode=count -coverprofile=coverage.out ./...
-  - "[ -n \"$COVERALLS_TOKEN\" ] && goveralls -coverprofile=coverage.out -service=travis-ci -repotoken $COVERALLS_TOKEN"
+  - make format
+  - git diff --exit-code
+  - go mod tidy
+  - git diff --exit-code
+  - make test
+  - make lint
+  - make coverage.out
+  - if [ "$TRAVIS_PULL_REQUEST" = "false" ]; then goveralls -coverprofile=coverage.out -service=travis-ci -repotoken $COVERALLS_TOKEN; fi
 
 sudo: false
