@@ -4,6 +4,7 @@ import (
 	"os"
 	"path"
 	"path/filepath"
+	"strings"
 	"syscall"
 	"time"
 )
@@ -220,6 +221,8 @@ func (p *PathFS) WriteFile(filename string, data []byte, perm os.FileMode) error
 // for the current path mainly because on Windows paths without a volume
 // specifier are never absolute, meaning that this check will always fail.
 func (p *PathFS) join(op string, name string) (string, error) {
+    // remove any volume names before appending the prefix
+    name = strings.Replace(name, filepath.VolumeName(name), "", 1)
 	name = filepath.ToSlash(name)
 	if !path.IsAbs(name) {
 		return "", &os.PathError{
