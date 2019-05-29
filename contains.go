@@ -45,21 +45,8 @@ func Contains(fs Stater, p, prefix string) (bool, error) {
 			}
 			// Ignore some syscall.Errnos.
 			if errno, ok := err.(syscall.Errno); ok {
-				switch errno {
-				case syscall.ELOOP:
+				if _, ignore := ignoreErrnoInContains[errno]; ignore {
 					goto TryParent
-				case syscall.EMLINK:
-					goto TryParent
-				case syscall.ENAMETOOLONG:
-					goto TryParent
-				case syscall.ENOENT:
-					goto TryParent
-				case syscall.EOVERFLOW:
-					goto TryParent
-				default:
-					if shouldSkipSystemError(errno) {
-						goto TryParent
-					}
 				}
 			}
 			return false, err

@@ -12,6 +12,15 @@ import (
 // HostOSFS is the host-specific OSFS.
 var HostOSFS = WindowsOSFS{}
 
+var ignoreErrnoInContains = map[syscall.Errno]struct{}{
+	syscall.ELOOP:                       {},
+	syscall.EMLINK:                      {},
+	syscall.ENAMETOOLONG:                {},
+	syscall.ENOENT:                      {},
+	syscall.EOVERFLOW:                   {},
+	windows.ERROR_CANT_RESOLVE_FILENAME: {},
+}
+
 // relativizePath, on Windows, strips any leading volume name from path and
 // replaces backslashes with slashes.
 func relativizePath(path string) string {
@@ -19,8 +28,4 @@ func relativizePath(path string) string {
 		path = path[len(volumeName):]
 	}
 	return filepath.ToSlash(path)
-}
-
-func shouldSkipSystemError(err syscall.Errno) bool {
-	return err == windows.ERROR_CANT_RESOLVE_FILENAME
 }
