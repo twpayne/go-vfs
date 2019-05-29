@@ -220,6 +220,11 @@ func (p *PathFS) WriteFile(filename string, data []byte, perm os.FileMode) error
 // for the current path mainly because on Windows paths without a volume
 // specifier are never absolute, meaning that this check will always fail.
 func (p *PathFS) join(op string, name string) (string, error) {
+	// remove any volume names before appending the prefix
+	if volumeName := filepath.VolumeName(name); volumeName != "" {
+		name = name[len(volumeName):]
+	}
+
 	name = filepath.ToSlash(name)
 	if !path.IsAbs(name) {
 		return "", &os.PathError{
