@@ -16,8 +16,8 @@ type WindowsOSFS struct {
 	osfs
 }
 
-func (WindowsOSFS) Chmod(name string, fileMode os.FileMode) error {
-	return acl.Chmod(name, fileMode)
+func (WindowsOSFS) Chmod(name string, mode os.FileMode) error {
+	return acl.Chmod(name, mode)
 }
 
 // WriteFile implements ioutil.WriteFile.
