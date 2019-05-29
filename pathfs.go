@@ -20,7 +20,7 @@ type PathFS struct {
 // path.
 func NewPathFS(fs FS, path string) *PathFS {
 	return &PathFS{
-		path: path,
+		path: filepath.ToSlash(path),
 		fs:   fs,
 	}
 }
@@ -215,17 +215,9 @@ func (p *PathFS) WriteFile(filename string, data []byte, perm os.FileMode) error
 	return p.fs.WriteFile(realFilename, data, perm)
 }
 
-// join returns p's path joined with name. incoming path names should always use
-// / as a separator, while outgoing paths should use the appropriate separator
-// for the current path mainly because on Windows paths without a volume
-// specifier are never absolute, meaning that this check will always fail.
+// join returns p's path joined with name.
 func (p *PathFS) join(op string, name string) (string, error) {
-	// remove any volume names before appending the prefix
-	if volumeName := filepath.VolumeName(name); volumeName != "" {
-		name = name[len(volumeName):]
-	}
-
-	name = filepath.ToSlash(name)
+	name = relativizePath(name)
 	if !path.IsAbs(name) {
 		return "", &os.PathError{
 			Op:   op,
