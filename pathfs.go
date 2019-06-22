@@ -4,6 +4,7 @@ import (
 	"os"
 	"path"
 	"path/filepath"
+	"strings"
 	"syscall"
 	"time"
 )
@@ -59,6 +60,22 @@ func (p *PathFS) Create(name string) (*os.File, error) {
 		return nil, err
 	}
 	return p.fs.Create(realName)
+}
+
+// Glob implements filepath.Glob.
+func (p *PathFS) Glob(pattern string) ([]string, error) {
+	realPattern, err := p.join("Glob", pattern)
+	if err != nil {
+		return nil, err
+	}
+	matches, err := p.fs.Glob(realPattern)
+	if err != nil {
+		return nil, err
+	}
+	for i, match := range matches {
+		matches[i] = strings.TrimPrefix(match, p.path)
+	}
+	return matches, nil
 }
 
 // Join returns p's path joined with name.

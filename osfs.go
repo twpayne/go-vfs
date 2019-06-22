@@ -3,6 +3,7 @@ package vfs
 import (
 	"io/ioutil"
 	"os"
+	"path/filepath"
 	"time"
 )
 
@@ -29,6 +30,11 @@ func (osfs) Chtimes(name string, atime, mtime time.Time) error {
 // Create implements os.Create.
 func (osfs) Create(name string) (*os.File, error) {
 	return os.Create(name)
+}
+
+// Glob implements filepath.Glob.
+func (osfs) Glob(pattern string) ([]string, error) {
+	return filepath.Glob(pattern)
 }
 
 // Lchown implements os.Lchown.
