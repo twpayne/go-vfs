@@ -14,6 +14,7 @@ type FS interface {
 	Chown(name string, uid, git int) error
 	Chtimes(name string, atime, mtime time.Time) error
 	Create(name string) (*os.File, error)
+	Glob(pattern string) ([]string, error)
 	Lchown(name string, uid, git int) error
 	Lstat(name string) (os.FileInfo, error)
 	Mkdir(name string, perm os.FileMode) error

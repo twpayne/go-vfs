@@ -39,6 +39,11 @@ func (r *ReadOnlyFS) Create(name string) (*os.File, error) {
 	return nil, permError("Create", name)
 }
 
+// Glob implements filepath.Glob.
+func (r *ReadOnlyFS) Glob(pattern string) ([]string, error) {
+	return r.fs.Glob(pattern)
+}
+
 // Lchown implements os.Lchown.
 func (r *ReadOnlyFS) Lchown(name string, uid, gid int) error {
 	return permError("Lchown", name)
