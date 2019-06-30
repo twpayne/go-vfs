@@ -3,6 +3,8 @@ package vfst
 import (
 	"errors"
 	"os"
+	"path/filepath"
+	"strings"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -264,6 +266,58 @@ func TestErrors(t *testing.T) {
 			}
 			require.NoError(t, b.Build(fs, root))
 			assert.Error(t, f(b, fs))
+		})
+	}
+}
+
+func TestGlob(t *testing.T) {
+	fs, cleanup, err := NewTestFS(map[string]interface{}{
+		"/home/user/.bash_profile": "# contents of .bash_profile\n",
+		"/home/user/.bashrc":       "# contents of .bashrc\n",
+		"/home/user/.zshrc":        "# contents of .zshrc\n",
+	})
+	require.NoError(t, err)
+	defer cleanup()
+	for _, tc := range []struct {
+		name            string
+		pattern         string
+		expectedMatches []string
+	}{
+		{
+			name:    "all",
+			pattern: "/home/user/*",
+			expectedMatches: []string{
+				"/home/user/.bash_profile",
+				"/home/user/.bashrc",
+				"/home/user/.zshrc",
+			},
+		},
+		{
+			name:    "star_rc",
+			pattern: "/home/user/*rc",
+			expectedMatches: []string{
+				"/home/user/.bashrc",
+				"/home/user/.zshrc",
+			},
+		},
+		{
+			name:    "all_subdir",
+			pattern: "/home/*/*",
+			expectedMatches: []string{
+				"/home/user/.bash_profile",
+				"/home/user/.bashrc",
+				"/home/user/.zshrc",
+			},
+		},
+	} {
+		t.Run(tc.name, func(t *testing.T) {
+			matches, err := fs.Glob(tc.pattern)
+			require.NoError(t, err)
+			assert.Len(t, matches, len(tc.expectedMatches))
+			for i, match := range matches {
+				assert.True(t, filepath.IsAbs(match))
+				assert.Equal(t, tc.expectedMatches[i], strings.TrimPrefix(match, filepath.VolumeName(matches[i])))
+			}
 		})
 	}
 }
