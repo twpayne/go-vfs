@@ -2,7 +2,10 @@
 
 package vfs
 
-import "syscall"
+import (
+	"strings"
+	"syscall"
+)
 
 // HostOSFS is the host-specific OSFS.
 var HostOSFS = OSFS
@@ -18,4 +21,9 @@ var ignoreErrnoInContains = map[syscall.Errno]struct{}{
 // relativizePath, on POSIX systems, just returns path.
 func relativizePath(path string) string {
 	return path
+}
+
+// trimPrefix, on POSIX systems, trims prefix from path.
+func trimPrefix(path, prefix string) (string, error) {
+	return strings.TrimPrefix(path, prefix), nil
 }

@@ -4,7 +4,6 @@ import (
 	"os"
 	"path"
 	"path/filepath"
-	"strings"
 	"syscall"
 	"time"
 )
@@ -73,16 +72,10 @@ func (p *PathFS) Glob(pattern string) ([]string, error) {
 		return nil, err
 	}
 	for i, match := range matches {
-		// even on Windows, PathFS uses /-separated paths, so this
-		// TrimPrefix wouldn't remove anything without this conversion
-		// Also, Glob is expected to return absolute paths, which on Windows
-		// must contain a volume specifier, so use filepath.Abs to add one
-		newpath, err := filepath.Abs(strings.TrimPrefix(filepath.ToSlash(match), p.path))
+		matches[i], err = trimPrefix(match, p.path)
 		if err != nil {
 			return nil, err
 		}
-
-		matches[i] = newpath
 	}
 	return matches, nil
 }
