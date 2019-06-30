@@ -3,9 +3,10 @@ package vfst
 import (
 	"os"
 	"path/filepath"
-	"reflect"
 	"testing"
 
+	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 	vfs "github.com/twpayne/go-vfs"
 )
 
@@ -15,24 +16,18 @@ func TestWalk(t *testing.T) {
 		"/home/user/skip/foo": "bar",
 		"/home/user/symlink":  &Symlink{Target: "baz"},
 	})
-	if err != nil {
-		t.Fatal(err)
-	}
+	require.NoError(t, err)
 	defer cleanup()
 	pathTypeMap := make(map[string]os.FileMode)
-	if err := vfs.Walk(fs, "/", func(path string, info os.FileInfo, err error) error {
+	require.NoError(t, vfs.Walk(fs, "/", func(path string, info os.FileInfo, err error) error {
+		assert.NoError(t, err)
 		pathTypeMap[filepath.ToSlash(path)] = info.Mode() & os.ModeType
-		if err != nil {
-			t.Errorf("walkFn(%q, %v, %v) called, want err == <nil>", path, info, err)
-		}
 		if filepath.Base(path) == "skip" {
 			return filepath.SkipDir
 		}
 		return nil
-	}); err != nil {
-		t.Errorf("vfs.Walk(...) == %v, want <nil>", err)
-	}
-	wantPathTypeMap := map[string]os.FileMode{
+	}))
+	expectedPathTypeMap := map[string]os.FileMode{
 		"/":                  os.ModeDir,
 		"/home":              os.ModeDir,
 		"/home/user":         os.ModeDir,
@@ -40,7 +35,5 @@ func TestWalk(t *testing.T) {
 		"/home/user/skip":    os.ModeDir,
 		"/home/user/symlink": os.ModeSymlink,
 	}
-	if !reflect.DeepEqual(pathTypeMap, wantPathTypeMap) {
-		t.Errorf("pathTypeMap == %+v, want %+v", pathTypeMap, wantPathTypeMap)
-	}
+	assert.Equal(t, expectedPathTypeMap, pathTypeMap)
 }

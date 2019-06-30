@@ -2,10 +2,13 @@ package vfst
 
 import (
 	"errors"
-	"log"
 	"os"
+	"path/filepath"
+	"strings"
 	"testing"
 
+	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 	vfs "github.com/twpayne/go-vfs"
 )
 
@@ -120,9 +123,7 @@ func TestBuilderBuild(t *testing.T) {
 	} {
 		t.Run(tc.name, func(t *testing.T) {
 			fs, cleanup, err := NewTestFS(tc.root, BuilderUmask(tc.umask), BuilderVerbose(true))
-			if err != nil {
-				t.Fatal(err)
-			}
+			require.NoError(t, err)
 			defer cleanup()
 			RunTests(t, fs, "", tc.tests)
 		})
@@ -152,9 +153,7 @@ func TestCoverage(t *testing.T) {
 			},
 		},
 	})
-	if err != nil {
-		log.Fatal(err)
-	}
+	require.NoError(t, err)
 	defer cleanup()
 	RunTests(t, fs, "", []interface{}{
 		TestPath("/home",
@@ -252,9 +251,7 @@ func TestErrors(t *testing.T) {
 	} {
 		t.Run(name, func(t *testing.T) {
 			fs, cleanup, err := newTestFS()
-			if err != nil {
-				t.Fatal(err)
-			}
+			require.NoError(t, err)
 			defer cleanup()
 			b := NewBuilder(BuilderVerbose(true))
 			root := []interface{}{
@@ -267,11 +264,59 @@ func TestErrors(t *testing.T) {
 					"/home/user/symlink": &Symlink{Target: "empty"},
 				},
 			}
-			if err := b.Build(fs, root); err != nil {
-				t.Fatalf("b.Build(fs, root) == %v, want <nil>", err)
-			}
-			if err := f(b, fs); err == nil {
-				t.Error("got <nil>, want !<nil>")
+			require.NoError(t, b.Build(fs, root))
+			assert.Error(t, f(b, fs))
+		})
+	}
+}
+
+func TestGlob(t *testing.T) {
+	fs, cleanup, err := NewTestFS(map[string]interface{}{
+		"/home/user/.bash_profile": "# contents of .bash_profile\n",
+		"/home/user/.bashrc":       "# contents of .bashrc\n",
+		"/home/user/.zshrc":        "# contents of .zshrc\n",
+	})
+	require.NoError(t, err)
+	defer cleanup()
+	for _, tc := range []struct {
+		name            string
+		pattern         string
+		expectedMatches []string
+	}{
+		{
+			name:    "all",
+			pattern: "/home/user/*",
+			expectedMatches: []string{
+				"/home/user/.bash_profile",
+				"/home/user/.bashrc",
+				"/home/user/.zshrc",
+			},
+		},
+		{
+			name:    "star_rc",
+			pattern: "/home/user/*rc",
+			expectedMatches: []string{
+				"/home/user/.bashrc",
+				"/home/user/.zshrc",
+			},
+		},
+		{
+			name:    "all_subdir",
+			pattern: "/home/*/*",
+			expectedMatches: []string{
+				"/home/user/.bash_profile",
+				"/home/user/.bashrc",
+				"/home/user/.zshrc",
+			},
+		},
+	} {
+		t.Run(tc.name, func(t *testing.T) {
+			matches, err := fs.Glob(tc.pattern)
+			require.NoError(t, err)
+			assert.Len(t, matches, len(tc.expectedMatches))
+			for i, match := range matches {
+				assert.True(t, filepath.IsAbs(match))
+				assert.Equal(t, tc.expectedMatches[i], strings.TrimPrefix(match, filepath.VolumeName(matches[i])))
 			}
 		})
 	}
@@ -306,21 +351,15 @@ func TestIdempotency(t *testing.T) {
 	} {
 		t.Run(name, func(t *testing.T) {
 			fs, cleanup, err := newTestFS()
-			if err != nil {
-				t.Fatal(err)
-			}
+			require.NoError(t, err)
 			defer cleanup()
 			b := NewBuilder(BuilderVerbose(true))
 			root := map[string]interface{}{
 				"/home/user/.bashrc": "# bashrc\n",
 				"/home/user/symlink": &Symlink{Target: ".bashrc"},
 			}
-			if err := b.Build(fs, root); err != nil {
-				t.Fatalf("b.Build(fs, root) == %v, want <nil>", err)
-			}
-			if err := f(b, fs); err != nil {
-				t.Errorf("got %v, want <nil>", err)
-			}
+			require.NoError(t, b.Build(fs, root))
+			assert.NoError(t, f(b, fs))
 		})
 	}
 }

@@ -1,9 +1,10 @@
-//+build windows
+// +build windows
 
 package vfs
 
 import (
 	"path/filepath"
+	"strings"
 	"syscall"
 
 	"golang.org/x/sys/windows"
@@ -28,4 +29,14 @@ func relativizePath(path string) string {
 		path = path[len(volumeName):]
 	}
 	return filepath.ToSlash(path)
+}
+
+// trimPrefix, on Windows, trims prefix from path and returns an absolute path.
+// prefix must be a /-separated path.
+func trimPrefix(path, prefix string) (string, error) {
+	trimmedPath, err := filepath.Abs(strings.TrimPrefix(filepath.ToSlash(path), prefix))
+	if err != nil {
+		return "", err
+	}
+	return filepath.ToSlash(trimmedPath), nil
 }
