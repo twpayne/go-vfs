@@ -2,10 +2,11 @@ package vfst
 
 import (
 	"errors"
-	"log"
 	"os"
 	"testing"
 
+	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 	vfs "github.com/twpayne/go-vfs"
 )
 
@@ -120,9 +121,7 @@ func TestBuilderBuild(t *testing.T) {
 	} {
 		t.Run(tc.name, func(t *testing.T) {
 			fs, cleanup, err := NewTestFS(tc.root, BuilderUmask(tc.umask), BuilderVerbose(true))
-			if err != nil {
-				t.Fatal(err)
-			}
+			require.NoError(t, err)
 			defer cleanup()
 			RunTests(t, fs, "", tc.tests)
 		})
@@ -152,9 +151,7 @@ func TestCoverage(t *testing.T) {
 			},
 		},
 	})
-	if err != nil {
-		log.Fatal(err)
-	}
+	require.NoError(t, err)
 	defer cleanup()
 	RunTests(t, fs, "", []interface{}{
 		TestPath("/home",
@@ -252,9 +249,7 @@ func TestErrors(t *testing.T) {
 	} {
 		t.Run(name, func(t *testing.T) {
 			fs, cleanup, err := newTestFS()
-			if err != nil {
-				t.Fatal(err)
-			}
+			require.NoError(t, err)
 			defer cleanup()
 			b := NewBuilder(BuilderVerbose(true))
 			root := []interface{}{
@@ -267,12 +262,8 @@ func TestErrors(t *testing.T) {
 					"/home/user/symlink": &Symlink{Target: "empty"},
 				},
 			}
-			if err := b.Build(fs, root); err != nil {
-				t.Fatalf("b.Build(fs, root) == %v, want <nil>", err)
-			}
-			if err := f(b, fs); err == nil {
-				t.Error("got <nil>, want !<nil>")
-			}
+			require.NoError(t, b.Build(fs, root))
+			assert.Error(t, f(b, fs))
 		})
 	}
 }
@@ -306,21 +297,15 @@ func TestIdempotency(t *testing.T) {
 	} {
 		t.Run(name, func(t *testing.T) {
 			fs, cleanup, err := newTestFS()
-			if err != nil {
-				t.Fatal(err)
-			}
+			require.NoError(t, err)
 			defer cleanup()
 			b := NewBuilder(BuilderVerbose(true))
 			root := map[string]interface{}{
 				"/home/user/.bashrc": "# bashrc\n",
 				"/home/user/symlink": &Symlink{Target: ".bashrc"},
 			}
-			if err := b.Build(fs, root); err != nil {
-				t.Fatalf("b.Build(fs, root) == %v, want <nil>", err)
-			}
-			if err := f(b, fs); err != nil {
-				t.Errorf("got %v, want <nil>", err)
-			}
+			require.NoError(t, b.Build(fs, root))
+			assert.NoError(t, f(b, fs))
 		})
 	}
 }
