@@ -287,26 +287,26 @@ func TestGlob(t *testing.T) {
 			name:    "all",
 			pattern: "/home/user/*",
 			expectedMatches: []string{
-				"/home/user/.bash_profile",
-				"/home/user/.bashrc",
-				"/home/user/.zshrc",
+				filepath.FromSlash("/home/user/.bash_profile"),
+				filepath.FromSlash("/home/user/.bashrc"),
+				filepath.FromSlash("/home/user/.zshrc"),
 			},
 		},
 		{
 			name:    "star_rc",
 			pattern: "/home/user/*rc",
 			expectedMatches: []string{
-				"/home/user/.bashrc",
-				"/home/user/.zshrc",
+				filepath.FromSlash("/home/user/.bashrc"),
+				filepath.FromSlash("/home/user/.zshrc"),
 			},
 		},
 		{
 			name:    "all_subdir",
 			pattern: "/home/*/*",
 			expectedMatches: []string{
-				"/home/user/.bash_profile",
-				"/home/user/.bashrc",
-				"/home/user/.zshrc",
+				filepath.FromSlash("/home/user/.bash_profile"),
+				filepath.FromSlash("/home/user/.bashrc"),
+				filepath.FromSlash("/home/user/.zshrc"),
 			},
 		},
 	} {
