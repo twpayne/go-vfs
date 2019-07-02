@@ -287,26 +287,26 @@ func TestGlob(t *testing.T) {
 			name:    "all",
 			pattern: "/home/user/*",
 			expectedMatches: []string{
-				filepath.FromSlash("/home/user/.bash_profile"),
-				filepath.FromSlash("/home/user/.bashrc"),
-				filepath.FromSlash("/home/user/.zshrc"),
+				"/home/user/.bash_profile",
+				"/home/user/.bashrc",
+				"/home/user/.zshrc",
 			},
 		},
 		{
 			name:    "star_rc",
 			pattern: "/home/user/*rc",
 			expectedMatches: []string{
-				filepath.FromSlash("/home/user/.bashrc"),
-				filepath.FromSlash("/home/user/.zshrc"),
+				"/home/user/.bashrc",
+				"/home/user/.zshrc",
 			},
 		},
 		{
 			name:    "all_subdir",
 			pattern: "/home/*/*",
 			expectedMatches: []string{
-				filepath.FromSlash("/home/user/.bash_profile"),
-				filepath.FromSlash("/home/user/.bashrc"),
-				filepath.FromSlash("/home/user/.zshrc"),
+				"/home/user/.bash_profile",
+				"/home/user/.bashrc",
+				"/home/user/.zshrc",
 			},
 		},
 	} {
@@ -316,7 +316,7 @@ func TestGlob(t *testing.T) {
 			assert.Len(t, matches, len(tc.expectedMatches))
 			for i, match := range matches {
 				assert.True(t, filepath.IsAbs(match))
-				assert.Equal(t, tc.expectedMatches[i], strings.TrimPrefix(match, filepath.VolumeName(matches[i])))
+				assert.Equal(t, filepath.FromSlash(tc.expectedMatches[i]), strings.TrimPrefix(match, filepath.VolumeName(matches[i])))
 			}
 		})
 	}
