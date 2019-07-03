@@ -62,6 +62,11 @@ func (osfs) OpenFile(name string, flag int, perm os.FileMode) (*os.File, error) 
 	return os.OpenFile(name, flag, perm)
 }
 
+// RawPath returns the path to path on the underlying filesystem.
+func (osfs) RawPath(path string) (string, error) {
+	return path, nil
+}
+
 // ReadDir implements ioutil.ReadDir.
 func (osfs) ReadDir(dirname string) ([]os.FileInfo, error) {
 	return ioutil.ReadDir(dirname)
