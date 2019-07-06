@@ -1,6 +1,8 @@
 linters:
   enable-all: true
-  disable:
-    - gochecknoglobals
-    - lll
-    - scopelint
+
+issues:
+  exclude-rules:
+    - linters:
+        - scopelint
+      path: "_test\\.go"

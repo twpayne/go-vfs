@@ -285,6 +285,7 @@ func runTests(t *testing.T, fs vfs.FS, name string, test interface{}) {
 	case []Test:
 		for i, test := range test {
 			t.Run(prefix+strconv.Itoa(i), func(t *testing.T) {
+				//nolint:scopelint
 				test(t, fs)
 			})
 		}
@@ -296,6 +297,7 @@ func runTests(t *testing.T, fs vfs.FS, name string, test interface{}) {
 		sort.Strings(testNames)
 		for _, testName := range testNames {
 			t.Run(prefix+testName, func(t *testing.T) {
+				//nolint:scopelint
 				test[testName](t, fs)
 			})
 		}
@@ -345,6 +347,7 @@ func TestContentsString(wantContentsStr string) PathTest {
 
 // testDoesNotExist is a PathTest that verifies that a file or directory does
 // not exist.
+//nolint:gochecknoglobals
 var testDoesNotExist = func(t *testing.T, fs vfs.FS, path string) {
 	_, err := fs.Lstat(path)
 	if got, want := os.IsNotExist(err), true; got != want {
@@ -354,9 +357,11 @@ var testDoesNotExist = func(t *testing.T, fs vfs.FS, path string) {
 
 // TestDoesNotExist is a PathTest that verifies that a file or directory does
 // not exist.
+//nolint:gochecknoglobals
 var TestDoesNotExist PathTest = testDoesNotExist
 
 // TestIsDir is a PathTest that verifies that the path is a directory.
+//nolint:gochecknoglobals
 var TestIsDir = TestModeType(os.ModeDir)
 
 // TestModePerm returns a PathTest that verifies that the path's permissions
@@ -375,6 +380,7 @@ func TestModePerm(wantPerm os.FileMode) PathTest {
 }
 
 // TestModeIsRegular is a PathTest that tests that the path is a regular file.
+//nolint:gochecknoglobals
 var TestModeIsRegular = TestModeType(0)
 
 // TestModeType returns a PathTest that verifies that the path's mode type is
@@ -397,6 +403,7 @@ func TestPath(path string, pathTests ...PathTest) Test {
 	return func(t *testing.T, fs vfs.FS) {
 		for i, pathTest := range pathTests {
 			t.Run(strconv.Itoa(i), func(t *testing.T) {
+				//nolint:scopelint
 				pathTest(t, fs, path)
 			})
 		}
