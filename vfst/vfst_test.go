@@ -316,7 +316,9 @@ func TestGlob(t *testing.T) {
 			assert.Len(t, matches, len(tc.expectedMatches))
 			for i, match := range matches {
 				assert.True(t, filepath.IsAbs(match))
-				assert.Equal(t, filepath.FromSlash(tc.expectedMatches[i]), strings.TrimPrefix(match, filepath.VolumeName(matches[i])))
+				expected := filepath.FromSlash(tc.expectedMatches[i])
+				actual := strings.TrimPrefix(match, filepath.VolumeName(matches[i]))
+				assert.Equal(t, expected, actual)
 			}
 		})
 	}

@@ -1,7 +1,5 @@
 linters:
   enable-all: true
-  disable:
-    - lll
 
 issues:
   exclude-rules:
