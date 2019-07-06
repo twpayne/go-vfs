@@ -285,6 +285,7 @@ func runTests(t *testing.T, fs vfs.FS, name string, test interface{}) {
 	case []Test:
 		for i, test := range test {
 			t.Run(prefix+strconv.Itoa(i), func(t *testing.T) {
+				//nolint:scopelint
 				test(t, fs)
 			})
 		}
@@ -296,6 +297,7 @@ func runTests(t *testing.T, fs vfs.FS, name string, test interface{}) {
 		sort.Strings(testNames)
 		for _, testName := range testNames {
 			t.Run(prefix+testName, func(t *testing.T) {
+				//nolint:scopelint
 				test[testName](t, fs)
 			})
 		}
@@ -397,6 +399,7 @@ func TestPath(path string, pathTests ...PathTest) Test {
 	return func(t *testing.T, fs vfs.FS) {
 		for i, pathTest := range pathTests {
 			t.Run(strconv.Itoa(i), func(t *testing.T) {
+				//nolint:scopelint
 				pathTest(t, fs, path)
 			})
 		}
