@@ -8,8 +8,10 @@ import (
 )
 
 // HostOSFS is the host-specific OSFS.
+//nolint:gochecknoglobals
 var HostOSFS = OSFS
 
+//nolint:gochecknoglobals
 var ignoreErrnoInContains = map[syscall.Errno]struct{}{
 	syscall.ELOOP:        {},
 	syscall.EMLINK:       {},

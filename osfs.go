@@ -10,6 +10,7 @@ import (
 type osfs struct{}
 
 // OSFS is the FS that calls os and ioutil functions directly.
+//nolint:gochecknoglobals
 var OSFS = &osfs{}
 
 // Chmod implements os.Chmod.

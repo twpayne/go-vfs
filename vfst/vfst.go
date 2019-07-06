@@ -347,6 +347,7 @@ func TestContentsString(wantContentsStr string) PathTest {
 
 // testDoesNotExist is a PathTest that verifies that a file or directory does
 // not exist.
+//nolint:gochecknoglobals
 var testDoesNotExist = func(t *testing.T, fs vfs.FS, path string) {
 	_, err := fs.Lstat(path)
 	if got, want := os.IsNotExist(err), true; got != want {
@@ -356,9 +357,11 @@ var testDoesNotExist = func(t *testing.T, fs vfs.FS, path string) {
 
 // TestDoesNotExist is a PathTest that verifies that a file or directory does
 // not exist.
+//nolint:gochecknoglobals
 var TestDoesNotExist PathTest = testDoesNotExist
 
 // TestIsDir is a PathTest that verifies that the path is a directory.
+//nolint:gochecknoglobals
 var TestIsDir = TestModeType(os.ModeDir)
 
 // TestModePerm returns a PathTest that verifies that the path's permissions
@@ -377,6 +380,7 @@ func TestModePerm(wantPerm os.FileMode) PathTest {
 }
 
 // TestModeIsRegular is a PathTest that tests that the path is a regular file.
+//nolint:gochecknoglobals
 var TestModeIsRegular = TestModeType(0)
 
 // TestModeType returns a PathTest that verifies that the path's mode type is
