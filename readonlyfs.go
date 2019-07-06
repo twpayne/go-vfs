@@ -102,6 +102,11 @@ func (r *ReadOnlyFS) Rename(oldpath, newpath string) error {
 	return permError("Rename", oldpath)
 }
 
+// RawPath implements RawPath.
+func (r *ReadOnlyFS) RawPath(path string) (string, error) {
+	return r.fs.RawPath(path)
+}
+
 // Stat implements os.Stat.
 func (r *ReadOnlyFS) Stat(name string) (os.FileInfo, error) {
 	return r.fs.Stat(name)
