@@ -20,6 +20,7 @@ type FS interface {
 	Mkdir(name string, perm os.FileMode) error
 	Open(name string) (*os.File, error)
 	OpenFile(name string, flag int, perm os.FileMode) (*os.File, error)
+	RawPath(name string) (string, error)
 	ReadDir(dirname string) ([]os.FileInfo, error)
 	ReadFile(filename string) ([]byte, error)
 	Readlink(name string) (string, error)

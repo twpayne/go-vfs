@@ -130,6 +130,11 @@ func (p *PathFS) OpenFile(name string, flag int, perm os.FileMode) (*os.File, er
 	return p.fs.OpenFile(realName, flag, perm)
 }
 
+// RawPath implements RawPath.
+func (p *PathFS) RawPath(path string) (string, error) {
+	return p.join("RawPath", path)
+}
+
 // ReadDir implements ioutil.ReadDir.
 func (p *PathFS) ReadDir(dirname string) ([]os.FileInfo, error) {
 	realDirname, err := p.join("ReadDir", dirname)
