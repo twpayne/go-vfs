@@ -1,4 +1,6 @@
 linters:
+  disable:
+    - funlen
   enable-all: true
 
 issues:
