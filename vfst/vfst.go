@@ -10,7 +10,6 @@ import (
 	"path/filepath"
 	"sort"
 	"strconv"
-	"strings"
 	"testing"
 
 	vfs "github.com/twpayne/go-vfs"
@@ -342,24 +341,6 @@ func TestContentsString(wantContentsStr string) PathTest {
 	return func(t *testing.T, fs vfs.FS, path string) {
 		if gotContents, err := fs.ReadFile(path); err != nil || string(gotContents) != wantContentsStr {
 			t.Errorf("fs.ReadFile(%q) == %q, %v, want %q, <nil>", path, gotContents, err, wantContentsStr)
-		}
-	}
-}
-
-// TestContentsStringLines returns a PathTest that verifies the contents of the
-// file are equal to wantContentsStr, ignoring differences between Unix and
-// Windows line endings.
-func TestContentsStringLines(wantContentsStr string) PathTest {
-	return func(t *testing.T, fs vfs.FS, path string) {
-		gotContents, err := fs.ReadFile(path)
-		if err != nil {
-			t.Errorf("fs.ReadFile(%q) == %q, %v, want %q, <nil>", path, gotContents, err, wantContentsStr)
-			return
-		}
-		gotContentsStr := strings.Replace(string(gotContents), "\r\n", "\n", -1)
-		wantContentsStr = strings.Replace(wantContentsStr, "\r\n", "\n", -1)
-		if gotContentsStr != wantContentsStr {
-			t.Errorf("fs.ReadFile(%q) == %q, %v, want %q, <nil>", path, gotContentsStr, err, wantContentsStr)
 		}
 	}
 }
