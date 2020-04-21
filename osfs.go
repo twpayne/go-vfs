@@ -63,6 +63,11 @@ func (osfs) OpenFile(name string, flag int, perm os.FileMode) (*os.File, error) 
 	return os.OpenFile(name, flag, perm)
 }
 
+// PathSeparator returns os.PathSeparator.
+func (osfs) PathSeparator() rune {
+	return os.PathSeparator
+}
+
 // RawPath returns the path to path on the underlying filesystem.
 func (osfs) RawPath(path string) (string, error) {
 	return path, nil

@@ -130,6 +130,11 @@ func (p *PathFS) OpenFile(name string, flag int, perm os.FileMode) (*os.File, er
 	return p.fs.OpenFile(realName, flag, perm)
 }
 
+// PathSeparator implements PathSeparator.
+func (p *PathFS) PathSeparator() rune {
+	return p.fs.PathSeparator()
+}
+
 // RawPath implements RawPath.
 func (p *PathFS) RawPath(path string) (string, error) {
 	return p.join("RawPath", path)
