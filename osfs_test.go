@@ -1,3 +1,8 @@
 package vfs
 
-var _ FS = OSFS
+import "github.com/bmatcuk/doublestar"
+
+var (
+	_ FS            = OSFS
+	_ doublestar.OS = OSFS
+)
