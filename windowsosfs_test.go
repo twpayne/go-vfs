@@ -2,4 +2,9 @@
 
 package vfs
 
-var _ FS = WindowsOSFS{}
+import "github.com/bmatcuk/doublestar"
+
+var (
+	_ FS            = WindowsOSFS{}
+	_ doublestar.OS = WindowsOSFS{}
+)

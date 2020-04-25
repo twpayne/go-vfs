@@ -72,6 +72,11 @@ func (r *ReadOnlyFS) OpenFile(name string, flag int, perm os.FileMode) (*os.File
 	return r.fs.OpenFile(name, flag, perm)
 }
 
+// PathSeparator implements PathSeparator.
+func (r *ReadOnlyFS) PathSeparator() rune {
+	return r.fs.PathSeparator()
+}
+
 // ReadDir implements ioutil.ReadDir.
 func (r *ReadOnlyFS) ReadDir(dirname string) ([]os.FileInfo, error) {
 	return r.fs.ReadDir(dirname)

@@ -1,3 +1,8 @@
 package vfs
 
-var _ FS = &ReadOnlyFS{}
+import "github.com/bmatcuk/doublestar"
+
+var (
+	_ FS            = &ReadOnlyFS{}
+	_ doublestar.OS = &ReadOnlyFS{}
+)

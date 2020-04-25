@@ -1,3 +1,8 @@
 package vfs
 
-var _ FS = &PathFS{}
+import "github.com/bmatcuk/doublestar"
+
+var (
+	_ FS            = &PathFS{}
+	_ doublestar.OS = &PathFS{}
+)

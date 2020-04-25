@@ -7,6 +7,7 @@ import (
 	"strings"
 	"testing"
 
+	"github.com/bmatcuk/doublestar"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 	vfs "github.com/twpayne/go-vfs"
@@ -313,9 +314,63 @@ func TestGlob(t *testing.T) {
 		t.Run(tc.name, func(t *testing.T) {
 			matches, err := fs.Glob(tc.pattern)
 			require.NoError(t, err)
-			assert.Len(t, matches, len(tc.expectedMatches))
+			require.Len(t, matches, len(tc.expectedMatches))
 			for i, match := range matches {
 				assert.True(t, filepath.IsAbs(match))
+				expected := filepath.FromSlash(tc.expectedMatches[i])
+				actual := strings.TrimPrefix(match, filepath.VolumeName(matches[i]))
+				assert.Equal(t, expected, actual)
+			}
+		})
+	}
+}
+
+func TestDoublestarGlob(t *testing.T) {
+	fs, cleanup, err := NewTestFS(map[string]interface{}{
+		"/home/user/.bash_profile": "# contents of .bash_profile\n",
+		"/home/user/.bashrc":       "# contents of .bashrc\n",
+		"/home/user/.zshrc":        "# contents of .zshrc\n",
+	})
+	require.NoError(t, err)
+	defer cleanup()
+	for _, tc := range []struct {
+		name            string
+		pattern         string
+		expectedMatches []string
+	}{
+		{
+			name:    "all",
+			pattern: "/**",
+			expectedMatches: []string{
+				"/home",
+				"/home/user",
+				"/home/user/.bash_profile",
+				"/home/user/.bashrc",
+				"/home/user/.zshrc",
+			},
+		},
+		{
+			name:    "alternatives",
+			pattern: "/home/user/.{bash,zsh}rc",
+			expectedMatches: []string{
+				"/home/user/.bashrc",
+				"/home/user/.zshrc",
+			},
+		},
+		{
+			name:    "doublestar_star_rc",
+			pattern: "/**/*rc",
+			expectedMatches: []string{
+				"/home/user/.bashrc",
+				"/home/user/.zshrc",
+			},
+		},
+	} {
+		t.Run(tc.name, func(t *testing.T) {
+			matches, err := doublestar.GlobOS(fs, tc.pattern)
+			require.NoError(t, err)
+			require.Len(t, matches, len(tc.expectedMatches))
+			for i, match := range matches {
 				expected := filepath.FromSlash(tc.expectedMatches[i])
 				actual := strings.TrimPrefix(match, filepath.VolumeName(matches[i]))
 				assert.Equal(t, expected, actual)

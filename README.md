@@ -19,8 +19,10 @@ easy to test.
   see [the examples in the
   documentation](https://godoc.org/github.com/twpayne/go-vfs/vfst#pkg-examples).
 
-* Compatibility with [`github.com/spf13/afero`](https://github.com/spf13/afero)
-  and [`github.com/src-d/go-billy`](https://github.com/src-d/go-billy).
+* Compatibility with
+  [`github.com/bmatcuk/doublestar`](github.com/bmatcuk/doublestar),
+  [`github.com/spf13/afero`](https://github.com/spf13/afero) and
+  [`github.com/src-d/go-billy`](https://github.com/src-d/go-billy).
 
 ## Quick start
 
@@ -34,6 +36,7 @@ type FS interface {
     Chown(name string, uid, git int) error
     Chtimes(name string, atime, mtime time.Time) error
     Create(name string) (*os.File, error)
+    FileSeparator() rune
     Glob(pattern string) ([]string, error)
     Lchown(name string, uid, git int) error
     Lstat(name string) (os.FileInfo, error)
@@ -115,6 +118,19 @@ func TestWriteConfigFile(t *testing.T) {
     )
 }
 ```
+
+## `github.com/bmatcuk/doublestar` compatiblity
+
+`vfs.FS` is a superset of
+[`doublestar.OS`](https://pkg.go.dev/github.com/bmatcuk/doublestar?tab=doc#OS)
+which makes it compatible with
+[`github.com/bmatcuk/doublestar`](https://github.com/bmatcuk/doublestar)'s rich
+path pattern matching. You can directly pass a `vfs.FS` to the
+[`doublestar.GlobOS`](https://pkg.go.dev/github.com/bmatcuk/doublestar?tab=doc#GlobOS)
+and
+[`doublestar.PathMatchOS`](https://pkg.go.dev/github.com/bmatcuk/doublestar?tab=doc#PathMatchOS)
+functions.
+
 
 ## `github.com/spf13/afero` compatibility
 
