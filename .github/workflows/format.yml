@@ -22,5 +22,5 @@ jobs:
       uses: actions/checkout@v1
     - name: Check format
       run: |
-        find . -name \*.go | xargs $(go env GOPATH)/bin/gofumports -local github.com/twpayne/go-vfs -w
+        make format
         git diff --exit-code
