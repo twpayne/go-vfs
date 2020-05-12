@@ -1,26 +1,37 @@
 on:
-- push
-- pull_request
-name: test
+  push:
+    branches:
+    - master
+    tags:
+    - 'v*'
+  pull_request:
+name: go-vfs
 jobs:
-  format:
+  go-vfs:
+    name: Test
     strategy:
       matrix:
         go-version:
         - 1.14.x
         os:
+        - macos-latest
         - ubuntu-latest
+        - windows-latest
     runs-on: ${{ matrix.os }}
     steps:
     - name: Setup Go
       uses: actions/setup-go@v1
       with:
         go-version: ${{ matrix.go-version }}
-    - name: Install gofumports
-      run: GO111MODULE=off go get -u mvdan.cc/gofumpt/gofumports
     - name: Checkout
       uses: actions/checkout@v1
-    - name: Check format
+    - name: Go test
+      run: go test ./...
+    - name: Lint
+      if: matrix.os == 'ubuntu-latest'
+      run: make lint
+    - name: Check formatting
+      if: matrix.os == 'ubuntu-latest'
       run: |
         make format
         git diff --exit-code
