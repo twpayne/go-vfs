@@ -16,7 +16,7 @@ import (
 )
 
 // DefaultUmask is the default umask.
-const DefaultUmask = os.FileMode(022)
+const DefaultUmask = os.FileMode(0o22)
 
 // A Dir is a directory with a specified permissions and zero or more Entries.
 type Dir struct {
@@ -89,7 +89,7 @@ func (b *Builder) build(fs vfs.FS, path string, i interface{}) error {
 		return nil
 	case *Dir:
 		if parentDir := filepath.Dir(path); parentDir != "." {
-			if err := b.MkdirAll(fs, parentDir, 0777); err != nil {
+			if err := b.MkdirAll(fs, parentDir, 0o777); err != nil {
 				return err
 			}
 		}
@@ -108,7 +108,7 @@ func (b *Builder) build(fs vfs.FS, path string, i interface{}) error {
 		}
 		return nil
 	case map[string]interface{}:
-		if err := b.MkdirAll(fs, path, 0777); err != nil {
+		if err := b.MkdirAll(fs, path, 0o777); err != nil {
 			return err
 		}
 		entryNames := make([]string, 0, len(i))
@@ -123,7 +123,7 @@ func (b *Builder) build(fs vfs.FS, path string, i interface{}) error {
 		}
 		return nil
 	case map[string]string:
-		if err := b.MkdirAll(fs, path, 0777); err != nil {
+		if err := b.MkdirAll(fs, path, 0o777); err != nil {
 			return err
 		}
 		entryNames := make([]string, 0, len(i))
@@ -132,7 +132,7 @@ func (b *Builder) build(fs vfs.FS, path string, i interface{}) error {
 		}
 		sort.Strings(entryNames)
 		for _, entryName := range entryNames {
-			if err := b.WriteFile(fs, filepath.Join(path, entryName), []byte(i[entryName]), 0666); err != nil {
+			if err := b.WriteFile(fs, filepath.Join(path, entryName), []byte(i[entryName]), 0o666); err != nil {
 				return err
 			}
 		}
@@ -140,9 +140,9 @@ func (b *Builder) build(fs vfs.FS, path string, i interface{}) error {
 	case *File:
 		return b.WriteFile(fs, path, i.Contents, i.Perm)
 	case string:
-		return b.WriteFile(fs, path, []byte(i), 0666)
+		return b.WriteFile(fs, path, []byte(i), 0o666)
 	case []byte:
-		return b.WriteFile(fs, path, i, 0666)
+		return b.WriteFile(fs, path, i, 0o666)
 	case *Symlink:
 		return b.Symlink(fs, i.Target, path)
 	case nil:
@@ -232,7 +232,7 @@ func (b *Builder) Symlink(fs vfs.FS, oldname, newname string) error {
 	}
 
 	// Create newname.
-	if err := b.MkdirAll(fs, filepath.Dir(newname), 0777); err != nil {
+	if err := b.MkdirAll(fs, filepath.Dir(newname), 0o777); err != nil {
 		return err
 	}
 	if b.verbose {
@@ -264,7 +264,7 @@ func (b *Builder) WriteFile(fs vfs.FS, path string, contents []byte, perm os.Fil
 		}
 		return nil
 	}
-	if err := b.MkdirAll(fs, filepath.Dir(path), 0777); err != nil {
+	if err := b.MkdirAll(fs, filepath.Dir(path), 0o777); err != nil {
 		return err
 	}
 	if b.verbose {

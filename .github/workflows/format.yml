@@ -20,7 +20,7 @@ jobs:
       run: GO111MODULE=off go get -u mvdan.cc/gofumpt/gofumports
     - name: Checkout
       uses: actions/checkout@v1
-    - name: Format
-      run: find . -name \*.go | xargs $(go env GOPATH)/bin/gofumports -w
-    - name: Check diff
-      run: git diff --exit-code
+    - name: Check format
+      run: |
+        find . -name \*.go | xargs $(go env GOPATH)/bin/gofumports -local github.com/twpayne/go-vfs -w
+        git diff --exit-code

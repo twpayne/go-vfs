@@ -16,7 +16,7 @@ func ExampleNewTestFS_complex() {
 			"/home/user/empty":   []byte{},
 			// To set non-default permissions on a file, create an &vfst.File.
 			"/home/user/bin/hello.sh": &vfst.File{
-				Perm:     0755,
+				Perm:     0o755,
 				Contents: []byte("echo hello\n"),
 			},
 			// Directories can be nested.
@@ -28,7 +28,7 @@ func ExampleNewTestFS_complex() {
 			// To set non-default permissions on a directory, create an
 			// &vfst.Dir.
 			"/root": &vfst.Dir{
-				Perm: 0700,
+				Perm: 0o700,
 				Entries: map[string]interface{}{
 					".bashrc": "# contents of root's .bashrc\n",
 				},
@@ -47,15 +47,15 @@ func ExampleNewTestFS_complex() {
 			// Test multiple properties of a single path with TestPath.
 			vfst.TestPath("/home",
 				vfst.TestIsDir,
-				vfst.TestModePerm(0755),
+				vfst.TestModePerm(0o755),
 			),
 			vfst.TestPath("/home/user",
 				vfst.TestIsDir,
-				vfst.TestModePerm(0755),
+				vfst.TestModePerm(0o755),
 			),
 			vfst.TestPath("/home/user/.bashrc",
 				vfst.TestModeIsRegular,
-				vfst.TestModePerm(0644),
+				vfst.TestModePerm(0o644),
 				vfst.TestContentsString("# contents of user's .bashrc\n"),
 			),
 			// Maps with string keys create sub tests with testing.T.Run. The key
@@ -63,22 +63,22 @@ func ExampleNewTestFS_complex() {
 			map[string]interface{}{
 				"home_user_empty": vfst.TestPath("/home/user/empty",
 					vfst.TestModeIsRegular,
-					vfst.TestModePerm(0644),
+					vfst.TestModePerm(0o644),
 					vfst.TestSize(0),
 				),
 				"foo_bar_baz": vfst.TestPath("/home/user/foo/bar/baz",
 					vfst.TestModeIsRegular,
-					vfst.TestModePerm(0644),
+					vfst.TestModePerm(0o644),
 					vfst.TestContentsString("qux"),
 				),
 				"root": []interface{}{
 					vfst.TestPath("/root",
 						vfst.TestIsDir,
-						vfst.TestModePerm(0700),
+						vfst.TestModePerm(0o700),
 					),
 					vfst.TestPath("/root/.bashrc",
 						vfst.TestModeIsRegular,
-						vfst.TestModePerm(0644),
+						vfst.TestModePerm(0o644),
 						vfst.TestContentsString("# contents of root's .bashrc\n"),
 					),
 				},

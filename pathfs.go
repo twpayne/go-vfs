@@ -81,7 +81,7 @@ func (p *PathFS) Glob(pattern string) ([]string, error) {
 }
 
 // Join returns p's path joined with name.
-func (p *PathFS) Join(op string, name string) (string, error) {
+func (p *PathFS) Join(op, name string) (string, error) {
 	return p.join("Join", name)
 }
 
@@ -245,7 +245,7 @@ func (p *PathFS) WriteFile(filename string, data []byte, perm os.FileMode) error
 }
 
 // join returns p's path joined with name.
-func (p *PathFS) join(op string, name string) (string, error) {
+func (p *PathFS) join(op, name string) (string, error) {
 	name = relativizePath(name)
 	if !path.IsAbs(name) {
 		return "", &os.PathError{

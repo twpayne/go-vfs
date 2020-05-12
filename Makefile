@@ -1,3 +1,5 @@
+GOLANGCI_LINT_VERSION=1.26.0
+
 .PHONY: nothing
 nothing:
 
@@ -7,7 +9,7 @@ coverage.out:
 
 .PHONY: format
 format:
-	find . -name \*.go | xargs gofumports -w
+	find . -name \*.go | xargs gofumports -local github.com/twpayne/go-vfs -w
 
 .PHONY: html-coverage
 html-coverage:
@@ -15,7 +17,7 @@ html-coverage:
 
 .PHONY: install-tools
 install-tools:
-	curl -sfL https://install.goreleaser.com/github.com/golangci/golangci-lint.sh | sh -s -- v1.18.0
+	curl -sfL https://install.goreleaser.com/github.com/golangci/golangci-lint.sh | sh -s -- v1.26.0
 	GO111MODULE=off go get -u \
 		github.com/mattn/goveralls \
 		golang.org/x/tools/cmd/cover \
