@@ -119,9 +119,9 @@ func TestWriteConfigFile(t *testing.T) {
 }
 ```
 
-## `github.com/bmatcuk/doublestar` compatiblity
+## `github.com/bmatcuk/doublestar` compatibility
 
-`vfs.FS` is a superset of
+`vfs.FS` is a super set of
 [`doublestar.OS`](https://pkg.go.dev/github.com/bmatcuk/doublestar?tab=doc#OS)
 which makes it compatible with
 [`github.com/bmatcuk/doublestar`](https://github.com/bmatcuk/doublestar)'s rich
