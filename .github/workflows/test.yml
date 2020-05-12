@@ -8,11 +8,12 @@ jobs:
       matrix:
         go-version:
         - 1.13.x
-        platform:
+        - 1.14.x
+        os:
         - macos-latest
         - ubuntu-latest
         - windows-latest
-    runs-on: ${{ matrix.platform }}
+    runs-on: ${{ matrix.os }}
     steps:
     - name: Setup Go
       uses: actions/setup-go@v1
