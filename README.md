@@ -1,9 +1,7 @@
 # go-vfs
 
 [![GoDoc](https://godoc.org/github.com/twpayne/go-vfs?status.svg)](https://godoc.org/github.com/twpayne/go-vfs)
-[![Build status](https://ci.appveyor.com/api/projects/status/v53b59r5iivoadyr/branch/master?svg=true)](https://ci.appveyor.com/project/twpayne/go-vfs/branch/master)
 [![Report Card](https://goreportcard.com/badge/github.com/twpayne/go-vfs)](https://goreportcard.com/report/github.com/twpayne/go-vfs)
-[![Coverage Status](https://coveralls.io/repos/github/twpayne/go-vfs/badge.svg)](https://coveralls.io/github/twpayne/go-vfs)
 
 Package `vfs` provides an abstraction of the `os` and `ioutil` packages that is
 easy to test.
@@ -119,9 +117,9 @@ func TestWriteConfigFile(t *testing.T) {
 }
 ```
 
-## `github.com/bmatcuk/doublestar` compatiblity
+## `github.com/bmatcuk/doublestar` compatibility
 
-`vfs.FS` is a superset of
+`vfs.FS` is a super set of
 [`doublestar.OS`](https://pkg.go.dev/github.com/bmatcuk/doublestar?tab=doc#OS)
 which makes it compatible with
 [`github.com/bmatcuk/doublestar`](https://github.com/bmatcuk/doublestar)'s rich
