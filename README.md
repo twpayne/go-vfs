@@ -1,7 +1,6 @@
 # go-vfs
 
 [![GoDoc](https://godoc.org/github.com/twpayne/go-vfs?status.svg)](https://godoc.org/github.com/twpayne/go-vfs)
-[![Build status](https://ci.appveyor.com/api/projects/status/v53b59r5iivoadyr/branch/master?svg=true)](https://ci.appveyor.com/project/twpayne/go-vfs/branch/master)
 [![Report Card](https://goreportcard.com/badge/github.com/twpayne/go-vfs)](https://goreportcard.com/report/github.com/twpayne/go-vfs)
 [![Coverage Status](https://coveralls.io/repos/github/twpayne/go-vfs/badge.svg)](https://coveralls.io/github/twpayne/go-vfs)
 
