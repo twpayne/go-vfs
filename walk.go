@@ -53,3 +53,11 @@ func Walk(fs LstatReadDirer, path string, walkFn filepath.WalkFunc) error {
 	info, err := fs.Lstat(path)
 	return walk(fs, path, walkFn, info, err)
 }
+
+// WalkSlash is the equivalent of Walk but all paths are converted to use
+// forward slashes with filepath.ToSlash.
+func WalkSlash(fs LstatReadDirer, path string, walkFn filepath.WalkFunc) error {
+	return Walk(fs, path, func(path string, info os.FileInfo, err error) error {
+		return walkFn(filepath.ToSlash(path), info, err)
+	})
+}
