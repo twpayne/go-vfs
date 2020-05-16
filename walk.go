@@ -6,6 +6,9 @@ import (
 	"sort"
 )
 
+// SkipDir is filepath.SkipDir.
+var SkipDir = filepath.SkipDir
+
 // A LstatReadDirer implements all the functionality needed by Walk.
 type LstatReadDirer interface {
 	Lstat(name string) (os.FileInfo, error)

@@ -24,7 +24,7 @@ func TestWalk(t *testing.T) {
 		assert.NoError(t, err)
 		pathTypeMap[filepath.ToSlash(path)] = info.Mode() & os.ModeType
 		if filepath.Base(path) == "skip" {
-			return filepath.SkipDir
+			return vfs.SkipDir
 		}
 		return nil
 	}))
