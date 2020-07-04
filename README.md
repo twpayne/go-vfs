@@ -18,7 +18,7 @@ easy to test.
   documentation](https://godoc.org/github.com/twpayne/go-vfs/vfst#pkg-examples).
 
 * Compatibility with
-  [`github.com/bmatcuk/doublestar`](github.com/bmatcuk/doublestar),
+  [`github.com/bmatcuk/doublestar`](https://github.com/bmatcuk/doublestar),
   [`github.com/spf13/afero`](https://github.com/spf13/afero) and
   [`github.com/src-d/go-billy`](https://github.com/src-d/go-billy).
 
