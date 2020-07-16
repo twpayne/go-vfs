@@ -10,9 +10,6 @@ import (
 	"golang.org/x/sys/windows"
 )
 
-// HostOSFS is the host-specific OSFS.
-var HostOSFS = WindowsOSFS{}
-
 var ignoreErrnoInContains = map[syscall.Errno]struct{}{
 	syscall.ELOOP:                       {},
 	syscall.EMLINK:                      {},
