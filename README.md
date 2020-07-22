@@ -1,6 +1,6 @@
 # go-vfs
 
-[![GoDoc](https://godoc.org/github.com/twpayne/go-vfs?status.svg)](https://godoc.org/github.com/twpayne/go-vfs)
+[![PkgGoDev](https://pkg.go.dev/badge/github.com/twpayne/go-vfs)](https://pkg.go.dev/github.com/twpayne/go-vfs)
 [![Report Card](https://goreportcard.com/badge/github.com/twpayne/go-vfs)](https://goreportcard.com/report/github.com/twpayne/go-vfs)
 
 Package `vfs` provides an abstraction of the `os` and `ioutil` packages that is
