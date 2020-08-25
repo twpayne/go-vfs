@@ -10,10 +10,18 @@ import (
 	vfs "github.com/twpayne/go-vfs"
 )
 
+//nolint:gochecknoglobals
+var umask os.FileMode
+
+func init() {
+	umask = os.FileMode(syscall.Umask(0))
+	syscall.Umask(int(umask))
+}
+
 // permEqual returns if perm1 and perm2 represent the same permissions. On
 // Windows, it always returns true.
 func permEqual(perm1, perm2 os.FileMode) bool {
-	return perm1&os.ModePerm == perm2&os.ModePerm
+	return perm1&os.ModePerm&^umask == perm2&os.ModePerm&^umask
 }
 
 // TestSysNlink returns a PathTest that verifies that the the path's
