@@ -10,9 +10,6 @@ import (
 	vfs "github.com/twpayne/go-vfs"
 )
 
-//nolint:gochecknoglobals
-var umask os.FileMode
-
 func init() {
 	umask = os.FileMode(syscall.Umask(0))
 	syscall.Umask(int(umask))

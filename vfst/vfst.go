@@ -15,8 +15,8 @@ import (
 	vfs "github.com/twpayne/go-vfs"
 )
 
-// DefaultUmask is the default umask.
-const DefaultUmask = os.FileMode(0o22)
+//nolint:gochecknoglobals
+var umask os.FileMode
 
 // A Dir is a directory with a specified permissions and zero or more Entries.
 type Dir struct {
@@ -68,7 +68,7 @@ func BuilderVerbose(verbose bool) BuilderOption {
 // NewBuilder returns a new Builder with the given options set.
 func NewBuilder(options ...BuilderOption) *Builder {
 	b := &Builder{
-		umask:   DefaultUmask,
+		umask:   umask,
 		verbose: false,
 	}
 	for _, option := range options {
