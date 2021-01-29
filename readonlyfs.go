@@ -77,14 +77,14 @@ func (r *ReadOnlyFS) PathSeparator() rune {
 	return r.fs.PathSeparator()
 }
 
-// ReadDir implements ioutil.ReadDir.
-func (r *ReadOnlyFS) ReadDir(dirname string) ([]os.FileInfo, error) {
-	return r.fs.ReadDir(dirname)
+// ReadDir implements os.ReadDir.
+func (r *ReadOnlyFS) ReadDir(name string) ([]os.DirEntry, error) {
+	return r.fs.ReadDir(name)
 }
 
-// ReadFile implements ioutil.ReadFile.
-func (r *ReadOnlyFS) ReadFile(filename string) ([]byte, error) {
-	return r.fs.ReadFile(filename)
+// ReadFile implements os.ReadFile.
+func (r *ReadOnlyFS) ReadFile(name string) ([]byte, error) {
+	return r.fs.ReadFile(name)
 }
 
 // Readlink implments os.Readlink.
@@ -127,7 +127,7 @@ func (r *ReadOnlyFS) Truncate(name string, size int64) error {
 	return permError("Truncate", name)
 }
 
-// WriteFile implements ioutil.WriteFile.
+// WriteFile implements os.WriteFile.
 func (r *ReadOnlyFS) WriteFile(filename string, data []byte, perm os.FileMode) error {
 	return permError("WriteFile", filename)
 }

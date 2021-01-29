@@ -1,7 +1,6 @@
 package vfst
 
 import (
-	"io/ioutil"
 	"os"
 
 	vfs "github.com/twpayne/go-vfs"
@@ -15,7 +14,7 @@ type TestFS struct {
 }
 
 func newTestFS() (*TestFS, func(), error) {
-	tempDir, err := ioutil.TempDir("", "go-vfs-vfst")
+	tempDir, err := os.MkdirTemp("", "go-vfs-vfst")
 	if err != nil {
 		return nil, nil, err
 	}

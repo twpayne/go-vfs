@@ -140,8 +140,8 @@ func (p *PathFS) RawPath(path string) (string, error) {
 	return p.join("RawPath", path)
 }
 
-// ReadDir implements ioutil.ReadDir.
-func (p *PathFS) ReadDir(dirname string) ([]os.FileInfo, error) {
+// ReadDir implements os.ReadDir.
+func (p *PathFS) ReadDir(dirname string) ([]os.DirEntry, error) {
 	realDirname, err := p.join("ReadDir", dirname)
 	if err != nil {
 		return nil, err
@@ -149,13 +149,13 @@ func (p *PathFS) ReadDir(dirname string) ([]os.FileInfo, error) {
 	return p.fs.ReadDir(realDirname)
 }
 
-// ReadFile implements ioutil.ReadFile.
-func (p *PathFS) ReadFile(filename string) ([]byte, error) {
-	realFilename, err := p.join("ReadFile", filename)
+// ReadFile implements os.ReadFile.
+func (p *PathFS) ReadFile(name string) ([]byte, error) {
+	realName, err := p.join("ReadFile", name)
 	if err != nil {
 		return nil, err
 	}
-	return p.fs.ReadFile(realFilename)
+	return p.fs.ReadFile(realName)
 }
 
 // Readlink implements os.Readlink.
@@ -235,7 +235,7 @@ func (p *PathFS) Truncate(name string, size int64) error {
 	return p.fs.Truncate(realName, size)
 }
 
-// WriteFile implements ioutil.WriteFile.
+// WriteFile implements io.WriteFile.
 func (p *PathFS) WriteFile(filename string, data []byte, perm os.FileMode) error {
 	realFilename, err := p.join("WriteFile", filename)
 	if err != nil {

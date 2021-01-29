@@ -1,5 +1,5 @@
-// Package vfs provides an abstraction of the os and ioutil packages that is
-// easy to test.
+// Package vfs provides an abstraction of the os and io packages that is easy to
+// test.
 package vfs
 
 import (
@@ -7,7 +7,7 @@ import (
 	"time"
 )
 
-// An FS is an abstraction over commonly-used functions in the os and ioutil
+// An FS is an abstraction over commonly-used functions in the os and io
 // packages.
 type FS interface {
 	Chmod(name string, mode os.FileMode) error
@@ -22,7 +22,7 @@ type FS interface {
 	OpenFile(name string, flag int, perm os.FileMode) (*os.File, error)
 	PathSeparator() rune
 	RawPath(name string) (string, error)
-	ReadDir(dirname string) ([]os.FileInfo, error)
+	ReadDir(dirname string) ([]os.DirEntry, error)
 	ReadFile(filename string) ([]byte, error)
 	Readlink(name string) (string, error)
 	Remove(name string) error
