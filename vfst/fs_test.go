@@ -8,7 +8,7 @@ import (
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 
-	vfs "github.com/twpayne/go-vfs"
+	vfs "github.com/twpayne/go-vfs/v2"
 )
 
 func TestWalk(t *testing.T) {

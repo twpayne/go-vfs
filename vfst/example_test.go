@@ -3,7 +3,7 @@ package vfst_test
 import (
 	"testing"
 
-	"github.com/twpayne/go-vfs/vfst"
+	"github.com/twpayne/go-vfs/v2/vfst"
 )
 
 func ExampleNewTestFS_complex() {
