@@ -3,13 +3,13 @@
 [![PkgGoDev](https://pkg.go.dev/badge/github.com/twpayne/go-vfs)](https://pkg.go.dev/github.com/twpayne/go-vfs)
 [![Report Card](https://goreportcard.com/badge/github.com/twpayne/go-vfs)](https://goreportcard.com/report/github.com/twpayne/go-vfs)
 
-Package `vfs` provides an abstraction of the `os` and `ioutil` packages that is
-easy to test.
+Package `vfs` provides an abstraction of the `os` and `io` packages that is easy
+to test.
 
 ## Key features
 
-* File system abstraction layer for commonly-used `os` and `ioutil` functions
-  from the standard library.
+* File system abstraction layer for commonly-used `os` and `io` functions from
+  the standard library.
 
 * Powerful and easy-to-use declarative testing framework, `vfst`. You declare
   the desired state of the filesystem after your code has run, and `vfst` tests
@@ -26,7 +26,7 @@ easy to test.
 `vfs` provides implementations of the `FS` interface:
 
 ```go
-// An FS is an abstraction over commonly-used functions in the os and ioutil
+// An FS is an abstraction over commonly-used functions in the os and io
 // packages.
 type FS interface {
     Chmod(name string, mode os.FileMode) error
@@ -41,7 +41,7 @@ type FS interface {
     Open(name string) (*os.File, error)
     OpenFile(name string, flag int, perm os.ModePerm) (*os.File, error)
     RawPath(name string) (string, error)
-    ReadDir(dirname string) ([]os.FileInfo, error)
+    ReadDir(dirname string) ([]os.DirEntry, error)
     ReadFile(filename string) ([]byte, error)
     Readlink(name string) (string, error)
     Remove(name string) error
@@ -63,7 +63,7 @@ To use `vfs`, you write your code to use the `FS` interface, and then use
 
 The implementations of `FS` provided are:
 
-* `OSFS` which calls the underlying `os` and `ioutil` functions directly.
+* `OSFS` which calls the underlying `os` and `io` functions directly.
 
 * `PathFS` which transforms all paths to provide a poor-man's `chroot`.
 
@@ -141,7 +141,7 @@ example.
   implementation `MemMapFs`, to the point that it is unusable for non-trivial
   test cases. `vfs` does not attempt to implement an in-memory mock filesystem,
   and instead only provides a thin layer around the standard library's `os` and
-  `ioutil` packages, and as such should have fewer bugs.
+  `io` packages, and as such should have fewer bugs.
 
 * `afero` does not support creating or reading symbolic links, and its
   `LstatIfPossible` interface is clumsy to use as it is not part of the

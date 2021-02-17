@@ -1,5 +1,7 @@
 package vfs
 
+// FIXME implement path/filepath.WalkDir
+
 import (
 	"os"
 	"path/filepath"
@@ -13,14 +15,14 @@ var SkipDir = filepath.SkipDir
 // A LstatReadDirer implements all the functionality needed by Walk.
 type LstatReadDirer interface {
 	Lstat(name string) (os.FileInfo, error)
-	ReadDir(dirname string) ([]os.FileInfo, error)
+	ReadDir(name string) ([]os.DirEntry, error)
 }
 
-type infosByName []os.FileInfo
+type dirEntriesByName []os.DirEntry
 
-func (is infosByName) Len() int           { return len(is) }
-func (is infosByName) Less(i, j int) bool { return is[i].Name() < is[j].Name() }
-func (is infosByName) Swap(i, j int)      { is[i], is[j] = is[j], is[i] }
+func (is dirEntriesByName) Len() int           { return len(is) }
+func (is dirEntriesByName) Less(i, j int) bool { return is[i].Name() < is[j].Name() }
+func (is dirEntriesByName) Swap(i, j int)      { is[i], is[j] = is[j], is[i] }
 
 // walk recursively walks fs from path.
 func walk(fs LstatReadDirer, path string, walkFn filepath.WalkFunc, info os.FileInfo, err error) error {
@@ -34,17 +36,21 @@ func walk(fs LstatReadDirer, path string, walkFn filepath.WalkFunc, info os.File
 	if err == filepath.SkipDir {
 		return nil
 	}
-	infos, err := fs.ReadDir(path)
+	dirEntries, err := fs.ReadDir(path)
 	if err != nil {
 		return err
 	}
-	sort.Sort(infosByName(infos))
-	for _, info := range infos {
-		name := info.Name()
+	sort.Sort(dirEntriesByName(dirEntries))
+	for _, dirEntry := range dirEntries {
+		name := dirEntry.Name()
 		if name == "." || name == ".." {
 			continue
 		}
-		if err := walk(fs, filepath.Join(path, info.Name()), walkFn, info, nil); err != nil {
+		info, err := dirEntry.Info()
+		if err != nil {
+			return err
+		}
+		if err := walk(fs, filepath.Join(path, dirEntry.Name()), walkFn, info, nil); err != nil {
 			return err
 		}
 	}

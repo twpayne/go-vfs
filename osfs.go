@@ -1,7 +1,6 @@
 package vfs
 
 import (
-	"io/ioutil"
 	"os"
 	"path/filepath"
 	"time"
@@ -9,7 +8,7 @@ import (
 
 type osfs struct{}
 
-// OSFS is the FS that calls os and ioutil functions directly.
+// OSFS is the FS that calls os and io functions directly.
 //nolint:gochecknoglobals
 var OSFS = &osfs{}
 
@@ -73,14 +72,14 @@ func (osfs) RawPath(path string) (string, error) {
 	return path, nil
 }
 
-// ReadDir implements ioutil.ReadDir.
-func (osfs) ReadDir(dirname string) ([]os.FileInfo, error) {
-	return ioutil.ReadDir(dirname)
+// ReadDir implements os.ReadDir.
+func (osfs) ReadDir(dirname string) ([]os.DirEntry, error) {
+	return os.ReadDir(dirname)
 }
 
-// ReadFile implements ioutil.ReadFile.
-func (osfs) ReadFile(dirname string) ([]byte, error) {
-	return ioutil.ReadFile(dirname)
+// ReadFile implements os.ReadFile.
+func (osfs) ReadFile(name string) ([]byte, error) {
+	return os.ReadFile(name)
 }
 
 // Readlink implments os.Readlink.
@@ -118,7 +117,7 @@ func (osfs) Truncate(name string, size int64) error {
 	return os.Truncate(name, size)
 }
 
-// WriteFile implements ioutil.WriteFile.
+// WriteFile implements os.WriteFile.
 func (osfs) WriteFile(filename string, data []byte, perm os.FileMode) error {
-	return ioutil.WriteFile(filename, data, perm)
+	return os.WriteFile(filename, data, perm)
 }
