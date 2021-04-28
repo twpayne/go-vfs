@@ -8,6 +8,8 @@ import (
 
 func ExampleNewTestFS_complex() {
 	Test := func(t *testing.T) {
+		t.Helper()
+
 		// Describe the structure of the filesystem using a map from filenames to
 		// file or directory contents.
 		root := map[string]interface{}{
@@ -100,6 +102,8 @@ func ExampleNewTestFS_complex() {
 
 func ExampleNewTestFS() {
 	Test := func(t *testing.T) {
+		t.Helper()
+
 		fs, cleanup, err := vfst.NewTestFS(map[string]interface{}{
 			"/home/user/.bashrc": "# contents of user's .bashrc\n",
 		})

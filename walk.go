@@ -1,5 +1,6 @@
 package vfs
 
+//nolint:godox
 // FIXME implement path/filepath.WalkDir
 
 import (
