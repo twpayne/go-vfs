@@ -1,51 +1,58 @@
 package vfs
 
 import (
+	"errors"
+	"io/fs"
 	"os"
 	"path/filepath"
 	"syscall"
 )
 
-// A Stater implements Stat. It is assumed that the os.FileInfos returned by
+// A Stater implements Stat. It is assumed that the fs.FileInfos returned by
 // Stat are compatible with os.SameFile.
 type Stater interface {
-	Stat(string) (os.FileInfo, error)
+	Stat(string) (fs.FileInfo, error)
 }
 
 // Contains returns true if p is reachable by traversing through prefix. prefix
 // must exist, but p may not. It is an expensive but accurate alternative to the
 // deprecated filepath.HasPrefix.
-func Contains(fs Stater, p, prefix string) (bool, error) {
-	prefixFI, err := fs.Stat(prefix)
+func Contains(fileSystem Stater, p, prefix string) (bool, error) {
+	prefixFI, err := fileSystem.Stat(prefix)
 	if err != nil {
 		return false, err
 	}
 	for {
-		fi, err := fs.Stat(p)
+		fi, err := fileSystem.Stat(p)
 		switch {
 		case err == nil:
 			if os.SameFile(fi, prefixFI) {
 				return true, nil
 			}
 			goto TryParent
-		case os.IsNotExist(err):
+		case errors.Is(err, fs.ErrNotExist):
 			goto TryParent
-		case os.IsPermission(err):
+		case errors.Is(err, fs.ErrPermission):
 			goto TryParent
 		default:
-			// Remove any os.PathError or os.SyscallError wrapping, if present.
+			// Remove any fs.PathError or os.SyscallError wrapping, if present.
+		Unwrap:
 			for {
-				if pathError, ok := err.(*os.PathError); ok {
+				var pathError *fs.PathError
+				var syscallError *os.SyscallError
+				switch {
+				case errors.As(err, &pathError):
 					err = pathError.Err
-				} else if syscallError, ok := err.(*os.SyscallError); ok {
+				case errors.As(err, &syscallError):
 					err = syscallError.Err
-				} else {
-					break
+				default:
+					break Unwrap
 				}
 			}
 			// Ignore some syscall.Errnos.
-			if errno, ok := err.(syscall.Errno); ok {
-				if _, ignore := ignoreErrnoInContains[errno]; ignore {
+			var syscallErrno syscall.Errno
+			if errors.As(err, &syscallErrno) {
+				if _, ignore := ignoreErrnoInContains[syscallErrno]; ignore {
 					goto TryParent
 				}
 			}

@@ -4,29 +4,30 @@ package vfs
 // FIXME implement path/filepath.WalkDir
 
 import (
-	"os"
+	"errors"
+	"io/fs"
 	"path/filepath"
 	"sort"
 )
 
-// SkipDir is filepath.SkipDir.
+// SkipDir is fs.SkipDir.
 //nolint:gochecknoglobals
-var SkipDir = filepath.SkipDir
+var SkipDir = fs.SkipDir
 
 // A LstatReadDirer implements all the functionality needed by Walk.
 type LstatReadDirer interface {
-	Lstat(name string) (os.FileInfo, error)
-	ReadDir(name string) ([]os.DirEntry, error)
+	Lstat(name string) (fs.FileInfo, error)
+	ReadDir(name string) ([]fs.DirEntry, error)
 }
 
-type dirEntriesByName []os.DirEntry
+type dirEntriesByName []fs.DirEntry
 
 func (is dirEntriesByName) Len() int           { return len(is) }
 func (is dirEntriesByName) Less(i, j int) bool { return is[i].Name() < is[j].Name() }
 func (is dirEntriesByName) Swap(i, j int)      { is[i], is[j] = is[j], is[i] }
 
-// walk recursively walks fs from path.
-func walk(fs LstatReadDirer, path string, walkFn filepath.WalkFunc, info os.FileInfo, err error) error {
+// walk recursively walks fileSystem from path.
+func walk(fileSystem LstatReadDirer, path string, walkFn filepath.WalkFunc, info fs.FileInfo, err error) error {
 	if err != nil {
 		return walkFn(path, info, err)
 	}
@@ -34,10 +35,10 @@ func walk(fs LstatReadDirer, path string, walkFn filepath.WalkFunc, info os.File
 	if !info.IsDir() {
 		return err
 	}
-	if err == filepath.SkipDir {
+	if errors.Is(err, fs.SkipDir) {
 		return nil
 	}
-	dirEntries, err := fs.ReadDir(path)
+	dirEntries, err := fileSystem.ReadDir(path)
 	if err != nil {
 		return err
 	}
@@ -51,24 +52,24 @@ func walk(fs LstatReadDirer, path string, walkFn filepath.WalkFunc, info os.File
 		if err != nil {
 			return err
 		}
-		if err := walk(fs, filepath.Join(path, dirEntry.Name()), walkFn, info, nil); err != nil {
+		if err := walk(fileSystem, filepath.Join(path, dirEntry.Name()), walkFn, info, nil); err != nil {
 			return err
 		}
 	}
 	return nil
 }
 
-// Walk is the equivalent of filepath.Walk but operates on fs. Entries are
-// returned in lexicographical order.
-func Walk(fs LstatReadDirer, path string, walkFn filepath.WalkFunc) error {
-	info, err := fs.Lstat(path)
-	return walk(fs, path, walkFn, info, err)
+// Walk is the equivalent of filepath.Walk but operates on fileSystem. Entries
+// are returned in lexicographical order.
+func Walk(fileSystem LstatReadDirer, path string, walkFn filepath.WalkFunc) error {
+	info, err := fileSystem.Lstat(path)
+	return walk(fileSystem, path, walkFn, info, err)
 }
 
 // WalkSlash is the equivalent of Walk but all paths are converted to use
 // forward slashes with filepath.ToSlash.
-func WalkSlash(fs LstatReadDirer, path string, walkFn filepath.WalkFunc) error {
-	return Walk(fs, path, func(path string, info os.FileInfo, err error) error {
+func WalkSlash(fileSystem LstatReadDirer, path string, walkFn filepath.WalkFunc) error {
+	return Walk(fileSystem, path, func(path string, info fs.FileInfo, err error) error {
 		return walkFn(filepath.ToSlash(path), info, err)
 	})
 }

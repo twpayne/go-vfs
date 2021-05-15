@@ -29,28 +29,28 @@ to test.
 // An FS is an abstraction over commonly-used functions in the os and io
 // packages.
 type FS interface {
-    Chmod(name string, mode os.FileMode) error
+    Chmod(name string, mode fs.FileMode) error
     Chown(name string, uid, git int) error
     Chtimes(name string, atime, mtime time.Time) error
     Create(name string) (*os.File, error)
-    FileSeparator() rune
     Glob(pattern string) ([]string, error)
     Lchown(name string, uid, git int) error
-    Lstat(name string) (os.FileInfo, error)
-    Mkdir(name string, perm os.FileMode) error
-    Open(name string) (*os.File, error)
-    OpenFile(name string, flag int, perm os.ModePerm) (*os.File, error)
+    Lstat(name string) (fs.FileInfo, error)
+    Mkdir(name string, perm fs.FileMode) error
+    Open(name string) (fs.File, error)
+    OpenFile(name string, flag int, perm fs.FileMode) (*os.File, error)
+    PathSeparator() rune
     RawPath(name string) (string, error)
-    ReadDir(dirname string) ([]os.DirEntry, error)
+    ReadDir(dirname string) ([]fs.DirEntry, error)
     ReadFile(filename string) ([]byte, error)
     Readlink(name string) (string, error)
     Remove(name string) error
     RemoveAll(name string) error
     Rename(oldpath, newpath string) error
-    Stat(name string) (os.FileInfo, error)
+    Stat(name string) (fs.FileInfo, error)
     Symlink(oldname, newname string) error
     Truncate(name string, size int64) error
-    WriteFile(filename string, data []byte, perm os.FileMode) error
+    WriteFile(filename string, data []byte, perm fs.FileMode) error
 }
 ```
 
@@ -76,15 +76,15 @@ Example usage:
 
 ```go
 // writeConfigFile is the function we're going to test. It can make arbitrary
-// changes to the filesystem through fs.
-func writeConfigFile(fs vfs.FS) error {
-    return fs.WriteFile("/home/user/app.conf", []byte(`app config`), 0644)
+// changes to the filesystem through fileSystem.
+func writeConfigFile(fileSystem vfs.FS) error {
+    return fileSystem.WriteFile("/home/user/app.conf", []byte(`app config`), 0644)
 }
 
 // TestWriteConfigFile is our test function.
 func TestWriteConfigFile(t *testing.T) {
     // Create and populate an temporary directory with a home directory.
-    fs, cleanup, err := vfst.NewTestFS(map[string]interface{}{
+    fileSystem, cleanup, err := vfst.NewTestFS(map[string]interface{}{
         "/home/user/.bashrc": "# contents of user's .bashrc\n",
     })
 
@@ -97,12 +97,12 @@ func TestWriteConfigFile(t *testing.T) {
     defer cleanup()
 
     // Call the function we want to test.
-    if err := writeConfigFile(fs); err != nil {
+    if err := writeConfigFile(fileSystem); err != nil {
         t.Error(err)
     }
 
     // Check properties of the filesystem after our function has modified it.
-    vfst.RunTest(t, fs, "app_conf",
+    vfst.RunTest(t, fileSystem, "app_conf",
         vfst.PathTest("/home/user/app.conf",
             vfst.TestModeIsRegular,
             vfst.TestModePerm(0644),
