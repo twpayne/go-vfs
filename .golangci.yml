@@ -1,11 +1,18 @@
 linters:
   enable:
+  - asciicheck
   - bodyclose
   - deadcode
   - depguard
   - dogsled
   - dupl
+  - durationcheck
   - errcheck
+  - errorlint
+  - exhaustive
+  - exportloopref
+  - forbidigo
+  - forcetypeassert
   - gochecknoglobals
   - gocognit
   - goconst
@@ -13,43 +20,68 @@ linters:
   - gocyclo
   - godot
   - godox
+  - goerr113
   - gofmt
+  - gofumpt
+  - goheader
   - goimports
-  - golint
+  - gomoddirectives
   - gomodguard
   - goprintffuncname
   - gosec
   - gosimple
   - govet
+  - ifshort
+  - importas
   - ineffassign
   - lll
+  - makezero
   - misspell
   - nakedret
+  - nilerr
+  - noctx
+  - nolintlint
   - prealloc
+  - predeclared
+  - promlinter
+  - revive
   - rowserrcheck
+  - sqlclosecheck
   - staticcheck
   - structcheck
   - stylecheck
+  - tagliatelle
   - thelper
   - typecheck
   - unconvert
   - unparam
   - unused
   - varcheck
+  - wastedassign
   - whitespace
   disable:
+  - cyclop
+  - exhaustivestruct
   - funlen
+  - gci
+  - gochecknoinits
   - gomnd
   - nestif
+  - nlreturn
+  - paralleltest
   - testpackage
+  - tparallel
+  - wrapcheck
   - wsl
 
 linters-settings:
   goimports:
     local-prefixes: github.com/twpayne/go-vfs
+  misspell:
+    locale: US
 
 issues:
   exclude-rules:
   - linters:
-    - scopelint
-    path: "_test\\.go"
+    - goerr113
+    text: "do not define dynamic errors, use wrapped static errors instead"
