@@ -1,24 +1,25 @@
 package vfs
 
 import (
-	"os"
+	"errors"
+	"io/fs"
 	"path/filepath"
 )
 
 // A MkdirStater implements all the functionality needed by MkdirAll.
 type MkdirStater interface {
-	Mkdir(name string, perm os.FileMode) error
-	Stat(name string) (os.FileInfo, error)
+	Mkdir(name string, perm fs.FileMode) error
+	Stat(name string) (fs.FileInfo, error)
 }
 
-// MkdirAll is equivalent to os.MkdirAll but operates on fs.
-func MkdirAll(fs MkdirStater, path string, perm os.FileMode) error {
-	err := fs.Mkdir(path, perm)
+// MkdirAll is equivalent to os.MkdirAll but operates on fileSystem.
+func MkdirAll(fileSystem MkdirStater, path string, perm fs.FileMode) error {
+	err := fileSystem.Mkdir(path, perm)
 	switch {
 	case err == nil:
 		// Mkdir was successful.
 		return nil
-	case os.IsExist(err):
+	case errors.Is(err, fs.ErrExist):
 		// path already exists, but we don't know whether it's a directory or
 		// something else. We get this error if we try to create a subdirectory
 		// of a non-directory, for example if the parent directory of path is a
@@ -28,7 +29,7 @@ func MkdirAll(fs MkdirStater, path string, perm os.FileMode) error {
 		// between "path already exists and is already a directory" and "path
 		// already exists and is not a directory". Between the call to Mkdir and
 		// the call to Stat path might have changed.
-		info, statErr := fs.Stat(path)
+		info, statErr := fileSystem.Stat(path)
 		if statErr != nil {
 			return statErr
 		}
@@ -36,7 +37,7 @@ func MkdirAll(fs MkdirStater, path string, perm os.FileMode) error {
 			return err
 		}
 		return nil
-	case os.IsNotExist(err):
+	case errors.Is(err, fs.ErrNotExist):
 		// Parent directory does not exist. Create the parent directory
 		// recursively, then try again.
 		parentDir := filepath.Dir(path)
@@ -45,10 +46,10 @@ func MkdirAll(fs MkdirStater, path string, perm os.FileMode) error {
 			// return the original error.
 			return err
 		}
-		if err := MkdirAll(fs, parentDir, perm); err != nil {
+		if err := MkdirAll(fileSystem, parentDir, perm); err != nil {
 			return err
 		}
-		return fs.Mkdir(path, perm)
+		return fileSystem.Mkdir(path, perm)
 	default:
 		// Some other error.
 		return err

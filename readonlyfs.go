@@ -1,6 +1,7 @@
 package vfs
 
 import (
+	"io/fs"
 	"os"
 	"syscall"
 	"time"
@@ -9,18 +10,18 @@ import (
 // A ReadOnlyFS operates on an existing FS, but any methods that
 // modify the FS return an error.
 type ReadOnlyFS struct {
-	fs FS
+	fileSystem FS
 }
 
-// NewReadOnlyFS returns a new *ReadOnlyFS operating on fs.
-func NewReadOnlyFS(fs FS) *ReadOnlyFS {
+// NewReadOnlyFS returns a new *ReadOnlyFS operating on fileSystem.
+func NewReadOnlyFS(fileSystem FS) *ReadOnlyFS {
 	return &ReadOnlyFS{
-		fs: fs,
+		fileSystem: fileSystem,
 	}
 }
 
 // Chmod implements os.Chmod.
-func (r *ReadOnlyFS) Chmod(name string, mode os.FileMode) error {
+func (r *ReadOnlyFS) Chmod(name string, mode fs.FileMode) error {
 	return permError("Chmod", name)
 }
 
@@ -41,7 +42,7 @@ func (r *ReadOnlyFS) Create(name string) (*os.File, error) {
 
 // Glob implements filepath.Glob.
 func (r *ReadOnlyFS) Glob(pattern string) ([]string, error) {
-	return r.fs.Glob(pattern)
+	return r.fileSystem.Glob(pattern)
 }
 
 // Lchown implements os.Lchown.
@@ -50,46 +51,46 @@ func (r *ReadOnlyFS) Lchown(name string, uid, gid int) error {
 }
 
 // Lstat implements os.Lstat.
-func (r *ReadOnlyFS) Lstat(name string) (os.FileInfo, error) {
-	return r.fs.Lstat(name)
+func (r *ReadOnlyFS) Lstat(name string) (fs.FileInfo, error) {
+	return r.fileSystem.Lstat(name)
 }
 
 // Mkdir implements os.Mkdir.
-func (r *ReadOnlyFS) Mkdir(name string, perm os.FileMode) error {
+func (r *ReadOnlyFS) Mkdir(name string, perm fs.FileMode) error {
 	return permError("Mkdir", name)
 }
 
 // Open implements os.Open.
-func (r *ReadOnlyFS) Open(name string) (*os.File, error) {
-	return r.fs.Open(name)
+func (r *ReadOnlyFS) Open(name string) (fs.File, error) {
+	return r.fileSystem.Open(name)
 }
 
 // OpenFile implements os.OpenFile.
-func (r *ReadOnlyFS) OpenFile(name string, flag int, perm os.FileMode) (*os.File, error) {
+func (r *ReadOnlyFS) OpenFile(name string, flag int, perm fs.FileMode) (*os.File, error) {
 	if flag&(os.O_RDONLY|os.O_WRONLY|os.O_RDWR) != os.O_RDONLY {
 		return nil, permError("OpenFile", name)
 	}
-	return r.fs.OpenFile(name, flag, perm)
+	return r.fileSystem.OpenFile(name, flag, perm)
 }
 
 // PathSeparator implements PathSeparator.
 func (r *ReadOnlyFS) PathSeparator() rune {
-	return r.fs.PathSeparator()
+	return r.fileSystem.PathSeparator()
 }
 
 // ReadDir implements os.ReadDir.
-func (r *ReadOnlyFS) ReadDir(name string) ([]os.DirEntry, error) {
-	return r.fs.ReadDir(name)
+func (r *ReadOnlyFS) ReadDir(name string) ([]fs.DirEntry, error) {
+	return r.fileSystem.ReadDir(name)
 }
 
 // ReadFile implements os.ReadFile.
 func (r *ReadOnlyFS) ReadFile(name string) ([]byte, error) {
-	return r.fs.ReadFile(name)
+	return r.fileSystem.ReadFile(name)
 }
 
-// Readlink implments os.Readlink.
+// Readlink implements os.Readlink.
 func (r *ReadOnlyFS) Readlink(name string) (string, error) {
-	return r.fs.Readlink(name)
+	return r.fileSystem.Readlink(name)
 }
 
 // Remove implements os.Remove.
@@ -109,12 +110,12 @@ func (r *ReadOnlyFS) Rename(oldpath, newpath string) error {
 
 // RawPath implements RawPath.
 func (r *ReadOnlyFS) RawPath(path string) (string, error) {
-	return r.fs.RawPath(path)
+	return r.fileSystem.RawPath(path)
 }
 
 // Stat implements os.Stat.
-func (r *ReadOnlyFS) Stat(name string) (os.FileInfo, error) {
-	return r.fs.Stat(name)
+func (r *ReadOnlyFS) Stat(name string) (fs.FileInfo, error) {
+	return r.fileSystem.Stat(name)
 }
 
 // Symlink implements os.Symlink.
@@ -128,7 +129,7 @@ func (r *ReadOnlyFS) Truncate(name string, size int64) error {
 }
 
 // WriteFile implements os.WriteFile.
-func (r *ReadOnlyFS) WriteFile(filename string, data []byte, perm os.FileMode) error {
+func (r *ReadOnlyFS) WriteFile(filename string, data []byte, perm fs.FileMode) error {
 	return permError("WriteFile", filename)
 }
 

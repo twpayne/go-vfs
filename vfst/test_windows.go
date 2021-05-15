@@ -1,7 +1,7 @@
 package vfst
 
 import (
-	"os"
+	"io/fs"
 	"testing"
 
 	"github.com/twpayne/go-vfs/v2"
@@ -9,7 +9,7 @@ import (
 
 // permEqual returns if perm1 and perm2 represent the same permissions. On
 // Windows, it always returns true.
-func permEqual(perm1, perm2 os.FileMode) bool {
+func permEqual(perm1, perm2 fs.FileMode) bool {
 	return true
 }
 

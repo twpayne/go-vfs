@@ -200,11 +200,11 @@ func TestContains(t *testing.T) {
 		},
 	} {
 		t.Run(tc.name, func(t *testing.T) {
-			fs, cleanup, err := NewTestFS(tc.root)
+			fileSystem, cleanup, err := NewTestFS(tc.root)
 			require.NoError(t, err)
 			defer cleanup()
 			for _, test := range tc.tests {
-				actual, err := vfs.Contains(fs, test.p, test.prefix)
+				actual, err := vfs.Contains(fileSystem, test.p, test.prefix)
 				if test.expectErr {
 					assert.Error(t, err)
 				} else {

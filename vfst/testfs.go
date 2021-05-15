@@ -28,16 +28,16 @@ func newTestFS() (*TestFS, func(), error) {
 
 // NewTestFS returns a new *TestFS populated with root and a cleanup function.
 func NewTestFS(root interface{}, builderOptions ...BuilderOption) (*TestFS, func(), error) {
-	fs, cleanup, err := newTestFS()
+	fileSystem, cleanup, err := newTestFS()
 	if err != nil {
 		cleanup()
 		return nil, nil, err
 	}
-	if err := NewBuilder(builderOptions...).Build(fs, root); err != nil {
+	if err := NewBuilder(builderOptions...).Build(fileSystem, root); err != nil {
 		cleanup()
 		return nil, nil, err
 	}
-	return fs, cleanup, nil
+	return fileSystem, cleanup, nil
 }
 
 // Keep prevents t's cleanup function from removing the temporary directory. It

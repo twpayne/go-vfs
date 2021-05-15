@@ -1,6 +1,7 @@
 package vfs
 
 import (
+	"io/fs"
 	"os"
 	"path/filepath"
 	"time"
@@ -13,7 +14,7 @@ type osfs struct{}
 var OSFS = &osfs{}
 
 // Chmod implements os.Chmod.
-func (osfs) Chmod(name string, mode os.FileMode) error {
+func (osfs) Chmod(name string, mode fs.FileMode) error {
 	return os.Chmod(name, mode)
 }
 
@@ -43,22 +44,22 @@ func (osfs) Lchown(name string, uid, gid int) error {
 }
 
 // Lstat implements os.Lstat.
-func (osfs) Lstat(name string) (os.FileInfo, error) {
+func (osfs) Lstat(name string) (fs.FileInfo, error) {
 	return os.Lstat(name)
 }
 
 // Mkdir implements os.Mkdir.
-func (osfs) Mkdir(name string, perm os.FileMode) error {
+func (osfs) Mkdir(name string, perm fs.FileMode) error {
 	return os.Mkdir(name, perm)
 }
 
 // Open implements os.Open.
-func (osfs) Open(name string) (*os.File, error) {
+func (osfs) Open(name string) (fs.File, error) {
 	return os.Open(name)
 }
 
 // OpenFile implements os.OpenFile.
-func (osfs) OpenFile(name string, flag int, perm os.FileMode) (*os.File, error) {
+func (osfs) OpenFile(name string, flag int, perm fs.FileMode) (*os.File, error) {
 	return os.OpenFile(name, flag, perm)
 }
 
@@ -73,7 +74,7 @@ func (osfs) RawPath(path string) (string, error) {
 }
 
 // ReadDir implements os.ReadDir.
-func (osfs) ReadDir(dirname string) ([]os.DirEntry, error) {
+func (osfs) ReadDir(dirname string) ([]fs.DirEntry, error) {
 	return os.ReadDir(dirname)
 }
 
@@ -82,7 +83,7 @@ func (osfs) ReadFile(name string) ([]byte, error) {
 	return os.ReadFile(name)
 }
 
-// Readlink implments os.Readlink.
+// Readlink implements os.Readlink.
 func (osfs) Readlink(name string) (string, error) {
 	return os.Readlink(name)
 }
@@ -103,7 +104,7 @@ func (osfs) Rename(oldpath, newpath string) error {
 }
 
 // Stat implements os.Stat.
-func (osfs) Stat(name string) (os.FileInfo, error) {
+func (osfs) Stat(name string) (fs.FileInfo, error) {
 	return os.Stat(name)
 }
 
@@ -118,6 +119,6 @@ func (osfs) Truncate(name string, size int64) error {
 }
 
 // WriteFile implements os.WriteFile.
-func (osfs) WriteFile(filename string, data []byte, perm os.FileMode) error {
+func (osfs) WriteFile(filename string, data []byte, perm fs.FileMode) error {
 	return os.WriteFile(filename, data, perm)
 }

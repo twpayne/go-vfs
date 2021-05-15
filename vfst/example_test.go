@@ -38,7 +38,7 @@ func ExampleNewTestFS_complex() {
 		}
 
 		// Create and populate an *vfst.TestFS
-		fs, cleanup, err := vfst.NewTestFS(root)
+		fileSystem, cleanup, err := vfst.NewTestFS(root)
 		if err != nil {
 			t.Fatal(err)
 		}
@@ -88,13 +88,13 @@ func ExampleNewTestFS_complex() {
 		}
 
 		// RunTests traverses the data structure and running all Tests.
-		vfst.RunTests(t, fs, "", tests)
+		vfst.RunTests(t, fileSystem, "", tests)
 
-		// Optionally, calling fs.Keep() prevents the cleanup function from
-		// removing the temporary directory, so you can inspect it later. The
-		// directory itself is returned by fs.TempDir().
-		// fs.Keep()
-		t.Logf("fs.TempDir() == %s", fs.TempDir())
+		// Optionally, calling fileSystem.Keep() prevents the cleanup function
+		// from removing the temporary directory, so you can inspect it later.
+		// The directory itself is returned by fileSystem.TempDir().
+		// fileSystem.Keep()
+		t.Logf("fs.TempDir() == %s", fileSystem.TempDir())
 	}
 
 	Test(&testing.T{})
@@ -104,7 +104,7 @@ func ExampleNewTestFS() {
 	Test := func(t *testing.T) {
 		t.Helper()
 
-		fs, cleanup, err := vfst.NewTestFS(map[string]interface{}{
+		fileSystem, cleanup, err := vfst.NewTestFS(map[string]interface{}{
 			"/home/user/.bashrc": "# contents of user's .bashrc\n",
 		})
 		if err != nil {
@@ -112,7 +112,7 @@ func ExampleNewTestFS() {
 		}
 		defer cleanup()
 
-		vfst.RunTests(t, fs, "bashrc",
+		vfst.RunTests(t, fileSystem, "bashrc",
 			vfst.TestPath("/home/user/.bashrc",
 				vfst.TestModeIsRegular,
 				vfst.TestContentsString("# contents of user's .bashrc\n"),

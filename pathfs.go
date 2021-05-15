@@ -1,6 +1,7 @@
 package vfs
 
 import (
+	"io/fs"
 	"os"
 	"path"
 	"path/filepath"
@@ -12,26 +13,26 @@ import (
 // names must be absolute paths, with the exception of symlinks, which may be
 // relative.
 type PathFS struct {
-	fs   FS
-	path string
+	fileSystem FS
+	path       string
 }
 
-// NewPathFS returns a new *PathFS operating on fs and prefixing all names with
-// path.
-func NewPathFS(fs FS, path string) *PathFS {
+// NewPathFS returns a new *PathFS operating on fileSystem and prefixing all
+// names with path.
+func NewPathFS(fileSystem FS, path string) *PathFS {
 	return &PathFS{
-		path: filepath.ToSlash(path),
-		fs:   fs,
+		fileSystem: fileSystem,
+		path:       filepath.ToSlash(path),
 	}
 }
 
 // Chmod implements os.Chmod.
-func (p *PathFS) Chmod(name string, mode os.FileMode) error {
+func (p *PathFS) Chmod(name string, mode fs.FileMode) error {
 	realName, err := p.join("Chmod", name)
 	if err != nil {
 		return err
 	}
-	return p.fs.Chmod(realName, mode)
+	return p.fileSystem.Chmod(realName, mode)
 }
 
 // Chown implements os.Chown.
@@ -40,7 +41,7 @@ func (p *PathFS) Chown(name string, uid, gid int) error {
 	if err != nil {
 		return err
 	}
-	return p.fs.Chown(realName, uid, gid)
+	return p.fileSystem.Chown(realName, uid, gid)
 }
 
 // Chtimes implements os.Chtimes.
@@ -49,7 +50,7 @@ func (p *PathFS) Chtimes(name string, atime, mtime time.Time) error {
 	if err != nil {
 		return err
 	}
-	return p.fs.Chtimes(realName, atime, mtime)
+	return p.fileSystem.Chtimes(realName, atime, mtime)
 }
 
 // Create implements os.Create.
@@ -58,7 +59,7 @@ func (p *PathFS) Create(name string) (*os.File, error) {
 	if err != nil {
 		return nil, err
 	}
-	return p.fs.Create(realName)
+	return p.fileSystem.Create(realName)
 }
 
 // Glob implements filepath.Glob.
@@ -67,7 +68,7 @@ func (p *PathFS) Glob(pattern string) ([]string, error) {
 	if err != nil {
 		return nil, err
 	}
-	matches, err := p.fs.Glob(realPattern)
+	matches, err := p.fileSystem.Glob(realPattern)
 	if err != nil {
 		return nil, err
 	}
@@ -91,48 +92,48 @@ func (p *PathFS) Lchown(name string, uid, gid int) error {
 	if err != nil {
 		return err
 	}
-	return p.fs.Lchown(realName, uid, gid)
+	return p.fileSystem.Lchown(realName, uid, gid)
 }
 
 // Lstat implements os.Lstat.
-func (p *PathFS) Lstat(name string) (os.FileInfo, error) {
+func (p *PathFS) Lstat(name string) (fs.FileInfo, error) {
 	realName, err := p.join("Lstat", name)
 	if err != nil {
 		return nil, err
 	}
-	return p.fs.Lstat(realName)
+	return p.fileSystem.Lstat(realName)
 }
 
 // Mkdir implements os.Mkdir.
-func (p *PathFS) Mkdir(name string, perm os.FileMode) error {
+func (p *PathFS) Mkdir(name string, perm fs.FileMode) error {
 	realName, err := p.join("Mkdir", name)
 	if err != nil {
 		return err
 	}
-	return p.fs.Mkdir(realName, perm)
+	return p.fileSystem.Mkdir(realName, perm)
 }
 
 // Open implements os.Open.
-func (p *PathFS) Open(name string) (*os.File, error) {
+func (p *PathFS) Open(name string) (fs.File, error) {
 	realName, err := p.join("Open", name)
 	if err != nil {
 		return nil, err
 	}
-	return p.fs.Open(realName)
+	return p.fileSystem.Open(realName)
 }
 
 // OpenFile implements os.OpenFile.
-func (p *PathFS) OpenFile(name string, flag int, perm os.FileMode) (*os.File, error) {
+func (p *PathFS) OpenFile(name string, flag int, perm fs.FileMode) (*os.File, error) {
 	realName, err := p.join("OpenFile", name)
 	if err != nil {
 		return nil, err
 	}
-	return p.fs.OpenFile(realName, flag, perm)
+	return p.fileSystem.OpenFile(realName, flag, perm)
 }
 
 // PathSeparator implements PathSeparator.
 func (p *PathFS) PathSeparator() rune {
-	return p.fs.PathSeparator()
+	return p.fileSystem.PathSeparator()
 }
 
 // RawPath implements RawPath.
@@ -141,12 +142,12 @@ func (p *PathFS) RawPath(path string) (string, error) {
 }
 
 // ReadDir implements os.ReadDir.
-func (p *PathFS) ReadDir(dirname string) ([]os.DirEntry, error) {
+func (p *PathFS) ReadDir(dirname string) ([]fs.DirEntry, error) {
 	realDirname, err := p.join("ReadDir", dirname)
 	if err != nil {
 		return nil, err
 	}
-	return p.fs.ReadDir(realDirname)
+	return p.fileSystem.ReadDir(realDirname)
 }
 
 // ReadFile implements os.ReadFile.
@@ -155,7 +156,7 @@ func (p *PathFS) ReadFile(name string) ([]byte, error) {
 	if err != nil {
 		return nil, err
 	}
-	return p.fs.ReadFile(realName)
+	return p.fileSystem.ReadFile(realName)
 }
 
 // Readlink implements os.Readlink.
@@ -164,7 +165,7 @@ func (p *PathFS) Readlink(name string) (string, error) {
 	if err != nil {
 		return "", err
 	}
-	return p.fs.Readlink(realName)
+	return p.fileSystem.Readlink(realName)
 }
 
 // Remove implements os.Remove.
@@ -173,7 +174,7 @@ func (p *PathFS) Remove(name string) error {
 	if err != nil {
 		return err
 	}
-	return p.fs.Remove(realName)
+	return p.fileSystem.Remove(realName)
 }
 
 // RemoveAll implements os.RemoveAll.
@@ -182,7 +183,7 @@ func (p *PathFS) RemoveAll(name string) error {
 	if err != nil {
 		return err
 	}
-	return p.fs.RemoveAll(realName)
+	return p.fileSystem.RemoveAll(realName)
 }
 
 // Rename implements os.Rename.
@@ -195,16 +196,16 @@ func (p *PathFS) Rename(oldpath, newpath string) error {
 	if err != nil {
 		return err
 	}
-	return p.fs.Rename(realOldpath, realNewpath)
+	return p.fileSystem.Rename(realOldpath, realNewpath)
 }
 
 // Stat implements os.Stat.
-func (p *PathFS) Stat(name string) (os.FileInfo, error) {
+func (p *PathFS) Stat(name string) (fs.FileInfo, error) {
 	realName, err := p.join("Stat", name)
 	if err != nil {
 		return nil, err
 	}
-	return p.fs.Stat(realName)
+	return p.fileSystem.Stat(realName)
 }
 
 // Symlink implements os.Symlink.
@@ -223,7 +224,7 @@ func (p *PathFS) Symlink(oldname, newname string) error {
 	if err != nil {
 		return err
 	}
-	return p.fs.Symlink(realOldname, realNewname)
+	return p.fileSystem.Symlink(realOldname, realNewname)
 }
 
 // Truncate implements os.Truncate.
@@ -232,16 +233,16 @@ func (p *PathFS) Truncate(name string, size int64) error {
 	if err != nil {
 		return err
 	}
-	return p.fs.Truncate(realName, size)
+	return p.fileSystem.Truncate(realName, size)
 }
 
 // WriteFile implements io.WriteFile.
-func (p *PathFS) WriteFile(filename string, data []byte, perm os.FileMode) error {
+func (p *PathFS) WriteFile(filename string, data []byte, perm fs.FileMode) error {
 	realFilename, err := p.join("WriteFile", filename)
 	if err != nil {
 		return err
 	}
-	return p.fs.WriteFile(realFilename, data, perm)
+	return p.fileSystem.WriteFile(realFilename, data, perm)
 }
 
 // join returns p's path joined with name.
