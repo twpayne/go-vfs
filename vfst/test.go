@@ -7,7 +7,7 @@ import (
 	"syscall"
 	"testing"
 
-	vfs "github.com/twpayne/go-vfs/v2"
+	vfs "github.com/twpayne/go-vfs/v3"
 )
 
 func init() {
