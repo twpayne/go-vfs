@@ -1,4 +1,4 @@
-GOLANGCI_LINT_VERSION=1.40.1
+GOLANGCI_LINT_VERSION=1.41.1
 
 .PHONY: smoketest
 smoketest: test lint
