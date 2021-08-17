@@ -3,7 +3,7 @@ package vfst
 import (
 	"os"
 
-	vfs "github.com/twpayne/go-vfs/v3"
+	vfs "github.com/twpayne/go-vfs/v4"
 )
 
 // A TestFS is a virtual filesystem based in a temporary directory.
