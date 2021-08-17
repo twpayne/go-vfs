@@ -4,7 +4,7 @@ import (
 	"io/fs"
 	"testing"
 
-	"github.com/twpayne/go-vfs/v3"
+	"github.com/twpayne/go-vfs/v4"
 )
 
 // permEqual returns if perm1 and perm2 represent the same permissions. On

@@ -35,6 +35,7 @@ type FS interface {
     Create(name string) (*os.File, error)
     Glob(pattern string) ([]string, error)
     Lchown(name string, uid, git int) error
+    Link(oldname, newname string) error
     Lstat(name string) (fs.FileInfo, error)
     Mkdir(name string, perm fs.FileMode) error
     Open(name string) (fs.File, error)

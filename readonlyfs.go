@@ -50,6 +50,11 @@ func (r *ReadOnlyFS) Lchown(name string, uid, gid int) error {
 	return permError("Lchown", name)
 }
 
+// Link implements os.Link.
+func (r *ReadOnlyFS) Link(oldname, newname string) error {
+	return permError("Link", newname)
+}
+
 // Lstat implements os.Lstat.
 func (r *ReadOnlyFS) Lstat(name string) (fs.FileInfo, error) {
 	return r.fileSystem.Lstat(name)

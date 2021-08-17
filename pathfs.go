@@ -95,6 +95,25 @@ func (p *PathFS) Lchown(name string, uid, gid int) error {
 	return p.fileSystem.Lchown(realName, uid, gid)
 }
 
+// Link implements os.Link.
+func (p *PathFS) Link(oldname, newname string) error {
+	var realOldname string
+	if path.IsAbs(oldname) {
+		var err error
+		realOldname, err = p.join("Link", oldname)
+		if err != nil {
+			return err
+		}
+	} else {
+		realOldname = oldname
+	}
+	realNewname, err := p.join("Link", newname)
+	if err != nil {
+		return err
+	}
+	return p.fileSystem.Link(realOldname, realNewname)
+}
+
 // Lstat implements os.Lstat.
 func (p *PathFS) Lstat(name string) (fs.FileInfo, error) {
 	realName, err := p.join("Lstat", name)

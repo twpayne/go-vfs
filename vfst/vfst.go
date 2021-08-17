@@ -13,7 +13,7 @@ import (
 	"strconv"
 	"testing"
 
-	vfs "github.com/twpayne/go-vfs/v3"
+	vfs "github.com/twpayne/go-vfs/v4"
 )
 
 //nolint:gochecknoglobals

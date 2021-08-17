@@ -43,6 +43,11 @@ func (osfs) Lchown(name string, uid, gid int) error {
 	return os.Lchown(name, uid, gid)
 }
 
+// Link implements os.Link.
+func (osfs) Link(oldname, newname string) error {
+	return os.Link(oldname, newname)
+}
+
 // Lstat implements os.Lstat.
 func (osfs) Lstat(name string) (fs.FileInfo, error) {
 	return os.Lstat(name)
