@@ -6,13 +6,16 @@ on:
     - 'v*'
   pull_request:
 name: go-vfs
+env:
+  GOLANGCI_LINT_VERSION: 1.42.1
 jobs:
-  go-vfs:
-    name: Test
+  test:
     strategy:
       matrix:
         go-version:
         - 1.16
+        - 1.17
+        - 1.x
         os:
         - macos-latest
         - ubuntu-latest
@@ -28,12 +31,11 @@ jobs:
     - name: Go test
       run: go test ./...
     - name: Check formatting
-      if: matrix.os == 'ubuntu-latest'
+      if: matrix.go-version == '1.x' && matrix.os == 'ubuntu-latest'
       run: |
         make format
         git diff --exit-code
   lint:
-    name: Lint
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -41,4 +43,4 @@ jobs:
       - name: Lint
         uses: golangci/golangci-lint-action@v2
         with:
-          version: v1.41.1
+          version: v${{ env.GOLANGCI_LINT_VERSION }}

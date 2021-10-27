@@ -1,11 +1,12 @@
-GOLANGCI_LINT_VERSION=1.41.1
+GO?=go
+GOLANGCI_LINT_VERSION=$(shell grep GOLANGCI_LINT_VERSION: .github/workflows/main.yml | awk '{ print $$2 }')
 
 .PHONY: smoketest
 smoketest: test lint
 
 .PHONY: test
 test:
-	go test ./...
+	${GO} test ./...
 
 .PHONY: lint
 lint: ensure-golangci-lint
@@ -24,11 +25,11 @@ ensure-tools: \
 ensure-gofumports:
 	if [ ! -x bin/gofumports ] ; then \
 		mkdir -p bin ; \
-		( cd $$(mktemp -d) && go mod init tmp && GOBIN=${PWD}/bin go get mvdan.cc/gofumpt/gofumports ) ; \
+		GOBIN=$(shell pwd)/bin ${GO} install mvdan.cc/gofumpt/gofumports@latest ; \
 	fi
 
 .PHONY: ensure-golangci-lint
 ensure-golangci-lint:
 	if [ ! -x bin/golangci-lint ] || ( ./bin/golangci-lint --version | grep -Fqv "version ${GOLANGCI_LINT_VERSION}" ) ; then \
-		curl -sfL https://install.goreleaser.com/github.com/golangci/golangci-lint.sh | sh -s -- v${GOLANGCI_LINT_VERSION} ; \
+		curl -sSfL https://raw.githubusercontent.com/golangci/golangci-lint/master/install.sh | sh -s -- v${GOLANGCI_LINT_VERSION} ; \
 	fi
