@@ -103,8 +103,8 @@ func TestWriteConfigFile(t *testing.T) {
     }
 
     // Check properties of the filesystem after our function has modified it.
-    vfst.RunTest(t, fileSystem, "app_conf",
-        vfst.PathTest("/home/user/app.conf",
+    vfst.RunTests(t, fileSystem, "app_conf",
+        vfst.TestPath("/home/user/app.conf",
             vfst.TestModeIsRegular,
             vfst.TestModePerm(0644),
             vfst.TestContentsString("app config"),
