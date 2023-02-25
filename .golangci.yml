@@ -1,19 +1,27 @@
 linters:
   enable:
   - asciicheck
+  - bidichk
   - bodyclose
-  - deadcode
+  - containedctx
+  - contextcheck
+  - decorder
   - depguard
   - dogsled
   - dupl
+  - dupword
   - durationcheck
   - errcheck
+  - errchkjson
+  - errname
   - errorlint
+  - execinquery
   - exhaustive
   - exportloopref
   - forbidigo
   - forcetypeassert
-  - gochecknoglobals
+  - gci
+  - gocheckcompilerdirectives
   - goconst
   - gocritic
   - gocyclo
@@ -30,51 +38,73 @@ linters:
   - gosec
   - gosimple
   - govet
-  - ifshort
+  - grouper
   - importas
   - ineffassign
+  - ireturn
   - lll
+  - loggercheck
+  - maintidx
   - makezero
   - misspell
+  - musttag
   - nakedret
   - nilerr
+  - nilnil
   - noctx
   - nolintlint
+  - nonamedreturns
+  - nosprintfhostport
   - prealloc
   - predeclared
   - promlinter
+  - reassign
   - revive
-  - rowserrcheck
   - sqlclosecheck
   - staticcheck
-  - structcheck
   - stylecheck
   - tagliatelle
+  - tenv
+  - testpackage
   - thelper
   - typecheck
   - unconvert
   - unparam
   - unused
-  - varcheck
-  - wastedassign
+  - usestdlibvars
   - whitespace
   disable:
+  - asasalint
   - cyclop
   - exhaustivestruct
+  - exhaustruct
   - funlen
-  - gci
+  - gochecknoglobals
   - gochecknoinits
   - gocognit
   - gomnd
+  - interfacebloat
   - nestif
   - nlreturn
   - paralleltest
-  - testpackage
+  - rowserrcheck # https://github.com/golangci/golangci-lint/issues/2649
+  - testableexamples
   - tparallel
+  - varnamelen
+  - wastedassign # https://github.com/golangci/golangci-lint/issues/2649
   - wrapcheck
   - wsl
 
 linters-settings:
+  gci:
+    sections:
+    - standard
+    - default
+    - prefix(github.com/twpayne/go-vfs)
+  gofumpt:
+    extra-rules: true
+    go-version: '1.20'
+    module-path: github.com/twpayne/go-vfs
   goimports:
     local-prefixes: github.com/twpayne/go-vfs
   misspell:

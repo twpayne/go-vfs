@@ -1,9 +1,11 @@
 //go:build !windows
 // +build !windows
 
-package vfst
+package vfst_test
 
-import "syscall"
+import (
+	"syscall"
+)
 
 func init() {
 	syscall.Umask(0o22)

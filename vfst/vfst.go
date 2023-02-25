@@ -16,7 +16,6 @@ import (
 	vfs "github.com/twpayne/go-vfs/v4"
 )
 
-//nolint:gochecknoglobals
 var umask fs.FileMode
 
 // A Dir is a directory with a specified permissions and zero or more Entries.
@@ -171,7 +170,7 @@ func (b *Builder) Mkdir(fileSystem vfs.FS, path string, perm fs.FileMode) error 
 		return err
 	} else if !info.IsDir() {
 		return fmt.Errorf("%s: not a directory", path)
-	} else if gotPerm, wantPerm := info.Mode()&fs.ModePerm, perm&^b.umask; !permEqual(gotPerm, wantPerm) {
+	} else if gotPerm, wantPerm := info.Mode()&fs.ModePerm, perm&^b.umask; !PermEqual(gotPerm, wantPerm) {
 		return fmt.Errorf("%s has permissions 0%o, want 0%o", path, gotPerm, wantPerm)
 	}
 	return nil
@@ -242,10 +241,10 @@ func (b *Builder) Symlink(fileSystem vfs.FS, oldname, newname string) error {
 	return fileSystem.Symlink(oldname, newname)
 }
 
-// WriteFile writes file path withe contents contents and permissions perm. It
-// will create any missing parent directories with default permissions. It is
-// idempotent and will not fail if the file already exists, has contents
-// contents, and permissions perm.
+// WriteFile writes file path with contents and permissions perm. It will create
+// any missing parent directories with default permissions. It is idempotent and
+// will not fail if the file already exists, has contents contents, and
+// permissions perm.
 func (b *Builder) WriteFile(fileSystem vfs.FS, path string, contents []byte, perm fs.FileMode) error {
 	if info, err := fileSystem.Lstat(path); errors.Is(err, fs.ErrNotExist) {
 		// fallthrough to fileSystem.WriteFile
@@ -253,7 +252,7 @@ func (b *Builder) WriteFile(fileSystem vfs.FS, path string, contents []byte, per
 		return err
 	} else if !info.Mode().IsRegular() {
 		return fmt.Errorf("%s: not a regular file", path)
-	} else if gotPerm, wantPerm := info.Mode()&fs.ModePerm, perm&^b.umask; !permEqual(gotPerm, wantPerm) {
+	} else if gotPerm, wantPerm := info.Mode()&fs.ModePerm, perm&^b.umask; !PermEqual(gotPerm, wantPerm) {
 		return fmt.Errorf("%s has permissions 0%o, want 0%o", path, gotPerm, wantPerm)
 	} else {
 		gotContents, err := fileSystem.ReadFile(path)
@@ -352,7 +351,6 @@ func TestContentsString(wantContentsStr string) PathTest {
 
 // testDoesNotExist is a PathTest that verifies that a file or directory does
 // not exist.
-//nolint:gochecknoglobals
 var testDoesNotExist = func(t *testing.T, fileSystem vfs.FS, path string) {
 	t.Helper()
 	_, err := fileSystem.Lstat(path)
@@ -363,11 +361,9 @@ var testDoesNotExist = func(t *testing.T, fileSystem vfs.FS, path string) {
 
 // TestDoesNotExist is a PathTest that verifies that a file or directory does
 // not exist.
-//nolint:gochecknoglobals
 var TestDoesNotExist PathTest = testDoesNotExist
 
 // TestIsDir is a PathTest that verifies that the path is a directory.
-//nolint:gochecknoglobals
 var TestIsDir = TestModeType(fs.ModeDir)
 
 // TestModePerm returns a PathTest that verifies that the path's permissions
@@ -380,14 +376,13 @@ func TestModePerm(wantPerm fs.FileMode) PathTest {
 			t.Errorf("fileSystem.Lstat(%q) == %+v, %v, want !<nil>, <nil>", path, info, err)
 			return
 		}
-		if gotPerm := info.Mode() & fs.ModePerm; !permEqual(gotPerm, wantPerm) {
+		if gotPerm := info.Mode() & fs.ModePerm; !PermEqual(gotPerm, wantPerm) {
 			t.Errorf("fileSystem.Lstat(%q).Mode()&fs.ModePerm == 0%o, want 0%o", path, gotPerm, wantPerm)
 		}
 	}
 }
 
 // TestModeIsRegular is a PathTest that tests that the path is a regular file.
-//nolint:gochecknoglobals
 var TestModeIsRegular = TestModeType(0)
 
 // TestModeType returns a PathTest that verifies that the path's mode type is

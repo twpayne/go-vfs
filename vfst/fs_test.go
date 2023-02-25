@@ -1,4 +1,4 @@
-package vfst
+package vfst_test
 
 import (
 	"io/fs"
@@ -9,13 +9,14 @@ import (
 	"github.com/stretchr/testify/require"
 
 	vfs "github.com/twpayne/go-vfs/v4"
+	"github.com/twpayne/go-vfs/v4/vfst"
 )
 
 func TestWalk(t *testing.T) {
-	fileSystem, cleanup, err := NewTestFS(map[string]interface{}{
+	fileSystem, cleanup, err := vfst.NewTestFS(map[string]interface{}{
 		"/home/user/.bashrc":  "# .bashrc contents\n",
 		"/home/user/skip/foo": "bar",
-		"/home/user/symlink":  &Symlink{Target: "baz"},
+		"/home/user/symlink":  &vfst.Symlink{Target: "baz"},
 	})
 	require.NoError(t, err)
 	defer cleanup()
