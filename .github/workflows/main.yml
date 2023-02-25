@@ -1,46 +1,40 @@
+name: main
 on:
+  pull_request:
   push:
     branches:
     - master
     tags:
-    - 'v*'
-  pull_request:
-name: go-vfs
-env:
-  GOLANGCI_LINT_VERSION: 1.42.1
+    - v*
 jobs:
   test:
     strategy:
+      fail-fast: false
       matrix:
         go-version:
-        - 1.16
-        - 1.17
-        - 1.x
+        - stable
+        - oldstable
         os:
         - macos-latest
         - ubuntu-latest
         - windows-latest
     runs-on: ${{ matrix.os }}
     steps:
-    - name: Setup Go
-      uses: actions/setup-go@v1
+    - uses: actions/checkout@ac593985615ec2ede58e132d2e21d2b1cbd6127c
+    - uses: actions/setup-go@6edd4406fa81c3da01a34fa6f6343087c207a568
       with:
         go-version: ${{ matrix.go-version }}
-    - name: Checkout
-      uses: actions/checkout@v1
-    - name: Go test
+    - name: build
+      run: go build ./...
+    - name: test
       run: go test ./...
-    - name: Check formatting
-      if: matrix.go-version == '1.x' && matrix.os == 'ubuntu-latest'
-      run: |
-        make format
-        git diff --exit-code
   lint:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout
-        uses: actions/checkout@v2
-      - name: Lint
-        uses: golangci/golangci-lint-action@v2
-        with:
-          version: v${{ env.GOLANGCI_LINT_VERSION }}
+    - uses: actions/checkout@ac593985615ec2ede58e132d2e21d2b1cbd6127c
+    - uses: actions/setup-go@6edd4406fa81c3da01a34fa6f6343087c207a568
+      with:
+        go-version: stable
+    - uses: golangci/golangci-lint-action@08e2f20817b15149a52b5b3ebe7de50aff2ba8c5
+      with:
+        version: v1.51.2

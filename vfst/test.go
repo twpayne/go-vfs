@@ -16,13 +16,13 @@ func init() {
 	syscall.Umask(int(umask))
 }
 
-// permEqual returns if perm1 and perm2 represent the same permissions. On
+// PermEqual returns if perm1 and perm2 represent the same permissions. On
 // Windows, it always returns true.
-func permEqual(perm1, perm2 fs.FileMode) bool {
+func PermEqual(perm1, perm2 fs.FileMode) bool {
 	return perm1&fs.ModePerm&^umask == perm2&fs.ModePerm&^umask
 }
 
-// TestSysNlink returns a PathTest that verifies that the the path's
+// TestSysNlink returns a PathTest that verifies that the path's
 // Sys().(*syscall.Stat_t).Nlink is equal to wantNlink. If path's Sys() cannot
 // be converted to a *syscall.Stat_t, it does nothing.
 func TestSysNlink(wantNlink int) PathTest {

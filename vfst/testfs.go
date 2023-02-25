@@ -13,7 +13,8 @@ type TestFS struct {
 	keep    bool
 }
 
-func newTestFS() (*TestFS, func(), error) {
+// NewEmptyTestFS returns a new empty TestFS and a cleanup function.
+func NewEmptyTestFS() (*TestFS, func(), error) {
 	tempDir, err := os.MkdirTemp("", "go-vfs-vfst")
 	if err != nil {
 		return nil, nil, err
@@ -28,7 +29,7 @@ func newTestFS() (*TestFS, func(), error) {
 
 // NewTestFS returns a new *TestFS populated with root and a cleanup function.
 func NewTestFS(root interface{}, builderOptions ...BuilderOption) (*TestFS, func(), error) {
-	fileSystem, cleanup, err := newTestFS()
+	fileSystem, cleanup, err := NewEmptyTestFS()
 	if err != nil {
 		cleanup()
 		return nil, nil, err

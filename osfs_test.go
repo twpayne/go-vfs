@@ -1,3 +1,5 @@
-package vfs
+package vfs_test
 
-var _ FS = OSFS
+import "github.com/twpayne/go-vfs/v4"
+
+var _ vfs.FS = vfs.OSFS

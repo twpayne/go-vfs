@@ -1,4 +1,4 @@
-package vfst
+package vfst_test
 
 import (
 	"testing"
@@ -7,6 +7,7 @@ import (
 	"github.com/stretchr/testify/require"
 
 	vfs "github.com/twpayne/go-vfs/v4"
+	"github.com/twpayne/go-vfs/v4/vfst"
 )
 
 func TestContains(t *testing.T) {
@@ -114,7 +115,7 @@ func TestContains(t *testing.T) {
 					"/home/user/file": "contents",
 				},
 				map[string]interface{}{
-					"/home/symlink": &Symlink{Target: "user"},
+					"/home/symlink": &vfst.Symlink{Target: "user"},
 				},
 			},
 			tests: []test{
@@ -173,7 +174,7 @@ func TestContains(t *testing.T) {
 		{
 			name: "loop",
 			root: map[string]interface{}{
-				"/home/user": &Symlink{Target: "user"},
+				"/home/user": &vfst.Symlink{Target: "user"},
 			},
 			tests: []test{
 				{
@@ -200,7 +201,7 @@ func TestContains(t *testing.T) {
 		},
 	} {
 		t.Run(tc.name, func(t *testing.T) {
-			fileSystem, cleanup, err := NewTestFS(tc.root)
+			fileSystem, cleanup, err := vfst.NewTestFS(tc.root)
 			require.NoError(t, err)
 			defer cleanup()
 			for _, test := range tc.tests {

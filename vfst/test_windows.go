@@ -7,9 +7,9 @@ import (
 	"github.com/twpayne/go-vfs/v4"
 )
 
-// permEqual returns if perm1 and perm2 represent the same permissions. On
+// PermEqual returns if perm1 and perm2 represent the same permissions. On
 // Windows, it always returns true.
-func permEqual(perm1, perm2 fs.FileMode) bool {
+func PermEqual(perm1, perm2 fs.FileMode) bool {
 	return true
 }
 

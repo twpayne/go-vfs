@@ -11,7 +11,6 @@ import (
 )
 
 // SkipDir is fs.SkipDir.
-//nolint:gochecknoglobals
 var SkipDir = fs.SkipDir
 
 // A LstatReadDirer implements all the functionality needed by Walk.
