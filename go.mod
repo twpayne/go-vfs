@@ -1,10 +1,13 @@
 module github.com/twpayne/go-vfs/v4
 
-go 1.16
+go 1.19
 
 require (
-	github.com/davecgh/go-spew v1.1.1 // indirect
-	github.com/stretchr/testify v1.7.0
+	github.com/alecthomas/assert/v2 v2.3.0
 	golang.org/x/sys v0.5.0
-	gopkg.in/yaml.v3 v3.0.0-20210107192922-496545a6307b // indirect
+)
+
+require (
+	github.com/alecthomas/repr v0.2.0 // indirect
+	github.com/hexops/gotextdiff v1.0.3 // indirect
 )
