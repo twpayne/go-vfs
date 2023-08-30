@@ -5,8 +5,7 @@ import (
 	"path/filepath"
 	"testing"
 
-	"github.com/stretchr/testify/assert"
-	"github.com/stretchr/testify/require"
+	"github.com/alecthomas/assert/v2"
 
 	vfs "github.com/twpayne/go-vfs/v4"
 	"github.com/twpayne/go-vfs/v4/vfst"
@@ -18,10 +17,10 @@ func TestWalk(t *testing.T) {
 		"/home/user/skip/foo": "bar",
 		"/home/user/symlink":  &vfst.Symlink{Target: "baz"},
 	})
-	require.NoError(t, err)
+	assert.NoError(t, err)
 	defer cleanup()
 	pathTypeMap := make(map[string]fs.FileMode)
-	require.NoError(t, vfs.Walk(fileSystem, "/", func(path string, info fs.FileInfo, err error) error {
+	assert.NoError(t, vfs.Walk(fileSystem, "/", func(path string, info fs.FileInfo, err error) error {
 		assert.NoError(t, err)
 		pathTypeMap[filepath.ToSlash(path)] = info.Mode() & fs.ModeType
 		if filepath.Base(path) == "skip" {

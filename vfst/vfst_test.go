@@ -7,8 +7,7 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/stretchr/testify/assert"
-	"github.com/stretchr/testify/require"
+	"github.com/alecthomas/assert/v2"
 
 	vfs "github.com/twpayne/go-vfs/v4"
 	"github.com/twpayne/go-vfs/v4/vfst"
@@ -125,7 +124,7 @@ func TestBuilderBuild(t *testing.T) {
 	} {
 		t.Run(tc.name, func(t *testing.T) {
 			fileSystem, cleanup, err := vfst.NewTestFS(tc.root, vfst.BuilderUmask(tc.umask), vfst.BuilderVerbose(true))
-			require.NoError(t, err)
+			assert.NoError(t, err)
 			defer cleanup()
 			vfst.RunTests(t, fileSystem, "", tc.tests)
 		})
@@ -155,7 +154,7 @@ func TestCoverage(t *testing.T) {
 			},
 		},
 	})
-	require.NoError(t, err)
+	assert.NoError(t, err)
 	defer cleanup()
 	vfst.RunTests(t, fileSystem, "", []interface{}{
 		vfst.TestPath("/home",
@@ -253,7 +252,7 @@ func TestErrors(t *testing.T) {
 	} {
 		t.Run(name, func(t *testing.T) {
 			fileSystem, cleanup, err := vfst.NewEmptyTestFS()
-			require.NoError(t, err)
+			assert.NoError(t, err)
 			defer cleanup()
 			b := vfst.NewBuilder(vfst.BuilderVerbose(true))
 			root := []interface{}{
@@ -266,7 +265,7 @@ func TestErrors(t *testing.T) {
 					"/home/user/symlink": &vfst.Symlink{Target: "empty"},
 				},
 			}
-			require.NoError(t, b.Build(fileSystem, root))
+			assert.NoError(t, b.Build(fileSystem, root))
 			assert.Error(t, f(b, fileSystem))
 		})
 	}
@@ -278,7 +277,7 @@ func TestGlob(t *testing.T) {
 		"/home/user/.bashrc":       "# contents of .bashrc\n",
 		"/home/user/.zshrc":        "# contents of .zshrc\n",
 	})
-	require.NoError(t, err)
+	assert.NoError(t, err)
 	defer cleanup()
 	for _, tc := range []struct {
 		name            string
@@ -314,8 +313,8 @@ func TestGlob(t *testing.T) {
 	} {
 		t.Run(tc.name, func(t *testing.T) {
 			matches, err := fileSystem.Glob(tc.pattern)
-			require.NoError(t, err)
-			require.Len(t, matches, len(tc.expectedMatches))
+			assert.NoError(t, err)
+			assert.Equal(t, len(tc.expectedMatches), len(matches))
 			for i, match := range matches {
 				assert.True(t, filepath.IsAbs(match))
 				expected := filepath.FromSlash(tc.expectedMatches[i])
@@ -355,14 +354,14 @@ func TestIdempotency(t *testing.T) {
 	} {
 		t.Run(name, func(t *testing.T) {
 			fileSystem, cleanup, err := vfst.NewEmptyTestFS()
-			require.NoError(t, err)
+			assert.NoError(t, err)
 			defer cleanup()
 			b := vfst.NewBuilder(vfst.BuilderVerbose(true))
 			root := map[string]interface{}{
 				"/home/user/.bashrc": "# bashrc\n",
 				"/home/user/symlink": &vfst.Symlink{Target: ".bashrc"},
 			}
-			require.NoError(t, b.Build(fileSystem, root))
+			assert.NoError(t, b.Build(fileSystem, root))
 			assert.NoError(t, f(b, fileSystem))
 		})
 	}

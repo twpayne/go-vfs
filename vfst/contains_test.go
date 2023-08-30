@@ -3,8 +3,7 @@ package vfst_test
 import (
 	"testing"
 
-	"github.com/stretchr/testify/assert"
-	"github.com/stretchr/testify/require"
+	"github.com/alecthomas/assert/v2"
 
 	vfs "github.com/twpayne/go-vfs/v4"
 	"github.com/twpayne/go-vfs/v4/vfst"
@@ -202,7 +201,7 @@ func TestContains(t *testing.T) {
 	} {
 		t.Run(tc.name, func(t *testing.T) {
 			fileSystem, cleanup, err := vfst.NewTestFS(tc.root)
-			require.NoError(t, err)
+			assert.NoError(t, err)
 			defer cleanup()
 			for _, test := range tc.tests {
 				actual, err := vfs.Contains(fileSystem, test.p, test.prefix)
