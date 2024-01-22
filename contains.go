@@ -11,7 +11,7 @@ import (
 // A Stater implements Stat. It is assumed that the fs.FileInfos returned by
 // Stat are compatible with os.SameFile.
 type Stater interface {
-	Stat(string) (fs.FileInfo, error)
+	Stat(name string) (fs.FileInfo, error)
 }
 
 // Contains returns true if p is reachable by traversing through prefix. prefix
