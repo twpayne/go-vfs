@@ -1,4 +1,4 @@
-module github.com/twpayne/go-vfs/v4
+module github.com/twpayne/go-vfs/v5
 
 go 1.19
 

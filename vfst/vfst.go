@@ -13,7 +13,7 @@ import (
 	"strconv"
 	"testing"
 
-	vfs "github.com/twpayne/go-vfs/v4"
+	vfs "github.com/twpayne/go-vfs/v5"
 )
 
 var umask fs.FileMode

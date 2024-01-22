@@ -5,8 +5,8 @@ import (
 
 	"github.com/alecthomas/assert/v2"
 
-	vfs "github.com/twpayne/go-vfs/v4"
-	"github.com/twpayne/go-vfs/v4/vfst"
+	vfs "github.com/twpayne/go-vfs/v5"
+	"github.com/twpayne/go-vfs/v5/vfst"
 )
 
 func TestContains(t *testing.T) {
