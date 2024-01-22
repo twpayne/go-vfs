@@ -361,10 +361,10 @@ var testDoesNotExist = func(t *testing.T, fileSystem vfs.FS, path string) {
 
 // TestDoesNotExist is a PathTest that verifies that a file or directory does
 // not exist.
-var TestDoesNotExist PathTest = testDoesNotExist
+var TestDoesNotExist = func() PathTest { return testDoesNotExist }
 
 // TestIsDir is a PathTest that verifies that the path is a directory.
-var TestIsDir = TestModeType(fs.ModeDir)
+var TestIsDir = func() PathTest { return TestModeType(fs.ModeDir) }
 
 // TestModePerm returns a PathTest that verifies that the path's permissions
 // are equal to wantPerm.
@@ -383,7 +383,7 @@ func TestModePerm(wantPerm fs.FileMode) PathTest {
 }
 
 // TestModeIsRegular is a PathTest that tests that the path is a regular file.
-var TestModeIsRegular = TestModeType(0)
+var TestModeIsRegular = func() PathTest { return TestModeType(0) }
 
 // TestModeType returns a PathTest that verifies that the path's mode type is
 // equal to wantModeType.
