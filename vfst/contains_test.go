@@ -18,12 +18,12 @@ func TestContains(t *testing.T) {
 	}
 	for _, tc := range []struct {
 		name  string
-		root  interface{}
+		root  any
 		tests []test
 	}{
 		{
 			name: "core",
-			root: map[string]interface{}{
+			root: map[string]any{
 				"/home/user/file": "contents",
 			},
 			tests: []test{
@@ -91,7 +91,7 @@ func TestContains(t *testing.T) {
 		},
 		{
 			name: "nonexistant_prefix",
-			root: map[string]interface{}{
+			root: map[string]any{
 				"/home/user/file": "contents",
 			},
 			tests: []test{
@@ -109,11 +109,11 @@ func TestContains(t *testing.T) {
 		},
 		{
 			name: "symlink_dir",
-			root: []interface{}{
-				map[string]interface{}{
+			root: []any{
+				map[string]any{
 					"/home/user/file": "contents",
 				},
-				map[string]interface{}{
+				map[string]any{
 					"/home/symlink": &vfst.Symlink{Target: "user"},
 				},
 			},
@@ -172,7 +172,7 @@ func TestContains(t *testing.T) {
 		},
 		{
 			name: "loop",
-			root: map[string]interface{}{
+			root: map[string]any{
 				"/home/user": &vfst.Symlink{Target: "user"},
 			},
 			tests: []test{

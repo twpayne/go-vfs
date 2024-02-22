@@ -12,7 +12,7 @@ import (
 )
 
 func TestWalk(t *testing.T) {
-	fileSystem, cleanup, err := vfst.NewTestFS(map[string]interface{}{
+	fileSystem, cleanup, err := vfst.NewTestFS(map[string]any{
 		"/home/user/.bashrc":  "# .bashrc contents\n",
 		"/home/user/skip/foo": "bar",
 		"/home/user/symlink":  &vfst.Symlink{Target: "baz"},

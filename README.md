@@ -84,7 +84,7 @@ func writeConfigFile(fileSystem vfs.FS) error {
 // TestWriteConfigFile is our test function.
 func TestWriteConfigFile(t *testing.T) {
     // Create and populate an temporary directory with a home directory.
-    fileSystem, cleanup, err := vfst.NewTestFS(map[string]interface{}{
+    fileSystem, cleanup, err := vfst.NewTestFS(map[string]any{
         "/home/user/.bashrc": "# contents of user's .bashrc\n",
     })
 

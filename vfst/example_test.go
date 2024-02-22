@@ -12,7 +12,7 @@ func ExampleNewTestFS_complex() {
 
 		// Describe the structure of the filesystem using a map from filenames to
 		// file or directory contents.
-		root := map[string]interface{}{
+		root := map[string]any{
 			// A string or []byte is sets a file's contents.
 			"/home/user/.bashrc": "# contents of user's .bashrc\n",
 			"/home/user/empty":   []byte{},
@@ -22,8 +22,8 @@ func ExampleNewTestFS_complex() {
 				Contents: []byte("echo hello\n"),
 			},
 			// Directories can be nested.
-			"/home/user/foo": map[string]interface{}{
-				"bar": map[string]interface{}{
+			"/home/user/foo": map[string]any{
+				"bar": map[string]any{
 					"baz": "qux",
 				},
 			},
@@ -31,7 +31,7 @@ func ExampleNewTestFS_complex() {
 			// &vfst.Dir.
 			"/root": &vfst.Dir{
 				Perm: 0o700,
-				Entries: map[string]interface{}{
+				Entries: map[string]any{
 					".bashrc": "# contents of root's .bashrc\n",
 				},
 			},
@@ -45,7 +45,7 @@ func ExampleNewTestFS_complex() {
 		defer cleanup()
 
 		// Create tests by creating data structures containing Tests.
-		tests := []interface{}{
+		tests := []any{
 			// Test multiple properties of a single path with TestPath.
 			vfst.TestPath("/home",
 				vfst.TestIsDir(),
@@ -62,7 +62,7 @@ func ExampleNewTestFS_complex() {
 			),
 			// Maps with string keys create sub tests with testing.T.Run. The key
 			// is used as the test name.
-			map[string]interface{}{
+			map[string]any{
 				"home_user_empty": vfst.TestPath("/home/user/empty",
 					vfst.TestModeIsRegular(),
 					vfst.TestModePerm(0o644),
@@ -73,7 +73,7 @@ func ExampleNewTestFS_complex() {
 					vfst.TestModePerm(0o644),
 					vfst.TestContentsString("qux"),
 				),
-				"root": []interface{}{
+				"root": []any{
 					vfst.TestPath("/root",
 						vfst.TestIsDir(),
 						vfst.TestModePerm(0o700),
@@ -104,7 +104,7 @@ func ExampleNewTestFS() {
 	Test := func(t *testing.T) {
 		t.Helper()
 
-		fileSystem, cleanup, err := vfst.NewTestFS(map[string]interface{}{
+		fileSystem, cleanup, err := vfst.NewTestFS(map[string]any{
 			"/home/user/.bashrc": "# contents of user's .bashrc\n",
 		})
 		if err != nil {

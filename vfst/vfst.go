@@ -21,7 +21,7 @@ var umask fs.FileMode
 // A Dir is a directory with a specified permissions and zero or more Entries.
 type Dir struct {
 	Perm    fs.FileMode
-	Entries map[string]interface{}
+	Entries map[string]any
 }
 
 // A File is a file with a specified permissions and contents.
@@ -78,9 +78,9 @@ func NewBuilder(options ...BuilderOption) *Builder {
 }
 
 // build is a recursive helper for Build.
-func (b *Builder) build(fileSystem vfs.FS, path string, i interface{}) error {
+func (b *Builder) build(fileSystem vfs.FS, path string, i any) error {
 	switch i := i.(type) {
-	case []interface{}:
+	case []any:
 		for _, element := range i {
 			if err := b.build(fileSystem, path, element); err != nil {
 				return err
@@ -107,7 +107,7 @@ func (b *Builder) build(fileSystem vfs.FS, path string, i interface{}) error {
 			}
 		}
 		return nil
-	case map[string]interface{}:
+	case map[string]any:
 		if err := b.MkdirAll(fileSystem, path, 0o777); err != nil {
 			return err
 		}
@@ -153,7 +153,7 @@ func (b *Builder) build(fileSystem vfs.FS, path string, i interface{}) error {
 }
 
 // Build populates fileSystem from root.
-func (b *Builder) Build(fileSystem vfs.FS, root interface{}) error {
+func (b *Builder) Build(fileSystem vfs.FS, root any) error {
 	return b.build(fileSystem, "/", root)
 }
 
@@ -274,7 +274,7 @@ func (b *Builder) WriteFile(fileSystem vfs.FS, path string, contents []byte, per
 }
 
 // runTests recursively runs tests on fileSystem.
-func runTests(t *testing.T, fileSystem vfs.FS, name string, test interface{}) {
+func runTests(t *testing.T, fileSystem vfs.FS, name string, test any) {
 	t.Helper()
 	prefix := ""
 	if name != "" {
@@ -302,11 +302,11 @@ func runTests(t *testing.T, fileSystem vfs.FS, name string, test interface{}) {
 				test[testName](t, fileSystem)
 			})
 		}
-	case []interface{}:
+	case []any:
 		for _, u := range test {
 			runTests(t, fileSystem, name, u)
 		}
-	case map[string]interface{}:
+	case map[string]any:
 		testNames := make([]string, 0, len(test))
 		for testName := range test {
 			testNames = append(testNames, testName)
@@ -322,7 +322,7 @@ func runTests(t *testing.T, fileSystem vfs.FS, name string, test interface{}) {
 }
 
 // RunTests recursively runs tests on fileSystem.
-func RunTests(t *testing.T, fileSystem vfs.FS, name string, tests ...interface{}) {
+func RunTests(t *testing.T, fileSystem vfs.FS, name string, tests ...any) {
 	t.Helper()
 	runTests(t, fileSystem, name, tests)
 }

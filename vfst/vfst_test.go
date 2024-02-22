@@ -17,8 +17,8 @@ func TestBuilderBuild(t *testing.T) {
 	for _, tc := range []struct {
 		name  string
 		umask fs.FileMode
-		root  interface{}
-		tests interface{}
+		root  any
+		tests any
 	}{
 		{
 			name:  "empty",
@@ -28,10 +28,10 @@ func TestBuilderBuild(t *testing.T) {
 		{
 			name:  "dir",
 			umask: 0o22,
-			root: map[string]interface{}{
+			root: map[string]any{
 				"foo": &vfst.Dir{
 					Perm: 0o755,
-					Entries: map[string]interface{}{
+					Entries: map[string]any{
 						"bar": "baz",
 					},
 				},
@@ -65,7 +65,7 @@ func TestBuilderBuild(t *testing.T) {
 		{
 			name:  "map_string_empty_interface",
 			umask: 0o22,
-			root: map[string]interface{}{
+			root: map[string]any{
 				"foo": "bar",
 				"baz": &vfst.File{Perm: 0o755, Contents: []byte("qux")},
 				"dir": &vfst.Dir{Perm: 0o700},
@@ -111,7 +111,7 @@ func TestBuilderBuild(t *testing.T) {
 		{
 			name:  "symlink",
 			umask: 0o22,
-			root: map[string]interface{}{
+			root: map[string]any{
 				"foo": &vfst.Symlink{Target: "bar"},
 			},
 			tests: []vfst.Test{
@@ -134,7 +134,7 @@ func TestBuilderBuild(t *testing.T) {
 // TestCoverage exercises as much functionality as possible to increase test
 // coverage.
 func TestCoverage(t *testing.T) {
-	fileSystem, cleanup, err := vfst.NewTestFS(map[string]interface{}{
+	fileSystem, cleanup, err := vfst.NewTestFS(map[string]any{
 		"/home/user/.bashrc": "# contents of user's .bashrc\n",
 		"/home/user/empty":   []byte{},
 		"/home/user/symlink": &vfst.Symlink{Target: "empty"},
@@ -142,21 +142,21 @@ func TestCoverage(t *testing.T) {
 			Perm:     0o755,
 			Contents: []byte("echo hello\n"),
 		},
-		"/home/user/foo": map[string]interface{}{
-			"bar": map[string]interface{}{
+		"/home/user/foo": map[string]any{
+			"bar": map[string]any{
 				"baz": "qux",
 			},
 		},
 		"/root": &vfst.Dir{
 			Perm: 0o700,
-			Entries: map[string]interface{}{
+			Entries: map[string]any{
 				".bashrc": "# contents of root's .bashrc\n",
 			},
 		},
 	})
 	assert.NoError(t, err)
 	defer cleanup()
-	vfst.RunTests(t, fileSystem, "", []interface{}{
+	vfst.RunTests(t, fileSystem, "", []any{
 		vfst.TestPath("/home",
 			vfst.TestIsDir(),
 			vfst.TestModePerm(0o755),
@@ -173,7 +173,7 @@ func TestCoverage(t *testing.T) {
 				vfst.TestSysNlink(1),
 			),
 		},
-		map[string]interface{}{
+		map[string]any{
 			"home_user_empty": vfst.TestPath("/home/user/empty",
 				vfst.TestModeIsRegular(),
 				vfst.TestModePerm(0o644),
@@ -190,7 +190,7 @@ func TestCoverage(t *testing.T) {
 					vfst.TestContentsString("qux"),
 				),
 			},
-			"root": []interface{}{
+			"root": []any{
 				vfst.TestPath("/root",
 					vfst.TestIsDir(),
 					vfst.TestModePerm(0o700),
@@ -256,13 +256,13 @@ func TestErrors(t *testing.T) {
 			assert.NoError(t, err)
 			defer cleanup()
 			b := vfst.NewBuilder(vfst.BuilderVerbose(true))
-			root := []interface{}{
-				map[string]interface{}{
+			root := []any{
+				map[string]any{
 					"/home/user/.bashrc": "# bashrc\n",
 					"/home/user/empty":   []byte{},
 					"/home/user/foo":     &vfst.Dir{Perm: 0o755},
 				},
-				map[string]interface{}{
+				map[string]any{
 					"/home/user/symlink": &vfst.Symlink{Target: "empty"},
 				},
 			}
@@ -273,7 +273,7 @@ func TestErrors(t *testing.T) {
 }
 
 func TestGlob(t *testing.T) {
-	fileSystem, cleanup, err := vfst.NewTestFS(map[string]interface{}{
+	fileSystem, cleanup, err := vfst.NewTestFS(map[string]any{
 		"/home/user/.bash_profile": "# contents of .bash_profile\n",
 		"/home/user/.bashrc":       "# contents of .bashrc\n",
 		"/home/user/.zshrc":        "# contents of .zshrc\n",
@@ -358,7 +358,7 @@ func TestIdempotency(t *testing.T) {
 			assert.NoError(t, err)
 			defer cleanup()
 			b := vfst.NewBuilder(vfst.BuilderVerbose(true))
-			root := map[string]interface{}{
+			root := map[string]any{
 				"/home/user/.bashrc": "# bashrc\n",
 				"/home/user/symlink": &vfst.Symlink{Target: ".bashrc"},
 			}

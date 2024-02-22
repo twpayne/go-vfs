@@ -28,7 +28,7 @@ func NewEmptyTestFS() (*TestFS, func(), error) {
 }
 
 // NewTestFS returns a new *TestFS populated with root and a cleanup function.
-func NewTestFS(root interface{}, builderOptions ...BuilderOption) (*TestFS, func(), error) {
+func NewTestFS(root any, builderOptions ...BuilderOption) (*TestFS, func(), error) {
 	fileSystem, cleanup, err := NewEmptyTestFS()
 	if err != nil {
 		cleanup()
