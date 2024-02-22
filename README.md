@@ -1,7 +1,6 @@
 # go-vfs
 
-[![PkgGoDev](https://pkg.go.dev/badge/github.com/twpayne/go-vfs)](https://pkg.go.dev/github.com/twpayne/go-vfs)
-[![Report Card](https://goreportcard.com/badge/github.com/twpayne/go-vfs)](https://goreportcard.com/report/github.com/twpayne/go-vfs)
+[![PkgGoDev](https://pkg.go.dev/badge/github.com/twpayne/go-vfs/v5)](https://pkg.go.dev/github.com/twpayne/go-vfs/v5)
 
 Package `vfs` provides an abstraction of the `os` and `io` packages that is easy
 to test.
@@ -15,7 +14,7 @@ to test.
   the desired state of the filesystem after your code has run, and `vfst` tests
   that the filesystem matches that state. For a quick tour of `vfst`'s features,
   see [the examples in the
-  documentation](https://godoc.org/github.com/twpayne/go-vfs/vfst#pkg-examples).
+  documentation](https://godoc.org/github.com/twpayne/go-vfs/v5/vfst#pkg-examples).
 
 * Compatibility with
   [`github.com/spf13/afero`](https://github.com/spf13/afero) and
@@ -105,7 +104,7 @@ func TestWriteConfigFile(t *testing.T) {
     // Check properties of the filesystem after our function has modified it.
     vfst.RunTests(t, fileSystem, "app_conf",
         vfst.TestPath("/home/user/app.conf",
-            vfst.TestModeIsRegular,
+            vfst.TestModeIsRegular(),
             vfst.TestModePerm(0644),
             vfst.TestContentsString("app config"),
         ),
