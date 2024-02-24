@@ -39,7 +39,12 @@ func walk(fileSystem LstatReadDirer, path string, walkFn filepath.WalkFunc, info
 	}
 	dirEntries, err := fileSystem.ReadDir(path)
 	if err != nil {
-		return err
+		switch err := walkFn(path, info, err); {
+		case errors.Is(err, fs.SkipDir):
+			return nil
+		case err != nil:
+			return err
+		}
 	}
 	sort.Sort(dirEntriesByName(dirEntries))
 	for _, dirEntry := range dirEntries {
@@ -47,11 +52,17 @@ func walk(fileSystem LstatReadDirer, path string, walkFn filepath.WalkFunc, info
 		if name == "." || name == ".." {
 			continue
 		}
+		path := filepath.Join(path, dirEntry.Name())
 		info, err := dirEntry.Info()
 		if err != nil {
-			return err
+			switch err := walkFn(path, info, err); {
+			case errors.Is(err, fs.SkipDir) && info.IsDir():
+				// Do nothing.
+			case err != nil:
+				return err
+			}
 		}
-		if err := walk(fileSystem, filepath.Join(path, dirEntry.Name()), walkFn, info, nil); err != nil {
+		if err := walk(fileSystem, path, walkFn, info, nil); err != nil {
 			return err
 		}
 	}
