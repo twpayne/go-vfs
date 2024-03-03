@@ -56,8 +56,8 @@ func walk(fileSystem LstatReadDirer, path string, walkFn filepath.WalkFunc, info
 		info, err := dirEntry.Info()
 		if err != nil {
 			switch err := walkFn(path, info, err); {
-			case errors.Is(err, fs.SkipDir) && info.IsDir():
-				// Do nothing.
+			case errors.Is(err, fs.SkipDir) && (info == nil || info.IsDir()):
+				continue
 			case err != nil:
 				return err
 			}
