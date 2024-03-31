@@ -1,6 +1,8 @@
 package vfst
 
 import (
+	"errors"
+	"io/fs"
 	"os"
 
 	vfs "github.com/twpayne/go-vfs/v5"
@@ -54,6 +56,23 @@ func (t *TestFS) TempDir() string {
 
 func (t *TestFS) cleanup() {
 	if !t.keep {
-		os.RemoveAll(t.tempDir)
+		for {
+			// Remove t.tempDir but try to recover from permission denied errors
+			// by chmod'ing the path that causes the error.
+			err := os.RemoveAll(t.tempDir)
+			if err == nil {
+				break
+			}
+			if !errors.Is(err, fs.ErrPermission) {
+				break
+			}
+			var pathErr *os.PathError
+			if !errors.As(err, &pathErr) {
+				break
+			}
+			if err := os.Chmod(pathErr.Path, 0o777); err != nil {
+				break
+			}
+		}
 	}
 }
