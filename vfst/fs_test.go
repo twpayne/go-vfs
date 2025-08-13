@@ -3,6 +3,7 @@ package vfst_test
 import (
 	"errors"
 	"io/fs"
+	"os"
 	"path/filepath"
 	"runtime"
 	"testing"
@@ -47,6 +48,7 @@ func TestWalkErrors(t *testing.T) {
 	}
 	for _, tc := range []struct {
 		name          string
+		skip          bool
 		root          any
 		postFunc      func(vfs.FS) error
 		expectedPaths []string
@@ -72,6 +74,7 @@ func TestWalkErrors(t *testing.T) {
 		},
 		{
 			name: "private_subdir",
+			skip: os.Getuid() == 0, // Test fails if run as root, because root can read all files.
 			root: map[string]any{
 				"/dir/subdir/subsubdir/file": "",
 			},
@@ -86,6 +89,7 @@ func TestWalkErrors(t *testing.T) {
 		},
 		{
 			name: "private_subdir_keep_going",
+			skip: os.Getuid() == 0, // Test fails if run as root, because root can read all files.
 			root: map[string]any{
 				"/dir/subdir/subsubdir/file": "",
 				"/dir/subdir2/file":          "",
@@ -103,6 +107,9 @@ func TestWalkErrors(t *testing.T) {
 		},
 	} {
 		t.Run(tc.name, func(t *testing.T) {
+			if tc.skip {
+				t.Skip()
+			}
 			fileSystem, cleanup, err := vfst.NewTestFS(tc.root)
 			assert.NoError(t, err)
 			if tc.postFunc != nil {

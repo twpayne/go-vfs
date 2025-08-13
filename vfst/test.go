@@ -12,7 +12,7 @@ import (
 )
 
 func init() {
-	umask = fs.FileMode(syscall.Umask(0))
+	umask = fs.FileMode(syscall.Umask(0)) //nolint:gosec
 	syscall.Umask(int(umask))
 }
 
@@ -33,7 +33,7 @@ func TestSysNlink(wantNlink int) PathTest {
 			t.Errorf("fileSystem.Lstat(%q) == %+v, %v, want !<nil>, <nil>", path, info, err)
 			return
 		}
-		if stat, ok := info.Sys().(*syscall.Stat_t); ok && int(stat.Nlink) != wantNlink {
+		if stat, ok := info.Sys().(*syscall.Stat_t); ok && int(stat.Nlink) != wantNlink { //nolint:gosec
 			t.Errorf("fileSystem.Lstat(%q).Sys().(*syscall.Stat_t).Nlink == %d, want %d", path, stat.Nlink, wantNlink)
 		}
 	}

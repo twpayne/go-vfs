@@ -11,6 +11,7 @@ import (
 // A TestFS is a virtual filesystem based in a temporary directory.
 type TestFS struct {
 	vfs.PathFS
+
 	tempDir string
 	keep    bool
 }

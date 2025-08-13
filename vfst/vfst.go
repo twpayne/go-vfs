@@ -77,81 +77,6 @@ func NewBuilder(options ...BuilderOption) *Builder {
 	return b
 }
 
-// build is a recursive helper for Build.
-func (b *Builder) build(fileSystem vfs.FS, path string, i any) error {
-	switch i := i.(type) {
-	case []any:
-		for _, element := range i {
-			if err := b.build(fileSystem, path, element); err != nil {
-				return err
-			}
-		}
-		return nil
-	case *Dir:
-		if parentDir := filepath.Dir(path); parentDir != "." {
-			if err := b.MkdirAll(fileSystem, parentDir, 0o777); err != nil {
-				return err
-			}
-		}
-		if err := b.Mkdir(fileSystem, path, i.Perm); err != nil {
-			return err
-		}
-		entryNames := make([]string, 0, len(i.Entries))
-		for entryName := range i.Entries {
-			entryNames = append(entryNames, entryName)
-		}
-		sort.Strings(entryNames)
-		for _, entryName := range entryNames {
-			if err := b.build(fileSystem, filepath.Join(path, entryName), i.Entries[entryName]); err != nil {
-				return err
-			}
-		}
-		return nil
-	case map[string]any:
-		if err := b.MkdirAll(fileSystem, path, 0o777); err != nil {
-			return err
-		}
-		entryNames := make([]string, 0, len(i))
-		for entryName := range i {
-			entryNames = append(entryNames, entryName)
-		}
-		sort.Strings(entryNames)
-		for _, entryName := range entryNames {
-			if err := b.build(fileSystem, filepath.Join(path, entryName), i[entryName]); err != nil {
-				return err
-			}
-		}
-		return nil
-	case map[string]string:
-		if err := b.MkdirAll(fileSystem, path, 0o777); err != nil {
-			return err
-		}
-		entryNames := make([]string, 0, len(i))
-		for entryName := range i {
-			entryNames = append(entryNames, entryName)
-		}
-		sort.Strings(entryNames)
-		for _, entryName := range entryNames {
-			if err := b.WriteFile(fileSystem, filepath.Join(path, entryName), []byte(i[entryName]), 0o666); err != nil {
-				return err
-			}
-		}
-		return nil
-	case *File:
-		return b.WriteFile(fileSystem, path, i.Contents, i.Perm)
-	case string:
-		return b.WriteFile(fileSystem, path, []byte(i), 0o666)
-	case []byte:
-		return b.WriteFile(fileSystem, path, i, 0o666)
-	case *Symlink:
-		return b.Symlink(fileSystem, i.Target, path)
-	case nil:
-		return nil
-	default:
-		return fmt.Errorf("%s: unsupported type %T", path, i)
-	}
-}
-
 // Build populates fileSystem from root.
 func (b *Builder) Build(fileSystem vfs.FS, root any) error {
 	return b.build(fileSystem, "/", root)
@@ -454,5 +379,80 @@ func TestMinSize(wantMinSize int64) PathTest {
 		if gotSize := info.Size(); gotSize < wantMinSize {
 			t.Errorf("fileSystem.Lstat(%q).Size() == %d, want >=%d", path, gotSize, wantMinSize)
 		}
+	}
+}
+
+// build is a recursive helper for Build.
+func (b *Builder) build(fileSystem vfs.FS, path string, i any) error {
+	switch i := i.(type) {
+	case []any:
+		for _, element := range i {
+			if err := b.build(fileSystem, path, element); err != nil {
+				return err
+			}
+		}
+		return nil
+	case *Dir:
+		if parentDir := filepath.Dir(path); parentDir != "." {
+			if err := b.MkdirAll(fileSystem, parentDir, 0o777); err != nil {
+				return err
+			}
+		}
+		if err := b.Mkdir(fileSystem, path, i.Perm); err != nil {
+			return err
+		}
+		entryNames := make([]string, 0, len(i.Entries))
+		for entryName := range i.Entries {
+			entryNames = append(entryNames, entryName)
+		}
+		sort.Strings(entryNames)
+		for _, entryName := range entryNames {
+			if err := b.build(fileSystem, filepath.Join(path, entryName), i.Entries[entryName]); err != nil {
+				return err
+			}
+		}
+		return nil
+	case map[string]any:
+		if err := b.MkdirAll(fileSystem, path, 0o777); err != nil {
+			return err
+		}
+		entryNames := make([]string, 0, len(i))
+		for entryName := range i {
+			entryNames = append(entryNames, entryName)
+		}
+		sort.Strings(entryNames)
+		for _, entryName := range entryNames {
+			if err := b.build(fileSystem, filepath.Join(path, entryName), i[entryName]); err != nil {
+				return err
+			}
+		}
+		return nil
+	case map[string]string:
+		if err := b.MkdirAll(fileSystem, path, 0o777); err != nil {
+			return err
+		}
+		entryNames := make([]string, 0, len(i))
+		for entryName := range i {
+			entryNames = append(entryNames, entryName)
+		}
+		sort.Strings(entryNames)
+		for _, entryName := range entryNames {
+			if err := b.WriteFile(fileSystem, filepath.Join(path, entryName), []byte(i[entryName]), 0o666); err != nil {
+				return err
+			}
+		}
+		return nil
+	case *File:
+		return b.WriteFile(fileSystem, path, i.Contents, i.Perm)
+	case string:
+		return b.WriteFile(fileSystem, path, []byte(i), 0o666)
+	case []byte:
+		return b.WriteFile(fileSystem, path, i, 0o666)
+	case *Symlink:
+		return b.Symlink(fileSystem, i.Target, path)
+	case nil:
+		return nil
+	default:
+		return fmt.Errorf("%s: unsupported type %T", path, i)
 	}
 }
